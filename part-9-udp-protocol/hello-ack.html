@@ -22,7 +22,7 @@
     
     
       
-        <title>HELLO_ACK (UDP) - Wulfram 2 Server Implementation Guide</title>
+        <title>D_HANDSHAKE / HELLO_ACK (UDP) - Wulfram 2 Server Implementation Guide</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#udp-hello_ack-0x08" class="md-skip">
+        <a href="#udp-d_handshake-hello_ack-0x08" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              HELLO_ACK (UDP)
+              D_HANDSHAKE / HELLO_ACK (UDP)
             
           </span>
         </div>
@@ -1019,6 +1019,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#authentication-purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentication Purpose
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_handshake-server-client-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_HANDSHAKE (Server → Client) Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#when-its-sent" class="md-nav__link">
     <span class="md-ellipsis">
       When It's Sent
@@ -1028,9 +1046,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#packet-structure" class="md-nav__link">
+  <a href="#hello_ack-packet-structure-client-server" class="md-nav__link">
     <span class="md-ellipsis">
-      Packet Structure
+      HELLO_ACK Packet Structure (Client → Server)
     </span>
   </a>
   
@@ -1276,6 +1294,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#authentication-purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentication Purpose
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_handshake-server-client-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_HANDSHAKE (Server → Client) Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#when-its-sent" class="md-nav__link">
     <span class="md-ellipsis">
       When It's Sent
@@ -1285,9 +1321,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#packet-structure" class="md-nav__link">
+  <a href="#hello_ack-packet-structure-client-server" class="md-nav__link">
     <span class="md-ellipsis">
-      Packet Structure
+      HELLO_ACK Packet Structure (Client → Server)
     </span>
   </a>
   
@@ -1345,20 +1381,67 @@
 
 
 
-<h1 id="udp-hello_ack-0x08">UDP HELLO_ACK (0x08)<a class="headerlink" href="#udp-hello_ack-0x08" title="Permanent link">&para;</a></h1>
+<h1 id="udp-d_handshake-hello_ack-0x08">UDP D_HANDSHAKE / HELLO_ACK (0x08)<a class="headerlink" href="#udp-d_handshake-hello_ack-0x08" title="Permanent link">&para;</a></h1>
 <hr />
 <h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
-<p>The HELLO_ACK packet is used to establish and maintain the UDP channel between client and server. It serves as both an initial handshake confirmation and a periodic keepalive.</p>
+<p>The UDP 0x08 packet serves <strong>two different purposes</strong> depending on direction:</p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Name</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client → Server</td>
+<td>HELLO_ACK</td>
+<td>Simple keepalive/acknowledgment</td>
+</tr>
+<tr>
+<td>Server → Client</td>
+<td>D_HANDSHAKE</td>
+<td><strong>Authentication handshake</strong> (complex structure)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Discovery Credit</strong>: baffler identified that when sent TO the client, this packet is interpreted as D_HANDSHAKE and requires a more complex structure for UDP authentication.</p>
+</blockquote>
+<h3 id="authentication-purpose">Authentication Purpose<a class="headerlink" href="#authentication-purpose" title="Permanent link">&para;</a></h3>
+<p>The D_HANDSHAKE mechanism appears to verify that UDP packets are coming from the same source as the established TCP connection. This prevents:
+- UDP spoofing attacks
+- Session hijacking via UDP
+- Unauthorized UDP traffic injection</p>
+<p>The server should validate that the UDP source address/port corresponds to an authenticated TCP session before accepting UDP traffic from that endpoint.</p>
+<hr />
+<h3 id="d_handshake-server-client-structure">D_HANDSHAKE (Server → Client) Structure<a class="headerlink" href="#d_handshake-server-client-structure" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>⚠️ <strong>WARNING</strong>: The D_HANDSHAKE structure is complex and not fully documented. baffler notes it "needs a lot of shit" — sending a malformed D_HANDSHAKE will likely cause client issues.</p>
+</blockquote>
+<p>When the server sends 0x08 TO the client, the client interprets it as D_HANDSHAKE, not a simple acknowledgment. This structure likely includes:</p>
+<div class="highlight"><pre><span></span><code>D_HANDSHAKE Structure (INCOMPLETE - needs verification):
+┌──────────┬──────────────┬──────────────────────────────────┐
+│  TYPE    │  SESSION_ID  │  AUTHENTICATION_DATA...          │
+│  0x08    │  (4 bytes?)  │  (unknown structure)             │
+└──────────┴──────────────┴──────────────────────────────────┘
+</code></pre></div>
+<p><strong>Known/Suspected fields:</strong>
+- Session identifier (to correlate with TCP connection)
+- Possibly a challenge/response token
+- UDP endpoint verification data</p>
+<p><strong>TODO</strong>: Further reverse engineering needed to document the complete D_HANDSHAKE structure. Check the client handler at <code>LAB_00417970</code> for parsing details.</p>
 <hr />
 <h3 id="when-its-sent">When It's Sent<a class="headerlink" href="#when-its-sent" title="Permanent link">&para;</a></h3>
-<p><strong>Client → Server:</strong>
+<p><strong>Client → Server (HELLO_ACK):</strong>
 - After receiving TCP HELLO sub-type 1 (UDP port info)
 - Periodically as keepalive (approximately every 1000ms when no other UDP traffic)</p>
-<p><strong>Server → Client:</strong>
-- In response to client HELLO_ACK
-- To confirm UDP channel is operational</p>
+<p><strong>Server → Client (D_HANDSHAKE):</strong>
+- In response to client's first HELLO_ACK (to authenticate the UDP channel)
+- Possibly periodically for re-authentication</p>
 <hr />
-<h3 id="packet-structure">Packet Structure<a class="headerlink" href="#packet-structure" title="Permanent link">&para;</a></h3>
+<h3 id="hello_ack-packet-structure-client-server">HELLO_ACK Packet Structure (Client → Server)<a class="headerlink" href="#hello_ack-packet-structure-client-server" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>HELLO_ACK Structure:
 ┌──────────┬──────────────────┐
 │  TYPE    │   PLAYER_ID      │

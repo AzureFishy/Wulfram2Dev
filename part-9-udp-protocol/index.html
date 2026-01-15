@@ -1208,6 +1208,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#reference-packet-name-lookup-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference: Packet Name Lookup (Python)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#detailed-packet-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       Detailed Packet Documentation
@@ -1280,84 +1289,114 @@
 </blockquote>
 <hr />
 <h3 id="udp-packet-type-reference">UDP Packet Type Reference<a class="headerlink" href="#udp-packet-type-reference" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Source</strong>: Packet analysis by baffler, verified against decompiled client code.</p>
+</blockquote>
 <table>
 <thead>
 <tr>
 <th>Type</th>
 <th>Name</th>
 <th>Direction</th>
-<th>Purpose</th>
+<th>Status</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>0x08</code></td>
-<td>HELLO_ACK</td>
+<td>D_HANDSHAKE / HELLO_ACK</td>
 <td>Bidirectional</td>
-<td>UDP channel keepalive/establishment</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x09</code></td>
-<td>ROOT/START</td>
-<td>Client → Server</td>
-<td>Debug/start signal</td>
+<td>ROOT</td>
+<td>C→S</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x0A</code></td>
 <td>VOICE</td>
-<td>Client → Server</td>
-<td>Voice chat audio data</td>
+<td>C→S</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x0B</code></td>
 <td>PRIORITY</td>
-<td>Server → Client</td>
-<td>High-priority state updates</td>
+<td>S→C</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x0C</code></td>
 <td>WEAPONS</td>
-<td>Server → Client</td>
-<td>Weapon state data</td>
+<td>S→C</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x0D</code></td>
 <td>ACK_WPNS</td>
-<td>Server → Client</td>
-<td>Weapon acknowledgment</td>
+<td>S→C</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x0E</code></td>
 <td>PRIORITY2</td>
-<td>Server → Client</td>
-<td>Secondary priority updates</td>
+<td>S→C</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x10</code></td>
 <td>RESENDS</td>
-<td>Server → Client</td>
-<td>Retransmission requests</td>
+<td>S→C</td>
+<td>✓ Verified</td>
+</tr>
+<tr>
+<td><code>0x11</code></td>
+<td>UNKNOWN</td>
+<td>?</td>
+<td>⚠️ Unidentified</td>
 </tr>
 <tr>
 <td><code>0x12</code></td>
 <td>GRAPH_RESPONSE</td>
-<td>Server → Client</td>
-<td>Graph query response</td>
+<td>S→C</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x13</code></td>
 <td>GRAPH_DATA</td>
-<td>Server → Client</td>
-<td>Graph telemetry data</td>
+<td>S→C</td>
+<td>✓ Verified</td>
 </tr>
 <tr>
 <td><code>0x14</code></td>
 <td>IGNORE</td>
-<td>Server → Client</td>
-<td>Placeholder/padding</td>
+<td>S→C</td>
+<td>✓ Verified</td>
 </tr>
 </tbody>
 </table>
+<hr />
+<h3 id="reference-packet-name-lookup-python">Reference: Packet Name Lookup (Python)<a class="headerlink" href="#reference-packet-name-lookup-python" title="Permanent link">&para;</a></h3>
+<p>baffler's packet identification utility:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_udp_packet_name</span><span class="p">(</span><span class="n">type_byte</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the name of a UDP packet by its type byte&quot;&quot;&quot;</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mh">0x08</span><span class="p">:</span> <span class="s2">&quot;D_HANDSHAKE / HELLO_ACK (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x09</span><span class="p">:</span> <span class="s2">&quot;ROOT (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x0A</span><span class="p">:</span> <span class="s2">&quot;VOICE (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x0B</span><span class="p">:</span> <span class="s2">&quot;PRIORITY (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x0C</span><span class="p">:</span> <span class="s2">&quot;WEAPONS (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x0D</span><span class="p">:</span> <span class="s2">&quot;ACK_WPNS (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x0E</span><span class="p">:</span> <span class="s2">&quot;PRIORITY2 (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x10</span><span class="p">:</span> <span class="s2">&quot;RESENDS (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x11</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x11 UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x12</span><span class="p">:</span> <span class="s2">&quot;GRAPH_RESPONSE (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x13</span><span class="p">:</span> <span class="s2">&quot;GRAPH_DATA (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x14</span><span class="p">:</span> <span class="s2">&quot;IGNORE (UDP)&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_byte</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;UNKNOWN NOT LISTED (0x</span><span class="si">{</span><span class="n">type_byte</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2"> UDP)&quot;</span><span class="p">)</span>
+</code></pre></div>
 <hr />
 <h3 id="detailed-packet-documentation">Detailed Packet Documentation<a class="headerlink" href="#detailed-packet-documentation" title="Permanent link">&para;</a></h3>
 <ul>
