@@ -11,7 +11,7 @@
       
       
       
-        <link rel="prev" href="../part-9-udp-protocol/weapons.html">
+        <link rel="prev" href="../part-11-tcp-protocol/index.html">
       
       
       
@@ -904,6 +904,8 @@
       
         
       
+        
+      
     
     
     
@@ -956,12 +958,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/hello-ack.html" class="md-nav__link">
+      <a href="../part-9-udp-protocol/protocol-overview.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Part 9.1 - HELLO_ACK
+    Part 9.1 - PROTOCOL OVERVIEW
     
   </span>
   
@@ -1064,6 +1066,89 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-9-udp-protocol/d-handshake.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.6 - D-HANDSHAKE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-11-tcp-protocol/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    TCP Protocol
+    
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            TCP Protocol
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
           </ul>
         </nav>
       
@@ -1099,7 +1184,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -1117,8 +1202,8 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Reference Tables
           </label>
@@ -1507,33 +1592,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#complete-tcp-packet-type-reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      Complete TCP Packet Type Reference
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fun_00509ac0-uncertain-packets" class="md-nav__link">
-    <span class="md-ellipsis">
-      FUN_00509ac0 Uncertain Packets
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reference-packet-name-lookup-python" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reference: Packet Name Lookup (Python)
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1553,8 +1611,9 @@
 <h1 id="wulfram-2-complete-game-documentation">Wulfram 2 - Complete Game Documentation<a class="headerlink" href="#wulfram-2-complete-game-documentation" title="Permanent link">&para;</a></h1>
 <blockquote>
 <p><strong>Sources</strong>: Official Game Documentation, Team Tactical Fan Site (archived)<br />
-<strong>Technical Reference</strong>: Decompiled client binary (BEHAVIOR packet specification)<br />
+<strong>Technical Data</strong>: Values extracted from BEHAVIOR packet specification in decompiled client<br />
 <strong>Legend</strong>: Values marked with <code>?</code> are unknown/undocumented and need verification</p>
+<p>For protocol documentation, see <a href="../part-9-udp-protocol/index.html">Part 9: UDP Protocol</a> and <a href="../part-11-tcp-protocol/index.html">Part 11: TCP Protocol</a>.</p>
 </blockquote>
 <hr />
 <h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
@@ -1565,7 +1624,6 @@
 <li><a href="#base-structures">Base Structures</a></li>
 <li><a href="#utility-structures">Utility Structures</a></li>
 <li><a href="#space-units">Space Units</a></li>
-<li><a href="#technical-reference">Technical Reference</a></li>
 </ol>
 <hr />
 <h2 id="background-lore">Background &amp; Lore<a class="headerlink" href="#background-lore" title="Permanent link">&para;</a></h2>
@@ -3214,663 +3272,8 @@
 <li><strong>Space Units</strong>: Torpedo, Particle Beam</li>
 </ul>
 <hr />
-<hr />
-<h2 id="complete-tcp-packet-type-reference">Complete TCP Packet Type Reference<a class="headerlink" href="#complete-tcp-packet-type-reference" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p><strong>Source</strong>: Packet analysis by baffler, verified against decompiled client code.</p>
-<p><strong>Legend</strong>: ✓ = Verified, ⚠️ = Uncertain/Needs verification, ? = Unknown purpose</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Name</th>
-<th>Direction</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>0x00</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x01</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x02</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x03</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x04</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x05</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x06</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x07</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x08</code></td>
-<td>ROOT</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x09</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x0A</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x0B</code></td>
-<td>PING_REQUEST</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x0C</code></td>
-<td>PING</td>
-<td>Bidirectional</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x0D</code></td>
-<td>TRANSIENT_ARRAY</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x0E</code></td>
-<td>UPDATE_ARRAY</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x0F</code></td>
-<td>VIEW_UPDATE</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x10</code></td>
-<td>RESENDS</td>
-<td>S→C</td>
-<td>⚠️ Uncertain</td>
-</tr>
-<tr>
-<td><code>0x11</code></td>
-<td>HUD_MESSAGE</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x12</code></td>
-<td>LAG_FIX</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x13</code></td>
-<td>HELLO</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x14</code></td>
-<td>HIDE_OBJECT</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x15</code></td>
-<td>DELETE_OBJECT</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x16</code></td>
-<td>WORLD_STATS</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x17</code></td>
-<td>PLAYER</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x18</code></td>
-<td>TANK</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x19</code></td>
-<td>UNKNOWN</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x1A</code></td>
-<td>ADD_TO_ROSTER</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x1B</code></td>
-<td>REMOVE_FROM_ROSTER</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x1C</code></td>
-<td>UPDATE_STATS</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x1D</code></td>
-<td>DEATH_NOTICE</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x1E</code></td>
-<td>BIRTH_NOTICE</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x1F</code></td>
-<td>COMM_MESSAGE</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x20</code></td>
-<td>UNKNOWN</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x21</code></td>
-<td>LOGIN_REQUEST</td>
-<td>C→S</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x22</code></td>
-<td>LOGIN_STATUS</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x23</code></td>
-<td>MOTD</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x24</code></td>
-<td>BEHAVIOR</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x25</code></td>
-<td>REINCARNATE</td>
-<td>Bidirectional</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x26</code></td>
-<td>RETARGET (?)</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x27</code></td>
-<td>SHIP_STATUS</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x28</code></td>
-<td>TEAM_INFO</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x29</code></td>
-<td>CARRYING_INFO</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x2A</code></td>
-<td>UPLINK_INFO</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x2B</code></td>
-<td>UNKNOWN</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x2C</code></td>
-<td>SPACEMAP_UPDATE</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x2D</code></td>
-<td>SUPPLY_SHIP_INFO</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x2E</code></td>
-<td>UNKNOWN</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x2F</code></td>
-<td>GAME_CLOCK</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x30</code></td>
-<td>WARP_STATUS</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x31</code></td>
-<td>CONTINUOUS_SOUND</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x32</code></td>
-<td>PROCESS_TRANSLATION</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x33</code></td>
-<td>UNKNOWN</td>
-<td>S→C</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x34</code></td>
-<td>MODEM</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x35</code></td>
-<td>VIEWPOINT_INFO (?)</td>
-<td>S→C</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x36</code></td>
-<td>STRING_VALUE</td>
-<td>Bidirectional</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x37</code></td>
-<td>VERSION_ERROR</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x38</code></td>
-<td>DOCKING</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x39</code></td>
-<td>WANT_UPDATES</td>
-<td>C→S</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x3A</code></td>
-<td>Beacon Stream (?)</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x3B</code></td>
-<td>Beacon Stream (?)</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x3C</code></td>
-<td>UNKNOWN</td>
-<td>S→C</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x3D</code></td>
-<td>UNKNOWN</td>
-<td>S→C</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x3E</code></td>
-<td>LOAD_STATUS</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x3F</code></td>
-<td>RESET_GAME</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x40</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x41</code></td>
-<td>SHUTDOWN</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x42</code></td>
-<td>Squad Things (?)</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x43</code></td>
-<td>SQUAD</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x44</code></td>
-<td>SQUAD</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x45</code></td>
-<td>SQUAD</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x46</code></td>
-<td>Squad Things (?)</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x47</code></td>
-<td>UNKNOWN</td>
-<td>?</td>
-<td>? Unknown</td>
-</tr>
-<tr>
-<td><code>0x48</code></td>
-<td>SQUAD</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x49</code></td>
-<td>Squad Things (?)</td>
-<td>S→C</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x4A</code></td>
-<td>Squad Things (?)</td>
-<td>S→C</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x4B</code></td>
-<td>REQUEST_ACCOUNT_HANDLE</td>
-<td>C→S</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x4C</code></td>
-<td>ROUTING_PING</td>
-<td>C→S</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x4D</code></td>
-<td>IDENTIFIED_UDP</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x4E</code></td>
-<td>BPS~</td>
-<td>C→S</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x4F</code></td>
-<td>KUDOS</td>
-<td>C→S</td>
-<td>⚠️ See FUN_00509ac0</td>
-</tr>
-<tr>
-<td><code>0x50</code></td>
-<td>MILTAB</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x51</code></td>
-<td>VOICE_RESP</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x52</code></td>
-<td>LOGIN_INFO</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-<tr>
-<td><code>0x53</code></td>
-<td>VIDEO_MSG</td>
-<td>S→C</td>
-<td>✓ Verified</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="fun_00509ac0-uncertain-packets">FUN_00509ac0 Uncertain Packets<a class="headerlink" href="#fun_00509ac0-uncertain-packets" title="Permanent link">&para;</a></h2>
-<p>The following packets are registered via <code>FUN_00509ac0(type, arg)</code> with an unknown second argument. These need further investigation:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// From decompiled client (line 77085-77100)</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// COMM_MESSAGE_REQUEST related?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x25</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// REINCARNATE</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x26</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// RETARGET?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x2b</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// DROP_REQUEST?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x2e</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// WEAPON_DEMAND?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x35</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// VIEWPOINT_INFO?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x3a</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Beacon Stream?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x3b</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Beacon Stream?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x33</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Unknown</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x19</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// TANK_RESEND_REQUEST?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x40</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">  </span><span class="c1">// INPUT_FEEDBACK?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x42</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Squad Things?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x46</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Squad Things?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x49</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Squad Things?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x4a</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Squad Things?</span>
-<span class="n">FUN_00509ac0</span><span class="p">(</span><span class="mh">0x4f</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// KUDOS</span>
-</code></pre></div>
-<p>The second argument (0, 1, or 3) likely indicates packet handling flags or priority. Further reverse engineering needed.</p>
-<hr />
-<h2 id="reference-packet-name-lookup-python">Reference: Packet Name Lookup (Python)<a class="headerlink" href="#reference-packet-name-lookup-python" title="Permanent link">&para;</a></h2>
-<p>baffler's packet identification utilities:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_udp_packet_name</span><span class="p">(</span><span class="n">type_byte</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the name of a UDP packet by its type byte&quot;&quot;&quot;</span>
-    <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mh">0x08</span><span class="p">:</span> <span class="s2">&quot;D_HANDSHAKE / HELLO_ACK (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x09</span><span class="p">:</span> <span class="s2">&quot;ROOT (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x0A</span><span class="p">:</span> <span class="s2">&quot;VOICE (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x0B</span><span class="p">:</span> <span class="s2">&quot;PRIORITY (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x0C</span><span class="p">:</span> <span class="s2">&quot;WEAPONS (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x0D</span><span class="p">:</span> <span class="s2">&quot;ACK_WPNS (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x0E</span><span class="p">:</span> <span class="s2">&quot;PRIORITY2 (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x10</span><span class="p">:</span> <span class="s2">&quot;RESENDS (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x11</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x11 UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x12</span><span class="p">:</span> <span class="s2">&quot;GRAPH_RESPONSE (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x13</span><span class="p">:</span> <span class="s2">&quot;GRAPH_DATA (UDP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x14</span><span class="p">:</span> <span class="s2">&quot;IGNORE (UDP)&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_byte</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;UNKNOWN NOT LISTED (0x</span><span class="si">{</span><span class="n">type_byte</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2"> UDP)&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">get_tcp_packet_name</span><span class="p">(</span><span class="n">type_byte</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the name of a TCP packet by its type byte&quot;&quot;&quot;</span>
-    <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mh">0x00</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x00 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x01</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x01 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x02</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x02 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x03</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x03 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x04</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x04 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x05</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x05 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x06</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x06 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x07</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x07 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x08</span><span class="p">:</span> <span class="s2">&quot;ROOT (TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x09</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x09 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x0A</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x0A TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x0B</span><span class="p">:</span> <span class="s2">&quot;PING_REQUEST&quot;</span><span class="p">,</span>
-        <span class="mh">0x0C</span><span class="p">:</span> <span class="s2">&quot;PING&quot;</span><span class="p">,</span>
-        <span class="mh">0x0D</span><span class="p">:</span> <span class="s2">&quot;TRANSIENT_ARRAY&quot;</span><span class="p">,</span>
-        <span class="mh">0x0E</span><span class="p">:</span> <span class="s2">&quot;UPDATE_ARRAY&quot;</span><span class="p">,</span>
-        <span class="mh">0x0F</span><span class="p">:</span> <span class="s2">&quot;VIEW_UPDATE&quot;</span><span class="p">,</span>
-        <span class="mh">0x10</span><span class="p">:</span> <span class="s2">&quot;RESENDS? (TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x11</span><span class="p">:</span> <span class="s2">&quot;HUD_MESSAGE&quot;</span><span class="p">,</span>
-        <span class="mh">0x12</span><span class="p">:</span> <span class="s2">&quot;LAG_FIX&quot;</span><span class="p">,</span>
-        <span class="mh">0x13</span><span class="p">:</span> <span class="s2">&quot;HELLO (TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x14</span><span class="p">:</span> <span class="s2">&quot;HIDE_OBJECT&quot;</span><span class="p">,</span>
-        <span class="mh">0x15</span><span class="p">:</span> <span class="s2">&quot;DELETE_OBJECT&quot;</span><span class="p">,</span>
-        <span class="mh">0x16</span><span class="p">:</span> <span class="s2">&quot;WORLD_STATS&quot;</span><span class="p">,</span>
-        <span class="mh">0x17</span><span class="p">:</span> <span class="s2">&quot;PLAYER&quot;</span><span class="p">,</span>
-        <span class="mh">0x18</span><span class="p">:</span> <span class="s2">&quot;TANK&quot;</span><span class="p">,</span>
-        <span class="mh">0x19</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x19 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x1A</span><span class="p">:</span> <span class="s2">&quot;ADD_TO_ROSTER&quot;</span><span class="p">,</span>
-        <span class="mh">0x1B</span><span class="p">:</span> <span class="s2">&quot;REMOVE_FROM_ROSTER&quot;</span><span class="p">,</span>
-        <span class="mh">0x1C</span><span class="p">:</span> <span class="s2">&quot;UPDATE_STATS&quot;</span><span class="p">,</span>
-        <span class="mh">0x1D</span><span class="p">:</span> <span class="s2">&quot;DEATH_NOTICE&quot;</span><span class="p">,</span>
-        <span class="mh">0x1E</span><span class="p">:</span> <span class="s2">&quot;BIRTH_NOTICE&quot;</span><span class="p">,</span>
-        <span class="mh">0x1F</span><span class="p">:</span> <span class="s2">&quot;COMM_MESSAGE&quot;</span><span class="p">,</span>
-        <span class="mh">0x20</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x20 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x21</span><span class="p">:</span> <span class="s2">&quot;LOGIN_REQUEST (SERVER)&quot;</span><span class="p">,</span>
-        <span class="mh">0x22</span><span class="p">:</span> <span class="s2">&quot;LOGIN_STATUS&quot;</span><span class="p">,</span>
-        <span class="mh">0x23</span><span class="p">:</span> <span class="s2">&quot;MOTD&quot;</span><span class="p">,</span>
-        <span class="mh">0x24</span><span class="p">:</span> <span class="s2">&quot;BEHAVIOR&quot;</span><span class="p">,</span>
-        <span class="mh">0x25</span><span class="p">:</span> <span class="s2">&quot;REINCARNATE&quot;</span><span class="p">,</span>
-        <span class="mh">0x26</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (RETARGET?) (0x26 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x27</span><span class="p">:</span> <span class="s2">&quot;SHIP_STATUS&quot;</span><span class="p">,</span>
-        <span class="mh">0x28</span><span class="p">:</span> <span class="s2">&quot;TEAM_INFO&quot;</span><span class="p">,</span>
-        <span class="mh">0x29</span><span class="p">:</span> <span class="s2">&quot;CARRYING_INFO&quot;</span><span class="p">,</span>
-        <span class="mh">0x2A</span><span class="p">:</span> <span class="s2">&quot;UPLINK_INFO&quot;</span><span class="p">,</span>
-        <span class="mh">0x2B</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x2B TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x2C</span><span class="p">:</span> <span class="s2">&quot;SPACEMAP_UPDATE&quot;</span><span class="p">,</span>
-        <span class="mh">0x2D</span><span class="p">:</span> <span class="s2">&quot;SUPPLY_SHIP_INFO&quot;</span><span class="p">,</span>
-        <span class="mh">0x2E</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x2E TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x2F</span><span class="p">:</span> <span class="s2">&quot;GAME_CLOCK&quot;</span><span class="p">,</span>
-        <span class="mh">0x30</span><span class="p">:</span> <span class="s2">&quot;WARP_STATUS&quot;</span><span class="p">,</span>
-        <span class="mh">0x31</span><span class="p">:</span> <span class="s2">&quot;CONTINUOUS_SOUND&quot;</span><span class="p">,</span>
-        <span class="mh">0x32</span><span class="p">:</span> <span class="s2">&quot;PROCESS_TRANSLATION&quot;</span><span class="p">,</span>
-        <span class="mh">0x33</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x33 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x34</span><span class="p">:</span> <span class="s2">&quot;MODEM&quot;</span><span class="p">,</span>
-        <span class="mh">0x35</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (VIEWPOINT_INFO?) (0x35 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x36</span><span class="p">:</span> <span class="s2">&quot;STRING_VALUE&quot;</span><span class="p">,</span>
-        <span class="mh">0x37</span><span class="p">:</span> <span class="s2">&quot;VERSION_ERROR&quot;</span><span class="p">,</span>
-        <span class="mh">0x38</span><span class="p">:</span> <span class="s2">&quot;DOCKING&quot;</span><span class="p">,</span>
-        <span class="mh">0x39</span><span class="p">:</span> <span class="s2">&quot;WANT_UPDATES&quot;</span><span class="p">,</span>
-        <span class="mh">0x3A</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (Beacon Stream?) (0x3A TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x3B</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (Beacon Stream?) (0x3B TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x3C</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x3C TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x3D</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x3D TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x3E</span><span class="p">:</span> <span class="s2">&quot;LOAD_STATUS&quot;</span><span class="p">,</span>
-        <span class="mh">0x3F</span><span class="p">:</span> <span class="s2">&quot;RESET_GAME&quot;</span><span class="p">,</span>
-        <span class="mh">0x40</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x40 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x41</span><span class="p">:</span> <span class="s2">&quot;SHUTDOWN&quot;</span><span class="p">,</span>
-        <span class="mh">0x42</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (Squad Things?) (0x42 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x43</span><span class="p">:</span> <span class="s2">&quot;SQUAD (0x43)&quot;</span><span class="p">,</span>
-        <span class="mh">0x44</span><span class="p">:</span> <span class="s2">&quot;SQUAD (0x44)&quot;</span><span class="p">,</span>
-        <span class="mh">0x45</span><span class="p">:</span> <span class="s2">&quot;SQUAD (0x45)&quot;</span><span class="p">,</span>
-        <span class="mh">0x46</span><span class="p">:</span> <span class="s2">&quot;SQUAD (Squad Things?) (0x46)&quot;</span><span class="p">,</span>
-        <span class="mh">0x47</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (0x47 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x48</span><span class="p">:</span> <span class="s2">&quot;SQUAD (0x48)&quot;</span><span class="p">,</span>
-        <span class="mh">0x49</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (Squad Things?) (0x49 TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x4A</span><span class="p">:</span> <span class="s2">&quot;UNKNOWN (Squad Things?) (0x4A TCP)&quot;</span><span class="p">,</span>
-        <span class="mh">0x4B</span><span class="p">:</span> <span class="s2">&quot;REQUEST_ACCOUNT_HANDLE&quot;</span><span class="p">,</span>
-        <span class="mh">0x4C</span><span class="p">:</span> <span class="s2">&quot;ROUTING_PING&quot;</span><span class="p">,</span>
-        <span class="mh">0x4D</span><span class="p">:</span> <span class="s2">&quot;IDENTIFIED_UDP&quot;</span><span class="p">,</span>
-        <span class="mh">0x4E</span><span class="p">:</span> <span class="s2">&quot;BPS~&quot;</span><span class="p">,</span>
-        <span class="mh">0x4F</span><span class="p">:</span> <span class="s2">&quot;KUDOS&quot;</span><span class="p">,</span>
-        <span class="mh">0x50</span><span class="p">:</span> <span class="s2">&quot;MILTAB&quot;</span><span class="p">,</span>
-        <span class="mh">0x51</span><span class="p">:</span> <span class="s2">&quot;VOICE_RESP&quot;</span><span class="p">,</span>
-        <span class="mh">0x52</span><span class="p">:</span> <span class="s2">&quot;LOGIN_INFO&quot;</span><span class="p">,</span>
-        <span class="mh">0x53</span><span class="p">:</span> <span class="s2">&quot;VIDEO_MSG&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_byte</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;UNKNOWN NOT LISTED (0x</span><span class="si">{</span><span class="n">type_byte</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2"> TCP)&quot;</span><span class="p">)</span>
-</code></pre></div>
-<p><em>Document compiled from official game documentation, Team Tactical archive, and decompiled client analysis for Wulfram 2 server reimplementation project.</em></p>
+<p><em>Previous: <a href="../part-9-udp-protocol/index.html">Part 9: UDP Protocol</a></em>
+<em>Next: <a href="../part-11-tcp-protocol/index.html">Part 11: TCP Protocol</a></em></p>
 
 
 

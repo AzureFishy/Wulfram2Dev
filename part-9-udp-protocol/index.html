@@ -14,7 +14,7 @@
         <link rel="prev" href="../part-8-structures/update-stats.html">
       
       
-        <link rel="next" href="hello-ack.html">
+        <link rel="next" href="protocol-overview.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -908,6 +908,8 @@
       
         
       
+        
+      
     
     
     
@@ -960,12 +962,12 @@
   
   
     <li class="md-nav__item">
-      <a href="hello-ack.html" class="md-nav__link">
+      <a href="protocol-overview.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Part 9.1 - HELLO_ACK
+    Part 9.1 - PROTOCOL OVERVIEW
     
   </span>
   
@@ -1068,6 +1070,29 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="d-handshake.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.6 - D-HANDSHAKE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1105,6 +1130,66 @@
         
           
           <div class="md-nav__link md-nav__container">
+            <a href="../part-11-tcp-protocol/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    TCP Protocol
+    
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            TCP Protocol
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
             <a href="../part-10-reference-files/index.html" class="md-nav__link ">
               
   
@@ -1119,8 +1204,8 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Reference Tables
           </label>
@@ -1181,6 +1266,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#udp-architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      UDP Architecture Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#udp-connection-establishment" class="md-nav__link">
     <span class="md-ellipsis">
       UDP Connection Establishment
@@ -1225,6 +1319,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#quick-reference-when-to-use-each-packet" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: When to Use Each Packet
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1256,37 +1359,71 @@
 <li><strong>Real-time position/state updates</strong> (PRIORITY packets)  </li>
 <li><strong>Weapon state synchronization</strong> (WEAPONS packets)</li>
 <li><strong>Graph/telemetry data</strong> (GRAPH packets)</li>
+<li><strong>Connection authentication</strong> (D_ Protocol packets)</li>
 </ul>
 <blockquote>
 <p><strong>Important</strong>: UDP packet type codes exist in a <strong>separate namespace</strong> from TCP. Type <code>0x13</code> over TCP is HELLO, but over UDP it's GRAPH_DATA. See <a href="../part-1-introduction/index.html#fundamental-rule-6-tcp-vs-udp-packet-namespaces">Part 1</a> for the complete comparison table.</p>
 </blockquote>
 <hr />
-<h3 id="udp-connection-establishment">UDP Connection Establishment<a class="headerlink" href="#udp-connection-establishment" title="Permanent link">&para;</a></h3>
-<p>The UDP channel is established during the TCP handshake:</p>
-<div class="highlight"><pre><span></span><code>CLIENT                                    SERVER
-   │                                        │
-   │◄──── TCP: HELLO sub=1 (UDP port) ──────│
-   │                                        │
-   │───── UDP: HELLO_ACK (0x08) ───────────►│  Client confirms UDP works
-   │                                        │
-   │◄──── UDP: HELLO_ACK (0x08) ────────────│  Server acknowledges
-   │                                        │
-   │      UDP channel now established       │
-   │                                        │
+<h3 id="udp-architecture-overview">UDP Architecture Overview<a class="headerlink" href="#udp-architecture-overview" title="Permanent link">&para;</a></h3>
+<p>Wulfram 2's UDP system has two distinct layers:</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────┐
+│                    Game Data Packets                         │
+│  VOICE(0x0A), PRIORITY(0x0B), WEAPONS(0x0C), GRAPH(0x13)    │
+├─────────────────────────────────────────────────────────────┤
+│              D_ Protocol Layer (Type 0x08)                   │
+│  D_HANDSHAKE, D_ACK, D_IGNORE, D_SET_START                  │
+│  (Connection auth, stream management, sequencing)           │
+├─────────────────────────────────────────────────────────────┤
+│                     UDP Transport                            │
+│  Raw datagrams to/from server UDP port                      │
+└─────────────────────────────────────────────────────────────┘
 </code></pre></div>
-<p>After this, both TCP and UDP channels operate in parallel.</p>
+<p><strong>Game Data Packets</strong> (0x09-0x14): Direct payload packets for game state, voice, etc.</p>
+<p><strong>D_ Protocol Layer</strong> (0x08): A sub-protocol for connection management. UDP type 0x08 is a <strong>carrier frame</strong> that encapsulates D_ packets (D_HANDSHAKE, D_ACK, etc.). See <a href="d-handshake.html">Part 9.6: D_HANDSHAKE</a> for complete details.</p>
+<hr />
+<h3 id="udp-connection-establishment">UDP Connection Establishment<a class="headerlink" href="#udp-connection-establishment" title="Permanent link">&para;</a></h3>
+<p>The UDP channel is established through a multi-step process:</p>
+<div class="highlight"><pre><span></span><code>CLIENT                                              SERVER
+   │                                                   │
+   │◄──────────── TCP Connection ─────────────────────│
+   │                                                   │
+   │◄──── TCP: HELLO sub=1 (UDP port info) ───────────│
+   │                                                   │
+   │     Client binds UDP socket to server port       │
+   │                                                   │
+   │───── UDP[0x08]: Client sends initial packet ────►│
+   │                                                   │
+   │◄──── UDP[0x08]: D_HANDSHAKE ─────────────────────│
+   │      (D_type=3, sequence, session, streams)      │
+   │                                                   │
+   │───── UDP[0x08]: D_ACK ──────────────────────────►│
+   │      (D_type=2, sub_type=0, sequence)            │
+   │                                                   │
+   │          UDP Channel Authenticated               │
+   │                                                   │
+   │◄────────── Game Data: PRIORITY, VOICE ──────────►│
+   │                                                   │
+</code></pre></div>
+<blockquote>
+<p><strong>Key Insight</strong>: The 0x08 packet type is NOT a simple acknowledgment—it's a <strong>carrier frame</strong> for the D_ protocol. The first byte of the 0x08 payload determines the actual D_ packet type.</p>
+</blockquote>
 <hr />
 <h3 id="udp-packet-frame-structure">UDP Packet Frame Structure<a class="headerlink" href="#udp-packet-frame-structure" title="Permanent link">&para;</a></h3>
-<p>UDP packets use a similar but slightly different framing than TCP:</p>
+<p>UDP packets use a simple framing with an implicit length (from the datagram):</p>
 <div class="highlight"><pre><span></span><code>UDP Packet Structure:
 ┌──────────┬─────────────────────────────────┐
 │  TYPE    │           PAYLOAD               │
 │ (1 byte) │         (variable)              │
 └──────────┴─────────────────────────────────┘
 </code></pre></div>
-<blockquote>
-<p><strong>Note</strong>: UDP packets may omit the 2-byte length prefix since UDP datagrams have implicit boundaries. Verify this against packet captures.</p>
-</blockquote>
+<p>For <strong>type 0x08 (D_ Protocol)</strong>, the payload has additional structure:</p>
+<div class="highlight"><pre><span></span><code>D_ Protocol Frame (Type 0x08):
+┌──────────┬──────────┬───────────────────────────────┐
+│ UDP Type │ D_Type   │      D_ Payload               │
+│   0x08   │ (1 byte) │      (variable)               │
+└──────────┴──────────┴───────────────────────────────┘
+</code></pre></div>
 <hr />
 <h3 id="udp-packet-type-reference">UDP Packet Type Reference<a class="headerlink" href="#udp-packet-type-reference" title="Permanent link">&para;</a></h3>
 <blockquote>
@@ -1298,57 +1435,57 @@
 <th>Type</th>
 <th>Name</th>
 <th>Direction</th>
-<th>Status</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>0x08</code></td>
-<td>D_HANDSHAKE / HELLO_ACK</td>
+<td><strong>D_ Protocol</strong></td>
 <td>Bidirectional</td>
-<td>✓ Verified</td>
+<td>Carrier for D_HANDSHAKE, D_ACK, D_IGNORE, D_SET_START</td>
 </tr>
 <tr>
 <td><code>0x09</code></td>
 <td>ROOT</td>
 <td>C→S</td>
-<td>✓ Verified</td>
+<td>Root/base packet</td>
 </tr>
 <tr>
 <td><code>0x0A</code></td>
 <td>VOICE</td>
 <td>C→S</td>
-<td>✓ Verified</td>
+<td>Voice chat audio data</td>
 </tr>
 <tr>
 <td><code>0x0B</code></td>
 <td>PRIORITY</td>
 <td>S→C</td>
-<td>✓ Verified</td>
+<td>Primary game state updates</td>
 </tr>
 <tr>
 <td><code>0x0C</code></td>
 <td>WEAPONS</td>
 <td>S→C</td>
-<td>✓ Verified</td>
+<td>Weapon state synchronization</td>
 </tr>
 <tr>
 <td><code>0x0D</code></td>
 <td>ACK_WPNS</td>
 <td>S→C</td>
-<td>✓ Verified</td>
+<td>Weapon acknowledgment</td>
 </tr>
 <tr>
 <td><code>0x0E</code></td>
 <td>PRIORITY2</td>
 <td>S→C</td>
-<td>✓ Verified</td>
+<td>Secondary priority updates</td>
 </tr>
 <tr>
 <td><code>0x10</code></td>
 <td>RESENDS</td>
 <td>S→C</td>
-<td>✓ Verified</td>
+<td>Packet resend requests</td>
 </tr>
 <tr>
 <td><code>0x11</code></td>
@@ -1360,29 +1497,61 @@
 <td><code>0x12</code></td>
 <td>GRAPH_RESPONSE</td>
 <td>S→C</td>
-<td>✓ Verified</td>
+<td>Graph query response</td>
 </tr>
 <tr>
 <td><code>0x13</code></td>
 <td>GRAPH_DATA</td>
 <td>S→C</td>
-<td>✓ Verified</td>
+<td>Telemetry/graph data</td>
 </tr>
 <tr>
 <td><code>0x14</code></td>
 <td>IGNORE</td>
 <td>S→C</td>
-<td>✓ Verified</td>
+<td>Ignore instruction</td>
+</tr>
+</tbody>
+</table>
+<h4 id="d_-protocol-sub-types-within-0x08">D_ Protocol Sub-Types (within 0x08)<a class="headerlink" href="#d_-protocol-sub-types-within-0x08" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>D_Type</th>
+<th>Name</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0x01</code></td>
+<td>D_IGNORE</td>
+<td>Instruct receiver to ignore a stream</td>
+</tr>
+<tr>
+<td><code>0x02</code></td>
+<td>D_ACK</td>
+<td>Acknowledge D_ protocol packets</td>
+</tr>
+<tr>
+<td><code>0x03</code></td>
+<td>D_HANDSHAKE</td>
+<td>Stream configuration and authentication</td>
+</tr>
+<tr>
+<td><code>0x04</code></td>
+<td>D_SET_START</td>
+<td>Set stream start positions</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h3 id="reference-packet-name-lookup-python">Reference: Packet Name Lookup (Python)<a class="headerlink" href="#reference-packet-name-lookup-python" title="Permanent link">&para;</a></h3>
-<p>baffler's packet identification utility:</p>
+<p>Updated packet identification utility:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_udp_packet_name</span><span class="p">(</span><span class="n">type_byte</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the name of a UDP packet by its type byte&quot;&quot;&quot;</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mh">0x08</span><span class="p">:</span> <span class="s2">&quot;D_HANDSHAKE / HELLO_ACK (UDP)&quot;</span><span class="p">,</span>
+        <span class="mh">0x08</span><span class="p">:</span> <span class="s2">&quot;D_ Protocol (D_HANDSHAKE/D_ACK/D_IGNORE/D_SET_START)&quot;</span><span class="p">,</span>
         <span class="mh">0x09</span><span class="p">:</span> <span class="s2">&quot;ROOT (UDP)&quot;</span><span class="p">,</span>
         <span class="mh">0x0A</span><span class="p">:</span> <span class="s2">&quot;VOICE (UDP)&quot;</span><span class="p">,</span>
         <span class="mh">0x0B</span><span class="p">:</span> <span class="s2">&quot;PRIORITY (UDP)&quot;</span><span class="p">,</span>
@@ -1396,16 +1565,92 @@
         <span class="mh">0x14</span><span class="p">:</span> <span class="s2">&quot;IGNORE (UDP)&quot;</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_byte</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;UNKNOWN NOT LISTED (0x</span><span class="si">{</span><span class="n">type_byte</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2"> UDP)&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_d_protocol_name</span><span class="p">(</span><span class="n">d_type_byte</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the name of a D_ protocol packet by its type byte&quot;&quot;&quot;</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mh">0x01</span><span class="p">:</span> <span class="s2">&quot;D_IGNORE&quot;</span><span class="p">,</span>
+        <span class="mh">0x02</span><span class="p">:</span> <span class="s2">&quot;D_ACK&quot;</span><span class="p">,</span> 
+        <span class="mh">0x03</span><span class="p">:</span> <span class="s2">&quot;D_HANDSHAKE&quot;</span><span class="p">,</span>
+        <span class="mh">0x04</span><span class="p">:</span> <span class="s2">&quot;D_SET_START&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">d_type_byte</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;D_UNKNOWN (0x</span><span class="si">{</span><span class="n">d_type_byte</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_udp_packet</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a UDP packet and identify its type&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;EMPTY&quot;</span>
+
+    <span class="n">udp_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">get_udp_packet_name</span><span class="p">(</span><span class="n">udp_type</span><span class="p">)</span>
+
+    <span class="c1"># If it&#39;s a D_ protocol packet, decode the sub-type</span>
+    <span class="k">if</span> <span class="n">udp_type</span> <span class="o">==</span> <span class="mh">0x08</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">d_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">d_name</span> <span class="o">=</span> <span class="n">get_d_protocol_name</span><span class="p">(</span><span class="n">d_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">d_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">name</span>
 </code></pre></div>
 <hr />
 <h3 id="detailed-packet-documentation">Detailed Packet Documentation<a class="headerlink" href="#detailed-packet-documentation" title="Permanent link">&para;</a></h3>
+<h4 id="d_-protocol-type-0x08">D_ Protocol (Type 0x08)<a class="headerlink" href="#d_-protocol-type-0x08" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="hello-ack.html">HELLO_ACK (0x08)</a> - UDP channel establishment</li>
+<li><a href="protocol-overview.html">D_ Protocol Overview</a> - Frame structure and simple keepalives</li>
+<li><a href="d-handshake.html">D_HANDSHAKE Deep Dive</a> - <strong>Complete authentication protocol</strong></li>
+</ul>
+<h4 id="game-data-packets">Game Data Packets<a class="headerlink" href="#game-data-packets" title="Permanent link">&para;</a></h4>
+<ul>
 <li><a href="voice.html">VOICE (0x0A)</a> - Voice chat transmission</li>
 <li><a href="priority.html">PRIORITY Updates (0x0B, 0x0E)</a> - Real-time game state</li>
 <li><a href="weapons.html">WEAPONS (0x0C, 0x0D)</a> - Weapon synchronization</li>
 <li><a href="graph.html">GRAPH Data (0x12, 0x13)</a> - Telemetry and debugging</li>
 </ul>
+<hr />
+<h3 id="quick-reference-when-to-use-each-packet">Quick Reference: When to Use Each Packet<a class="headerlink" href="#quick-reference-when-to-use-each-packet" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Packet Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Initial UDP auth</td>
+<td>0x08 → D_HANDSHAKE (0x03)</td>
+<td>Must complete before other UDP</td>
+</tr>
+<tr>
+<td>Acknowledge D_ packets</td>
+<td>0x08 → D_ACK (0x02)</td>
+<td>Response to D_HANDSHAKE, etc.</td>
+</tr>
+<tr>
+<td>UDP keepalive</td>
+<td>0x08</td>
+<td>Simple ping when idle</td>
+</tr>
+<tr>
+<td>Voice transmission</td>
+<td>0x0A</td>
+<td>Audio data, C→S</td>
+</tr>
+<tr>
+<td>Game state sync</td>
+<td>0x0B, 0x0E</td>
+<td>Position, health, etc. S→C</td>
+</tr>
+<tr>
+<td>Weapon updates</td>
+<td>0x0C, 0x0D</td>
+<td>Weapon state, S→C</td>
+</tr>
+</tbody>
+</table>
 <hr />
 <p><em>Previous: <a href="../part-8-structures/index.html">Part 8: Structures</a></em>
 <em>Next: <a href="../part-10-reference-files/index.html">Part 10: Reference Files</a></em></p>

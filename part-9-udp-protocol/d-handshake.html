@@ -1,0 +1,2586 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="weapons.html">
+      
+      
+        <link rel="next" href="../part-11-tcp-protocol/index.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Part 9.6: D_HANDSHAKE Deep Dive - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#part-96-d_handshake-deep-dive" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 9.6: D_HANDSHAKE Deep Dive
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/update-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.3 - UPDATE_STATS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    UDP Protocol
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            UDP Protocol
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="protocol-overview.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.1 - PROTOCOL OVERVIEW
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="graph.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.2 - GRAPH Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="priority.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.3 - PRIORITY Updates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="voice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.4 - VOICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="weapons.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.5 - WEAPONS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 9.6 - D-HANDSHAKE
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="d-handshake.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.6 - D-HANDSHAKE
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-udp-connection-authentication-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      The UDP Connection Authentication Protocol
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The UDP Connection Authentication Protocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-d_-protocol-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      The D_ Protocol Layer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d_handshake-purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_HANDSHAKE Purpose
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Descriptions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decompiled-code-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decompiled Code Analysis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d_ack-response-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_ACK Response Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connection Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation Guide
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#byte-level-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Byte-Level Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Conditions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security Considerations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debugging Tips
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Documentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appendix-packet-writing-functions-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Appendix: Packet Writing Functions Reference
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-11-tcp-protocol/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    TCP Protocol
+    
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            TCP Protocol
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-10-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference Tables
+    
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Reference Tables
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-udp-connection-authentication-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      The UDP Connection Authentication Protocol
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The UDP Connection Authentication Protocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-d_-protocol-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      The D_ Protocol Layer
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d_handshake-purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_HANDSHAKE Purpose
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Descriptions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decompiled-code-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decompiled Code Analysis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d_ack-response-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_ACK Response Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connection-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connection Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementation-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation Guide
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#byte-level-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Byte-Level Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Conditions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security Considerations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debugging Tips
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Documentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appendix-packet-writing-functions-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Appendix: Packet Writing Functions Reference
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="part-96-d_handshake-deep-dive">Part 9.6: D_HANDSHAKE Deep Dive<a class="headerlink" href="#part-96-d_handshake-deep-dive" title="Permanent link">&para;</a></h1>
+<h2 id="the-udp-connection-authentication-protocol">The UDP Connection Authentication Protocol<a class="headerlink" href="#the-udp-connection-authentication-protocol" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The D_HANDSHAKE packet is a critical component of Wulfram 2's UDP connection management system. Unlike the simple UDP packets used for game data (PRIORITY, VOICE, WEAPONS), D_HANDSHAKE operates within a <strong>specialized sub-protocol</strong> that handles UDP channel authentication, stream management, and connection state synchronization.</p>
+<p>This document provides a comprehensive technical analysis based on direct examination of the decompiled client executable (<code>wulfram2_exe.c</code>), specifically the sender function <code>FUN_005052b0</code> (lines 181061-181131) and receiver function <code>FUN_005053f0</code> (lines 181135-181253).</p>
+<hr />
+<h3 id="the-d_-protocol-layer">The D_ Protocol Layer<a class="headerlink" href="#the-d_-protocol-layer" title="Permanent link">&para;</a></h3>
+<p>Wulfram 2 implements a <strong>layered UDP architecture</strong>:</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────┐
+│                    Application Layer                     │
+│  (Game logic, player input, state management)           │
+├─────────────────────────────────────────────────────────┤
+│                   Game Data Layer                        │
+│  PRIORITY(0x0B), VOICE(0x0A), WEAPONS(0x0C), etc.       │
+├─────────────────────────────────────────────────────────┤
+│              D_ Protocol Layer (Type 0x08)              │
+│  D_HANDSHAKE(3), D_ACK(2), D_IGNORE(1), D_SET_START(4) │
+├─────────────────────────────────────────────────────────┤
+│                     UDP Transport                        │
+│  Raw datagrams, connectionless                          │
+└─────────────────────────────────────────────────────────┘
+</code></pre></div>
+<p>The D_ protocol packets are encapsulated within <strong>UDP type 0x08</strong> frames. The first byte of the D_ protocol payload specifies the D_ packet type:</p>
+<table>
+<thead>
+<tr>
+<th>D_ Type</th>
+<th>Name</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>(Reserved)</td>
+<td>Unknown/unused</td>
+</tr>
+<tr>
+<td>1</td>
+<td>D_IGNORE</td>
+<td>Instructs receiver to ignore a stream</td>
+</tr>
+<tr>
+<td>2</td>
+<td>D_ACK</td>
+<td>Acknowledges D_ protocol packets</td>
+</tr>
+<tr>
+<td>3</td>
+<td>D_HANDSHAKE</td>
+<td>Stream configuration and authentication</td>
+</tr>
+<tr>
+<td>4</td>
+<td>D_SET_START</td>
+<td>Sets stream start positions</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="d_handshake-purpose">D_HANDSHAKE Purpose<a class="headerlink" href="#d_handshake-purpose" title="Permanent link">&para;</a></h3>
+<p>D_HANDSHAKE serves multiple critical functions:</p>
+<ol>
+<li><strong>UDP Channel Authentication</strong>: Verifies that UDP traffic originates from the same client that established the TCP connection</li>
+<li><strong>Stream Configuration</strong>: Transfers information about available communication streams (voice channels, data streams)</li>
+<li><strong>Player Session Binding</strong>: Associates player indices with their stream allocations</li>
+<li><strong>Sequence Synchronization</strong>: Establishes initial sequence numbers for reliable D_ protocol messaging</li>
+</ol>
+<blockquote>
+<p><strong>Security Note</strong>: Without proper D_HANDSHAKE validation, the server would be vulnerable to UDP spoofing attacks where malicious actors could inject fake game data or voice packets.</p>
+</blockquote>
+<hr />
+<h3 id="packet-structure">Packet Structure<a class="headerlink" href="#packet-structure" title="Permanent link">&para;</a></h3>
+<h4 id="wire-frame-udp-type-0x08-container">Wire Frame (UDP Type 0x08 Container)<a class="headerlink" href="#wire-frame-udp-type-0x08-container" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>UDP Type 0x08 Frame:
+┌──────────────┬──────────────────────────────────────────────────┐
+│ UDP Type     │                D_ Protocol Payload               │
+│   0x08       │     (D_HANDSHAKE when first byte = 0x03)        │
+│  (1 byte)    │                 (variable)                       │
+└──────────────┴──────────────────────────────────────────────────┘
+</code></pre></div>
+<h4 id="d_handshake-packet-server-client">D_HANDSHAKE Packet (Server → Client)<a class="headerlink" href="#d_handshake-packet-server-client" title="Permanent link">&para;</a></h4>
+<p>Based on <code>FUN_005052b0</code> analysis:</p>
+<div class="highlight"><pre><span></span><code>D_HANDSHAKE Structure (Server → Client):
+┌────────────────────────────────────────────────────────────────┐
+│                      FIXED HEADER (13 bytes)                   │
+├──────────┬──────────────┬──────────────┬──────────────────────┤
+│ D_Type   │  Sequence    │  Session_ID  │  Config_Value        │
+│  0x03    │  (4 bytes)   │  (4 bytes)   │  (4 bytes)           │
+│ (1 byte) │   uint32     │   uint32     │   uint32             │
+└──────────┴──────────────┴──────────────┴──────────────────────┘
+│                                                                │
+│                    STREAM DEFINITIONS                          │
+│    Repeated for each stream in the server&#39;s stream list        │
+├────────────────────────────────────────────────────────────────┤
+│  Stream_Name     │  Stream_Value   │  Stream_Index_Count      │
+│  (len-prefixed)  │  (4 bytes)      │  (implicit from entries) │
+│     string       │   uint32        │                          │
+├──────────────────┴─────────────────┴──────────────────────────┤
+│    Stream_Index entries (uint32 each)                         │
+│    [stream_idx_0, stream_idx_1, ...]                          │
+└────────────────────────────────────────────────────────────────┘
+│                                                                │
+│                    PLAYER ENTRIES                              │
+├────────────────────────────────────────────────────────────────┤
+│  Active_Player_Count (4 bytes, uint32)                         │
+├────────────────────────────────────────────────────────────────┤
+│  For each active player:                                       │
+│  ┌──────────────────────┬──────────────────────┐               │
+│  │  Player_Index (u32)  │  Player_Value (u32)  │               │
+│  └──────────────────────┴──────────────────────┘               │
+└────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="field-descriptions">Field Descriptions<a class="headerlink" href="#field-descriptions" title="Permanent link">&para;</a></h3>
+<h4 id="fixed-header-fields">Fixed Header Fields<a class="headerlink" href="#fixed-header-fields" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Offset</th>
+<th>Size</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D_Type</td>
+<td>0</td>
+<td>1</td>
+<td>uint8</td>
+<td>Always <code>0x03</code> for D_HANDSHAKE</td>
+</tr>
+<tr>
+<td>Sequence</td>
+<td>1</td>
+<td>4</td>
+<td>uint32</td>
+<td>Monotonically increasing sequence number. Client rejects packets with sequence ≤ last received</td>
+</tr>
+<tr>
+<td>Session_ID</td>
+<td>5</td>
+<td>4</td>
+<td>uint32</td>
+<td>Session identifier linking UDP to TCP connection</td>
+</tr>
+<tr>
+<td>Config_Value</td>
+<td>9</td>
+<td>4</td>
+<td>uint32</td>
+<td>Configuration value from server session state</td>
+</tr>
+</tbody>
+</table>
+<h4 id="stream-definition-fields">Stream Definition Fields<a class="headerlink" href="#stream-definition-fields" title="Permanent link">&para;</a></h4>
+<p>Streams represent communication channels (voice chat rooms, data channels, etc.). Each stream definition contains:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Size</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stream_Name</td>
+<td>variable</td>
+<td>len-prefixed string</td>
+<td>Human-readable stream identifier (e.g., "Beacon Stream", "Voice Channel 1")</td>
+</tr>
+<tr>
+<td>Stream_Value</td>
+<td>4</td>
+<td>uint32</td>
+<td>Stream-specific configuration value</td>
+</tr>
+<tr>
+<td>Stream_Indices</td>
+<td>4 each</td>
+<td>uint32[]</td>
+<td>Array of indices this stream occupies</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>String Encoding</strong>: Stream names use length-prefixed encoding: <code>[uint16 length][bytes][null terminator]</code></p>
+</blockquote>
+<h4 id="player-entry-fields">Player Entry Fields<a class="headerlink" href="#player-entry-fields" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Size</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Active_Count</td>
+<td>4</td>
+<td>uint32</td>
+<td>Number of active player entries to follow</td>
+</tr>
+<tr>
+<td>Player_Index</td>
+<td>4</td>
+<td>uint32</td>
+<td>Index/slot of the player</td>
+</tr>
+<tr>
+<td>Player_Value</td>
+<td>4</td>
+<td>uint32</td>
+<td>Player-specific value (possibly session or permission flags)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="decompiled-code-analysis">Decompiled Code Analysis<a class="headerlink" href="#decompiled-code-analysis" title="Permanent link">&para;</a></h3>
+<h4 id="server-sending-d_handshake-fun_005052b0">Server Sending D_HANDSHAKE (FUN_005052b0)<a class="headerlink" href="#server-sending-d_handshake-fun_005052b0" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// Location: wulfram2_exe.c lines 181061-181131</span>
+<span class="c1">// Function: FUN_005052b0</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="kr">__fastcall</span><span class="w"> </span><span class="n">FUN_005052b0</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">param_1</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Get config value from session</span>
+<span class="w">    </span><span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x58</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Get current timestamp/sequence</span>
+<span class="w">    </span><span class="n">uVar6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">**</span><span class="p">(</span><span class="n">code</span><span class="w"> </span><span class="o">**</span><span class="p">)(</span><span class="o">*</span><span class="n">DAT_005d5ee4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">))();</span><span class="w">  </span><span class="c1">// Timestamp function call</span>
+
+<span class="w">    </span><span class="c1">// Get session ID</span>
+<span class="w">    </span><span class="n">uVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x14</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Create D_HANDSHAKE packet (type 3, protocol mode 6 = UDP D_)</span>
+<span class="w">    </span><span class="n">iVar7</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00509cf0</span><span class="p">(</span><span class="s">&quot;D_HANDSHAKE&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">),</span><span class="w"> </span><span class="mi">6</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar7</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Write fixed header</span>
+<span class="w">        </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">uVar6</span><span class="p">);</span><span class="w">    </span><span class="c1">// Write sequence/timestamp (32-bit)</span>
+<span class="w">        </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">uVar2</span><span class="p">);</span><span class="w">    </span><span class="c1">// Write session ID (32-bit)</span>
+<span class="w">        </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">uVar1</span><span class="p">);</span><span class="w">    </span><span class="c1">// Write config value (32-bit)</span>
+
+<span class="w">        </span><span class="c1">// Iterate through stream linked list</span>
+<span class="w">        </span><span class="n">puVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">**</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x5c</span><span class="p">);</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">puVar3</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">puVar4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">puVar3</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="w">            </span><span class="n">puVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">*</span><span class="n">puVar3</span><span class="p">;</span><span class="w">  </span><span class="c1">// Next in list</span>
+
+<span class="w">            </span><span class="c1">// Write stream name (string)</span>
+<span class="w">            </span><span class="n">FUN_00509600</span><span class="p">(</span><span class="o">*</span><span class="n">puVar4</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// Write stream value (32-bit)</span>
+<span class="w">            </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">puVar4</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+
+<span class="w">            </span><span class="c1">// Write stream indices</span>
+<span class="w">            </span><span class="n">puVar4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">puVar4</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">puVar4</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">puVar5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">*</span><span class="n">puVar4</span><span class="p">;</span>
+<span class="w">                </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">puVar4</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span><span class="w">  </span><span class="c1">// Write index (32-bit)</span>
+<span class="w">                </span><span class="n">puVar4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">puVar5</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Count active player entries</span>
+<span class="w">        </span><span class="n">iVar10</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">iVar9</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x40</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">iVar9</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">piVar8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">**</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x54</span><span class="p">);</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">piVar8</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">iVar10</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar10</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="n">piVar8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">piVar8</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">iVar9</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar9</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">iVar9</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Write active player count</span>
+<span class="w">        </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">iVar10</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Write player entries</span>
+<span class="w">        </span><span class="n">uVar11</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x40</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">iVar9</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x54</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">uVar11</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar9</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">uVar11</span><span class="p">);</span><span class="w">   </span><span class="c1">// Write player index</span>
+<span class="w">                    </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">iVar9</span><span class="p">);</span><span class="w">    </span><span class="c1">// Write player value</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="n">iVar9</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">);</span>
+<span class="w">                </span><span class="n">uVar11</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uVar11</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">uVar11</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">uint</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x40</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Send the packet</span>
+<span class="w">        </span><span class="n">FUN_0050a340</span><span class="p">(</span><span class="n">iVar7</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Register callback for acknowledgment handling</span>
+<span class="w">        </span><span class="n">FUN_00504b60</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0xb4</span><span class="p">),</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">LAB_00504580</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="client-receiving-d_handshake-fun_005053f0">Client Receiving D_HANDSHAKE (FUN_005053f0)<a class="headerlink" href="#client-receiving-d_handshake-fun_005053f0" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// Location: wulfram2_exe.c lines 181135-181253</span>
+<span class="c1">// Function: FUN_005053f0</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">FUN_005053f0</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Begin parsing D_HANDSHAKE</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;D_HANDSHAKE&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Log/debug</span>
+
+<span class="w">    </span><span class="c1">// Read sequence number</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_78</span><span class="p">);</span><span class="w">  </span><span class="c1">// Read uint32 sequence</span>
+
+<span class="w">    </span><span class="c1">// Validate sequence (anti-replay protection)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_78</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">uint</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x4c</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Old packet, discard</span>
+<span class="w">        </span><span class="n">FUN_005099b0</span><span class="p">(</span><span class="n">uVar1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">param_3</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Update last sequence</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="n">uint</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x4c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_78</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Check if already handshaked</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x51</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Read session value</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_58</span><span class="p">);</span>
+<span class="w">        </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_58</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Read stream count</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_64</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Validate stream count (sanity check)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_64</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">uint</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">local_68</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x40</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">FUN_00509f30</span><span class="p">(</span><span class="s">&quot;D_HANDSHAKE: insane stream_count&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span>
+<span class="w">            </span><span class="n">FUN_005099b0</span><span class="p">();</span>
+<span class="w">            </span><span class="k">return</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Process each stream</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_64</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">local_78</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="c1">// Read stream name</span>
+<span class="w">                </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_6c</span><span class="p">);</span><span class="w">  </span><span class="c1">// Read len-prefixed string</span>
+<span class="w">                </span><span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00503e80</span><span class="p">(</span><span class="n">local_6c</span><span class="p">);</span><span class="w">  </span><span class="c1">// Create stream object</span>
+<span class="w">                </span><span class="o">*</span><span class="p">(</span><span class="n">undefined1</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">_free</span><span class="p">(</span><span class="n">local_6c</span><span class="p">);</span>
+
+<span class="w">                </span><span class="c1">// Read stream index count</span>
+<span class="w">                </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_5c</span><span class="p">);</span>
+
+<span class="w">                </span><span class="c1">// Read stream indices</span>
+<span class="w">                </span><span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_5c</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_7c</span><span class="p">);</span><span class="w">  </span><span class="c1">// Read index</span>
+<span class="w">                        </span><span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">                        </span><span class="c1">// Assign stream to index</span>
+<span class="w">                        </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x24</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">local_7c</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar2</span><span class="p">;</span>
+<span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">uVar1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">local_5c</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">                </span><span class="n">local_78</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_78</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">local_78</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">local_64</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Read private stream count</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_74</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Process private streams</span>
+<span class="w">        </span><span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_74</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_7c</span><span class="p">);</span><span class="w">   </span><span class="c1">// Stream index</span>
+<span class="w">                </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_54</span><span class="p">);</span><span class="w">   </span><span class="c1">// Stream value</span>
+
+<span class="w">                </span><span class="c1">// Create private stream if not exists</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x24</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">local_7c</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">_sprintf</span><span class="p">(</span><span class="n">local_50</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;* Private In Stream %d *&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">local_7c</span><span class="p">);</span>
+<span class="w">                    </span><span class="c1">// Create new stream object...</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">                </span><span class="c1">// Set stream value</span>
+<span class="w">                </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x24</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">local_7c</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_54</span><span class="p">;</span>
+<span class="w">                </span><span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">uVar1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">local_74</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Mark handshake complete</span>
+<span class="w">        </span><span class="o">*</span><span class="p">(</span><span class="n">undefined1</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x51</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Send D_ACK response</span>
+<span class="w">        </span><span class="n">uVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">**</span><span class="p">(</span><span class="n">code</span><span class="w"> </span><span class="o">**</span><span class="p">)(</span><span class="o">*</span><span class="n">DAT_005d5ee4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">))();</span><span class="w">  </span><span class="c1">// Get timestamp</span>
+<span class="w">        </span><span class="n">iVar4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00509cf0</span><span class="p">(</span><span class="s">&quot;D_ACK&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">local_70</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">),</span><span class="w"> </span><span class="mi">6</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">FUN_00509440</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">       </span><span class="c1">// Write sub-type 0 (8-bit)</span>
+<span class="w">            </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">uVar3</span><span class="p">);</span><span class="w">   </span><span class="c1">// Write timestamp (32-bit)</span>
+<span class="w">            </span><span class="n">FUN_0050a340</span><span class="p">(</span><span class="n">iVar4</span><span class="p">);</span><span class="w">   </span><span class="c1">// Send</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Already handshaked, just send ACK</span>
+<span class="w">        </span><span class="n">FUN_005099b0</span><span class="p">(</span><span class="n">uVar1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">FUN_00504620</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="d_ack-response-structure">D_ACK Response Structure<a class="headerlink" href="#d_ack-response-structure" title="Permanent link">&para;</a></h3>
+<p>When the client successfully processes D_HANDSHAKE, it responds with D_ACK:</p>
+<div class="highlight"><pre><span></span><code>D_ACK Response (Client → Server):
+┌──────────┬───────────┬──────────────┐
+│ D_Type   │  Sub_Type │  Sequence    │
+│  0x02    │   0x00    │  (4 bytes)   │
+│ (1 byte) │  (1 byte) │   uint32     │
+└──────────┴───────────┴──────────────┘
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Size</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D_Type</td>
+<td>1</td>
+<td><code>0x02</code></td>
+<td>D_ACK packet type</td>
+</tr>
+<tr>
+<td>Sub_Type</td>
+<td>1</td>
+<td><code>0x00</code></td>
+<td>Sub-type 0 = initial handshake ACK</td>
+</tr>
+<tr>
+<td>Sequence</td>
+<td>4</td>
+<td>uint32</td>
+<td>Echoed timestamp for RTT calculation</td>
+</tr>
+</tbody>
+</table>
+<h4 id="d_ack-sub-types">D_ACK Sub-Types<a class="headerlink" href="#d_ack-sub-types" title="Permanent link">&para;</a></h4>
+<p>The D_ACK packet has multiple sub-types for different purposes:</p>
+<table>
+<thead>
+<tr>
+<th>Sub-Type</th>
+<th>Purpose</th>
+<th>Additional Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Initial handshake ACK</td>
+<td>Sequence only</td>
+</tr>
+<tr>
+<td>1</td>
+<td>D_IGNORE acknowledgment</td>
+<td>Stream index (u8), Value (u16)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Extended ACK</td>
+<td>Sequence, Stream index (u8), Value (u16)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="validation-requirements">Validation Requirements<a class="headerlink" href="#validation-requirements" title="Permanent link">&para;</a></h3>
+<p>The client performs several validation checks on D_HANDSHAKE:</p>
+<ol>
+<li><strong>Sequence Validation</strong>: <code>received_sequence &gt;= last_sequence</code></li>
+<li>Prevents replay attacks</li>
+<li>
+<p>Packets with old sequences are silently discarded</p>
+</li>
+<li>
+<p><strong>Stream Count Sanity Check</strong>: <code>stream_count &lt; max_streams</code></p>
+</li>
+<li>Error message: <code>"D_HANDSHAKE: insane stream_count"</code></li>
+<li>
+<p>Prevents buffer overflow attacks</p>
+</li>
+<li>
+<p><strong>Handshake State Check</strong>: Only process if not already handshaked</p>
+</li>
+<li>Duplicate D_HANDSHAKE packets trigger re-ACK without reprocessing</li>
+</ol>
+<hr />
+<h3 id="connection-flow-diagram">Connection Flow Diagram<a class="headerlink" href="#connection-flow-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>CLIENT                                              SERVER
+   │                                                   │
+   │◄──────────── TCP Connection ─────────────────────│
+   │                                                   │
+   │◄──── TCP: HELLO sub=0 (version 0x4E89) ──────────│
+   │                                                   │
+   │◄──── TCP: HELLO sub=1 (UDP port info) ───────────│
+   │                                                   │
+   │ Client binds UDP socket to server&#39;s UDP port     │
+   │                                                   │
+   │───── UDP[0x08]: D_HANDSHAKE (type 3) ───────────►│
+   │      seq=0, session_id, streams, players         │
+   │                                                   │
+   │◄──── UDP[0x08]: D_ACK (type 2) ──────────────────│  
+   │      sub_type=0, sequence                        │
+   │                                                   │
+   │           UDP Channel Authenticated              │
+   │                                                   │
+   │◄────────── UDP: PRIORITY, VOICE, etc. ──────────►│
+   │                                                   │
+</code></pre></div>
+<blockquote>
+<p><strong>Note</strong>: The actual direction of D_HANDSHAKE (who sends first) may vary. The decompiled code shows the client can both send and receive D_HANDSHAKE, suggesting it may be bidirectional depending on context.</p>
+</blockquote>
+<hr />
+<h3 id="implementation-guide">Implementation Guide<a class="headerlink" href="#implementation-guide" title="Permanent link">&para;</a></h3>
+<h4 id="python-server-implementation">Python Server Implementation<a class="headerlink" href="#python-server-implementation" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DHandshakePacket</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    D_HANDSHAKE packet builder for Wulfram 2 server.</span>
+
+<span class="sd">    This packet is sent within a UDP type 0x08 frame as part of</span>
+<span class="sd">    the D_ protocol layer for connection authentication.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">UDP_FRAME_TYPE</span> <span class="o">=</span> <span class="mh">0x08</span>
+    <span class="n">D_TYPE_HANDSHAKE</span> <span class="o">=</span> <span class="mh">0x03</span>
+    <span class="n">D_TYPE_ACK</span> <span class="o">=</span> <span class="mh">0x02</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">config_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">sequence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">session_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_value</span> <span class="o">=</span> <span class="n">config_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">streams</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of (name, value, [indices])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">players</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># List of (index, value)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a stream definition to the handshake.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">indices</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">player_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an active player entry.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">player_index</span><span class="p">,</span> <span class="n">player_value</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_string</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Encode a string in Wulfram 2 format.</span>
+<span class="sd">        Format: [uint16 length][string bytes][null terminator]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">string_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_bytes</span><span class="p">))</span> <span class="o">+</span> <span class="n">string_bytes</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the complete D_HANDSHAKE packet.</span>
+
+<span class="sd">        Returns the D_ protocol payload (without UDP type byte).</span>
+<span class="sd">        Caller must wrap in UDP type 0x08 frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+        <span class="c1"># D_ packet type</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D_TYPE_HANDSHAKE</span><span class="p">)</span>
+
+        <span class="c1"># Fixed header: sequence, session_id, config_value</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence</span><span class="p">))</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="p">))</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_value</span><span class="p">))</span>
+
+        <span class="c1"># Stream definitions</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">indices</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">streams</span><span class="p">:</span>
+            <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encode_string</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="p">))</span>
+
+        <span class="c1"># Player entries</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">player_idx</span><span class="p">,</span> <span class="n">player_val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">:</span>
+            <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">player_idx</span><span class="p">))</span>
+            <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">player_val</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_udp_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build complete UDP frame with type byte.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">UDP_FRAME_TYPE</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DAckPacket</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;D_ACK packet parser and builder.&quot;&quot;&quot;</span>
+
+    <span class="n">D_TYPE_ACK</span> <span class="o">=</span> <span class="mh">0x02</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_handshake_ack</span><span class="p">(</span><span class="n">sequence</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build D_ACK sub-type 0 (handshake acknowledgment).&quot;&quot;&quot;</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x08</span><span class="p">)</span>  <span class="c1"># UDP frame type</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DAckPacket</span><span class="o">.</span><span class="n">D_TYPE_ACK</span><span class="p">)</span>  <span class="c1"># D_ACK</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>  <span class="c1"># Sub-type 0</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">sequence</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse incoming D_ACK packet.</span>
+
+<span class="sd">        Returns dict with sub_type and relevant fields.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;D_ACK packet too short&quot;</span><span class="p">)</span>
+
+        <span class="n">d_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sub_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;d_type&#39;</span><span class="p">:</span> <span class="n">d_type</span><span class="p">,</span>
+            <span class="s1">&#39;sub_type&#39;</span><span class="p">:</span> <span class="n">sub_type</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">sub_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Handshake ACK: sequence only</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">sub_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># D_IGNORE ACK</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;stream_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">sub_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Extended ACK</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">9</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;stream_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+                <span class="n">result</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">9</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="c1"># Example usage</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">send_d_handshake</span><span class="p">(</span><span class="n">udp_socket</span><span class="p">,</span> <span class="n">client_addr</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Send D_HANDSHAKE to establish UDP channel authentication.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handshake</span> <span class="o">=</span> <span class="n">DHandshakePacket</span><span class="p">(</span>
+        <span class="n">sequence</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">next_sequence</span><span class="p">(),</span>
+        <span class="n">session_id</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">session_id</span><span class="p">,</span>
+        <span class="n">config_value</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">config_flags</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Add voice channel streams</span>
+    <span class="n">handshake</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="s2">&quot;Team Voice&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="n">handshake</span><span class="o">.</span><span class="n">add_stream</span><span class="p">(</span><span class="s2">&quot;Proximity Voice&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+
+    <span class="c1"># Add connected players</span>
+    <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">players</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">player</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="n">handshake</span><span class="o">.</span><span class="n">add_player</span><span class="p">(</span><span class="n">player</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">player</span><span class="o">.</span><span class="n">permissions</span><span class="p">)</span>
+
+    <span class="n">packet</span> <span class="o">=</span> <span class="n">handshake</span><span class="o">.</span><span class="n">build_udp_frame</span><span class="p">()</span>
+    <span class="n">udp_socket</span><span class="o">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">packet</span><span class="p">,</span> <span class="n">client_addr</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TX D_HANDSHAKE: </span><span class="si">{</span><span class="n">packet</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_d_ack</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">client_addr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle incoming D_ACK from client.&quot;&quot;&quot;</span>
+    <span class="c1"># Skip UDP frame type byte</span>
+    <span class="n">d_payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">ack</span> <span class="o">=</span> <span class="n">DAckPacket</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">d_payload</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ack</span><span class="p">[</span><span class="s1">&#39;sub_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;D_HANDSHAKE acknowledged, seq=</span><span class="si">{</span><span class="n">ack</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sequence&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Mark UDP channel as authenticated</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<hr />
+<h3 id="byte-level-example">Byte-Level Example<a class="headerlink" href="#byte-level-example" title="Permanent link">&para;</a></h3>
+<h4 id="minimal-d_handshake-no-streams-no-players">Minimal D_HANDSHAKE (No Streams, No Players)<a class="headerlink" href="#minimal-d_handshake-no-streams-no-players" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Building minimal D_HANDSHAKE:
+
+UDP Frame:
+  08                    UDP type (D_ protocol)
+
+D_ Payload:
+  03                    D_Type: D_HANDSHAKE
+  00 00 00 01           Sequence: 1
+  00 00 12 34           Session_ID: 0x1234
+  00 00 00 00           Config_Value: 0
+  00 00 00 00           Active_Player_Count: 0
+
+Complete packet (hex):
+  08 03 00 00 00 01 00 00 12 34 00 00 00 00 00 00 00 00
+
+Breakdown:
+  08           = UDP frame type (D_ protocol carrier)
+  03           = D_HANDSHAKE
+  00 00 00 01  = Sequence number: 1
+  00 00 12 34  = Session ID: 0x1234
+  00 00 00 00  = Config value: 0
+  00 00 00 00  = Active player count: 0
+</code></pre></div>
+<h4 id="d_handshake-with-one-stream-and-one-player">D_HANDSHAKE with One Stream and One Player<a class="headerlink" href="#d_handshake-with-one-stream-and-one-player" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Building D_HANDSHAKE with data:
+
+Stream: &quot;Voice1&quot;, value=1, indices=[0]
+Player: index=5, value=100
+
+UDP Frame:
+  08                    UDP type (D_ protocol)
+
+D_ Payload:
+  03                    D_Type: D_HANDSHAKE
+  00 00 00 02           Sequence: 2
+  00 00 AB CD           Session_ID: 0xABCD
+  00 00 00 01           Config_Value: 1
+
+Stream definition:
+  00 07                 String length: 7 (including null)
+  56 6F 69 63 65 31 00  &quot;Voice1\0&quot;
+  00 00 00 01           Stream value: 1
+  00 00 00 00           Stream index: 0
+
+Player entries:
+  00 00 00 01           Active_Player_Count: 1
+  00 00 00 05           Player_Index: 5
+  00 00 00 64           Player_Value: 100
+
+Complete packet (hex):
+  08 03 00 00 00 02 00 00 AB CD 00 00 00 01 
+  00 07 56 6F 69 63 65 31 00 00 00 00 01 00 00 00 00
+  00 00 00 01 00 00 00 05 00 00 00 64
+</code></pre></div>
+<h4 id="expected-d_ack-response">Expected D_ACK Response<a class="headerlink" href="#expected-d_ack-response" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>D_ACK Response (sub-type 0):
+
+  08                    UDP type (D_ protocol)
+  02                    D_Type: D_ACK
+  00                    Sub-type: 0 (handshake ack)
+  00 00 00 02           Sequence: 2 (echo from handshake)
+
+Complete packet (hex):
+  08 02 00 00 00 00 02
+
+Note: The exact sequence value in the ACK may be the client&#39;s
+timestamp rather than an echo, based on decompiled code analysis.
+</code></pre></div>
+<hr />
+<h3 id="error-conditions">Error Conditions<a class="headerlink" href="#error-conditions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Cause</th>
+<th>Client Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sequence too old</td>
+<td><code>seq &lt; last_seq</code></td>
+<td>Silently discard packet</td>
+</tr>
+<tr>
+<td>Insane stream count</td>
+<td><code>stream_count &gt;= max_streams</code></td>
+<td>Log error, discard packet</td>
+</tr>
+<tr>
+<td>Already handshaked</td>
+<td>Duplicate D_HANDSHAKE</td>
+<td>Re-send D_ACK only</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="security-considerations">Security Considerations<a class="headerlink" href="#security-considerations" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Sequence Numbers</strong>: The client tracks the last received sequence and rejects older packets. Server must maintain per-session sequence counters.</p>
+</li>
+<li>
+<p><strong>Session Binding</strong>: The <code>session_id</code> field should match the TCP session to prevent cross-session attacks.</p>
+</li>
+<li>
+<p><strong>Stream Count Limits</strong>: The client validates stream counts against a maximum. Server should not exceed this limit.</p>
+</li>
+<li>
+<p><strong>UDP Source Validation</strong>: Even after D_HANDSHAKE, verify UDP source address matches the authenticated client.</p>
+</li>
+</ol>
+<hr />
+<h3 id="debugging-tips">Debugging Tips<a class="headerlink" href="#debugging-tips" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Wireshark Filter</strong>: <code>udp &amp;&amp; data[0] == 0x08 &amp;&amp; data[1] == 0x03</code> for D_HANDSHAKE packets</p>
+</li>
+<li>
+<p><strong>Check Sequence</strong>: If D_HANDSHAKE is ignored, verify sequence is higher than previously sent</p>
+</li>
+<li>
+<p><strong>Verify Framing</strong>: Ensure the packet is wrapped in UDP type 0x08, not sent raw</p>
+</li>
+<li>
+<p><strong>Stream Count</strong>: Client has a maximum stream limit - check <code>D_HANDSHAKE: insane stream_count</code> in logs</p>
+</li>
+</ol>
+<hr />
+<h3 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="index.html">UDP Protocol Overview</a> - General UDP packet reference</li>
+<li><a href="protocol-overview.html">HELLO_ACK / UDP Establishment</a> - Initial UDP channel setup</li>
+<li><a href="voice.html">VOICE Protocol</a> - Voice data that uses authenticated UDP channel</li>
+<li><a href="../part-2-hello-handshake/index.html">Part 2: HELLO Handshake</a> - TCP handshake that precedes UDP setup</li>
+</ul>
+<hr />
+<h3 id="appendix-packet-writing-functions-reference">Appendix: Packet Writing Functions Reference<a class="headerlink" href="#appendix-packet-writing-functions-reference" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Purpose</th>
+<th>Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FUN_00509440</code></td>
+<td>Write uint8</td>
+<td>1 byte</td>
+</tr>
+<tr>
+<td><code>FUN_005094b0</code></td>
+<td>Write uint16</td>
+<td>2 bytes</td>
+</tr>
+<tr>
+<td><code>FUN_00509520</code></td>
+<td>Write uint32</td>
+<td>4 bytes</td>
+</tr>
+<tr>
+<td><code>FUN_00509600</code></td>
+<td>Write string</td>
+<td>2 + len + 1 bytes</td>
+</tr>
+<tr>
+<td><code>FUN_005092e0</code></td>
+<td>Read uint8</td>
+<td>1 byte</td>
+</tr>
+<tr>
+<td><code>FUN_005092f0</code></td>
+<td>Read uint16</td>
+<td>2 bytes</td>
+</tr>
+<tr>
+<td><code>FUN_00509310</code></td>
+<td>Read uint32</td>
+<td>4 bytes</td>
+</tr>
+<tr>
+<td><code>FUN_00509340</code></td>
+<td>Read string</td>
+<td>Variable</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Previous: <a href="voice.html">VOICE (UDP)</a></em>
+<em>Back to: <a href="index.html">UDP Protocol Overview</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2093 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="index.html">
+      
+      
+        <link rel="next" href="graph.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Part 9.1: D_ Protocol (UDP 0x08) - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#part-91-d_-protocol-overview-udp-type-0x08" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part 9.1: D_ Protocol (UDP 0x08)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/update-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.3 - UPDATE_STATS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    UDP Protocol
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            UDP Protocol
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 9.1 - PROTOCOL OVERVIEW
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="protocol-overview.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.1 - PROTOCOL OVERVIEW
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_-protocol-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_ Protocol Architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_-packet-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_ Packet Types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_ignore-type-0x01" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_IGNORE (Type 0x01)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_ack-type-0x02" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_ACK (Type 0x02)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_set_start-type-0x04" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_SET_START (Type 0x04)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_handshake-type-0x03" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_HANDSHAKE (Type 0x03)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simple-keepalive-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simple Keepalive Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python Implementation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#byte-level-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Byte-Level Examples
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Documentation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="graph.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.2 - GRAPH Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="priority.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.3 - PRIORITY Updates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="voice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.4 - VOICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="weapons.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.5 - WEAPONS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="d-handshake.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 9.6 - D-HANDSHAKE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-11-tcp-protocol/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    TCP Protocol
+    
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            TCP Protocol
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-10-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference Tables
+    
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Reference Tables
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_-protocol-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_ Protocol Architecture
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_-packet-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_ Packet Types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_ignore-type-0x01" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_IGNORE (Type 0x01)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_ack-type-0x02" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_ACK (Type 0x02)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_set_start-type-0x04" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_SET_START (Type 0x04)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d_handshake-type-0x03" class="md-nav__link">
+    <span class="md-ellipsis">
+      D_HANDSHAKE (Type 0x03)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simple-keepalive-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simple Keepalive Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python Implementation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#byte-level-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Byte-Level Examples
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Documentation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="part-91-d_-protocol-overview-udp-type-0x08">Part 9.1: D_ Protocol Overview (UDP Type 0x08)<a class="headerlink" href="#part-91-d_-protocol-overview-udp-type-0x08" title="Permanent link">&para;</a></h1>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>UDP type <code>0x08</code> is a <strong>carrier frame</strong> for the D_ Protocol—a sub-protocol layer that handles UDP connection management, authentication, and stream control. Unlike other UDP packet types that carry game data directly, type 0x08 packets contain an additional type byte that identifies the specific D_ packet being transmitted.</p>
+<blockquote>
+<p><strong>Key Discovery</strong>: Initial analysis suggested 0x08 was a simple "HELLO_ACK" keepalive. Deeper reverse engineering revealed it's actually the transport layer for a sophisticated connection management protocol.</p>
+</blockquote>
+<hr />
+<h3 id="d_-protocol-architecture">D_ Protocol Architecture<a class="headerlink" href="#d_-protocol-architecture" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>UDP Type 0x08 Frame:
+┌──────────────┬──────────────┬─────────────────────────────────┐
+│  UDP Type    │   D_Type     │        D_ Payload               │
+│    0x08      │   (1 byte)   │        (variable)               │
+└──────────────┴──────────────┴─────────────────────────────────┘
+     │               │
+     │               └─ Determines which D_ packet this is
+     └─ Identifies this as a D_ Protocol frame
+</code></pre></div>
+<p>The D_ Protocol provides:
+- <strong>Connection Authentication</strong>: Verifying UDP traffic comes from the correct TCP-authenticated client
+- <strong>Stream Management</strong>: Configuring voice channels and data streams
+- <strong>Sequence Control</strong>: Replay protection and ordering guarantees
+- <strong>Acknowledgments</strong>: Reliable delivery for control messages</p>
+<hr />
+<h3 id="d_-packet-types">D_ Packet Types<a class="headerlink" href="#d_-packet-types" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>D_Type</th>
+<th>Name</th>
+<th>Direction</th>
+<th>Documentation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0x01</code></td>
+<td>D_IGNORE</td>
+<td>S→C</td>
+<td><a href="#d_ignore-type-0x01">This document</a></td>
+</tr>
+<tr>
+<td><code>0x02</code></td>
+<td>D_ACK</td>
+<td>Bidirectional</td>
+<td><a href="#d_ack-type-0x02">This document</a></td>
+</tr>
+<tr>
+<td><code>0x03</code></td>
+<td>D_HANDSHAKE</td>
+<td>Bidirectional</td>
+<td><a href="d-handshake.html">Part 9.6: D_HANDSHAKE Deep Dive</a></td>
+</tr>
+<tr>
+<td><code>0x04</code></td>
+<td>D_SET_START</td>
+<td>S→C</td>
+<td><a href="#d_set_start-type-0x04">This document</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="d_ignore-type-0x01">D_IGNORE (Type 0x01)<a class="headerlink" href="#d_ignore-type-0x01" title="Permanent link">&para;</a></h3>
+<p>Instructs the receiver to ignore packets on a specific stream index.</p>
+<h4 id="packet-structure">Packet Structure<a class="headerlink" href="#packet-structure" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>D_IGNORE Structure:
+┌──────────┬──────────┬───────────────┬──────────────┐
+│ UDP Type │  D_Type  │ Stream_Index  │    Value     │
+│   0x08   │   0x01   │   (1 byte)    │  (2 bytes)   │
+└──────────┴──────────┴───────────────┴──────────────┘
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Offset</th>
+<th>Size</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UDP Type</td>
+<td>0</td>
+<td>1</td>
+<td>uint8</td>
+<td>Always <code>0x08</code></td>
+</tr>
+<tr>
+<td>D_Type</td>
+<td>1</td>
+<td>1</td>
+<td>uint8</td>
+<td>Always <code>0x01</code></td>
+</tr>
+<tr>
+<td>Stream_Index</td>
+<td>2</td>
+<td>1</td>
+<td>uint8</td>
+<td>Stream to ignore</td>
+</tr>
+<tr>
+<td>Value</td>
+<td>3</td>
+<td>2</td>
+<td>uint16 BE</td>
+<td>Associated value</td>
+</tr>
+</tbody>
+</table>
+<h4 id="client-response">Client Response<a class="headerlink" href="#client-response" title="Permanent link">&para;</a></h4>
+<p>When the client receives D_IGNORE, it responds with D_ACK sub-type 1:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_00505790 (wulfram2_exe.c line 181300-181326)</span>
+<span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;D_IGNORE&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span>
+<span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">param_2</span><span class="p">);</span><span class="w">         </span><span class="c1">// Read stream_index (u8)</span>
+<span class="n">FUN_005092f0</span><span class="p">(</span><span class="n">local_8</span><span class="p">);</span><span class="w">          </span><span class="c1">// Read value (u16)</span>
+<span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">uVar2</span><span class="p">,</span><span class="w"> </span><span class="n">uVar1</span><span class="p">);</span>
+<span class="n">FUN_00505050</span><span class="p">(</span><span class="n">param_2</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xff</span><span class="p">,</span><span class="w"> </span><span class="n">local_8</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+
+<span class="c1">// Send D_ACK response</span>
+<span class="n">iVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00509cf0</span><span class="p">(</span><span class="s">&quot;D_ACK&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509440</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">              </span><span class="c1">// Sub-type 1</span>
+<span class="w">    </span><span class="n">FUN_00509440</span><span class="p">(</span><span class="n">local_4</span><span class="p">);</span><span class="w">        </span><span class="c1">// Echo stream_index</span>
+<span class="w">    </span><span class="n">FUN_005094b0</span><span class="p">(</span><span class="n">local_8</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w">     </span><span class="c1">// Echo value</span>
+<span class="w">    </span><span class="n">FUN_0050a340</span><span class="p">(</span><span class="n">iVar3</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="d_ack-type-0x02">D_ACK (Type 0x02)<a class="headerlink" href="#d_ack-type-0x02" title="Permanent link">&para;</a></h3>
+<p>Acknowledges receipt of D_ protocol packets. Has multiple sub-types for different acknowledgment contexts.</p>
+<h4 id="packet-structure_1">Packet Structure<a class="headerlink" href="#packet-structure_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>D_ACK Structure:
+┌──────────┬──────────┬───────────┬─────────────────────────────┐
+│ UDP Type │  D_Type  │ Sub_Type  │   Sub-Type Specific Data    │
+│   0x08   │   0x02   │  (1 byte) │        (variable)           │
+└──────────┴──────────┴───────────┴─────────────────────────────┘
+</code></pre></div>
+<h4 id="d_ack-sub-types">D_ACK Sub-Types<a class="headerlink" href="#d_ack-sub-types" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Sub-Type</th>
+<th>Name</th>
+<th>Purpose</th>
+<th>Additional Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Handshake ACK</td>
+<td>Acknowledges D_HANDSHAKE</td>
+<td>Sequence (4 bytes)</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Ignore ACK</td>
+<td>Acknowledges D_IGNORE</td>
+<td>Stream_Index (1), Value (2)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Extended ACK</td>
+<td>Extended acknowledgment</td>
+<td>Sequence (4), Stream_Index (1), Value (2)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="sub-type-0-handshake-acknowledgment">Sub-Type 0: Handshake Acknowledgment<a class="headerlink" href="#sub-type-0-handshake-acknowledgment" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>D_ACK Sub-Type 0 Structure:
+┌──────────┬──────────┬───────────┬──────────────┐
+│ UDP Type │  D_Type  │ Sub_Type  │   Sequence   │
+│   0x08   │   0x02   │   0x00    │  (4 bytes)   │
+└──────────┴──────────┴───────────┴──────────────┘
+</code></pre></div>
+<p>Sent by the client after successfully processing D_HANDSHAKE. The server uses the sequence to calculate RTT and confirm the handshake completed.</p>
+<h4 id="sub-type-1-ignore-acknowledgment">Sub-Type 1: Ignore Acknowledgment<a class="headerlink" href="#sub-type-1-ignore-acknowledgment" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>D_ACK Sub-Type 1 Structure:
+┌──────────┬──────────┬───────────┬───────────────┬──────────────┐
+│ UDP Type │  D_Type  │ Sub_Type  │ Stream_Index  │    Value     │
+│   0x08   │   0x02   │   0x01    │   (1 byte)    │  (2 bytes)   │
+└──────────┴──────────┴───────────┴───────────────┴──────────────┘
+</code></pre></div>
+<p>Sent by the client after receiving D_IGNORE, echoing back the stream index and value.</p>
+<h4 id="sub-type-2-extended-acknowledgment">Sub-Type 2: Extended Acknowledgment<a class="headerlink" href="#sub-type-2-extended-acknowledgment" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>D_ACK Sub-Type 2 Structure:
+┌──────────┬──────────┬───────────┬──────────────┬───────────────┬──────────────┐
+│ UDP Type │  D_Type  │ Sub_Type  │   Sequence   │ Stream_Index  │    Value     │
+│   0x08   │   0x02   │   0x02    │  (4 bytes)   │   (1 byte)    │  (2 bytes)   │
+└──────────┴──────────┴───────────┴──────────────┴───────────────┴──────────────┘
+</code></pre></div>
+<p>Used for acknowledgments that need both sequence validation and stream identification.</p>
+<h4 id="decompiled-code-reference">Decompiled Code Reference<a class="headerlink" href="#decompiled-code-reference" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_00505b80 (wulfram2_exe.c line 181496-181552)</span>
+<span class="c1">// D_ACK receiver/handler</span>
+
+<span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;D_ACK&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span>
+<span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">param_2</span><span class="p">);</span><span class="w">           </span><span class="c1">// Read sub_type</span>
+<span class="n">uVar4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">param_2</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xff</span><span class="p">;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uVar4</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Sub-type 0: Handshake ACK</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span><span class="w">       </span><span class="c1">// Read sequence</span>
+<span class="w">    </span><span class="c1">// Validate sequence, update connection state</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="n">undefined1</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x50</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Mark connection established</span>
+<span class="p">}</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uVar4</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Sub-type 1: Ignore ACK</span>
+<span class="w">    </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_d</span><span class="p">);</span><span class="w">       </span><span class="c1">// Read stream_index</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">(</span><span class="n">local_c</span><span class="p">);</span><span class="w">        </span><span class="c1">// Read value</span>
+<span class="w">    </span><span class="n">FUN_00504a90</span><span class="p">(</span><span class="n">local_d</span><span class="p">,</span><span class="w"> </span><span class="n">local_c</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">uVar4</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Sub-type 2: Extended ACK</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span><span class="w">       </span><span class="c1">// Read sequence</span>
+<span class="w">    </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_d</span><span class="p">);</span><span class="w">       </span><span class="c1">// Read stream_index</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">(</span><span class="n">local_c</span><span class="p">);</span><span class="w">        </span><span class="c1">// Read value</span>
+<span class="w">    </span><span class="n">FUN_00505ad0</span><span class="p">(</span><span class="n">local_d</span><span class="p">,</span><span class="w"> </span><span class="n">local_c</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="d_set_start-type-0x04">D_SET_START (Type 0x04)<a class="headerlink" href="#d_set_start-type-0x04" title="Permanent link">&para;</a></h3>
+<p>Sets the starting position/state for a stream. Used during stream initialization.</p>
+<h4 id="packet-structure_2">Packet Structure<a class="headerlink" href="#packet-structure_2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>D_SET_START Structure:
+┌──────────┬──────────┬───────────────┬──────────────┐
+│ UDP Type │  D_Type  │ Stream_Index  │    Value     │
+│   0x08   │   0x04   │   (1 byte)    │  (2 bytes)   │
+└──────────┴──────────┴───────────────┴──────────────┘
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Offset</th>
+<th>Size</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UDP Type</td>
+<td>0</td>
+<td>1</td>
+<td>uint8</td>
+<td>Always <code>0x08</code></td>
+</tr>
+<tr>
+<td>D_Type</td>
+<td>1</td>
+<td>1</td>
+<td>uint8</td>
+<td>Always <code>0x04</code></td>
+</tr>
+<tr>
+<td>Stream_Index</td>
+<td>2</td>
+<td>1</td>
+<td>uint8</td>
+<td>Target stream</td>
+</tr>
+<tr>
+<td>Value</td>
+<td>3</td>
+<td>2</td>
+<td>uint16 BE</td>
+<td>Start position/value</td>
+</tr>
+</tbody>
+</table>
+<h4 id="decompiled-code-reference_1">Decompiled Code Reference<a class="headerlink" href="#decompiled-code-reference_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_00505840 (wulfram2_exe.c line 181330-181347)</span>
+<span class="c1">// D_SET_START sender</span>
+
+<span class="n">iVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00509cf0</span><span class="p">(</span><span class="s">&quot;D_SET_START&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar1</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509440</span><span class="p">(</span><span class="n">param_2</span><span class="p">);</span><span class="w">        </span><span class="c1">// Write stream_index (u8)</span>
+<span class="w">    </span><span class="n">FUN_005094b0</span><span class="p">(</span><span class="n">param_3</span><span class="p">);</span><span class="w">        </span><span class="c1">// Write value (u16)</span>
+<span class="w">    </span><span class="n">FUN_0050a340</span><span class="p">(</span><span class="n">iVar1</span><span class="p">);</span><span class="w">          </span><span class="c1">// Send</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="d_handshake-type-0x03">D_HANDSHAKE (Type 0x03)<a class="headerlink" href="#d_handshake-type-0x03" title="Permanent link">&para;</a></h3>
+<p>The most complex D_ packet, used for UDP channel authentication and stream configuration.</p>
+<blockquote>
+<p><strong>Full Documentation</strong>: See <a href="d-handshake.html">Part 9.6: D_HANDSHAKE Deep Dive</a> for complete structure, decompiled code analysis, and implementation guide.</p>
+</blockquote>
+<h4 id="quick-summary">Quick Summary<a class="headerlink" href="#quick-summary" title="Permanent link">&para;</a></h4>
+<p>D_HANDSHAKE contains:
+- Sequence number (for replay protection)
+- Session ID (links to TCP connection)
+- Configuration value
+- Stream definitions (names, values, indices)
+- Active player entries</p>
+<hr />
+<h3 id="simple-keepalive-usage">Simple Keepalive Usage<a class="headerlink" href="#simple-keepalive-usage" title="Permanent link">&para;</a></h3>
+<p>In addition to the D_ protocol packets, the client also uses UDP type 0x08 for simple keepalives:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_00417860 (wulfram2_exe.c line 21976-21983)</span>
+<span class="c1">// Client sends keepalive every 1000ms when idle</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">DAT_00677f1c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="mi">1000</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">uint</span><span class="p">)(</span><span class="n">DAT_005d5ee8</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_DAT_00677f20</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">iVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00509cf0</span><span class="p">(</span><span class="s">&quot;HELLO&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">  </span><span class="c1">// Type 8, mode 2</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">uVar1</span><span class="p">);</span><span class="w">      </span><span class="c1">// Write player ID (u32)</span>
+<span class="w">        </span><span class="n">FUN_0050a340</span><span class="p">(</span><span class="n">iVar3</span><span class="p">);</span><span class="w">      </span><span class="c1">// Send</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">_DAT_00677f20</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAT_005d5ee8</span><span class="p">;</span><span class="w"> </span><span class="c1">// Reset timer</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>These keepalive packets are simpler than D_ protocol packets:</p>
+<div class="highlight"><pre><span></span><code>Simple Keepalive Structure:
+┌──────────┬──────────────────┐
+│ UDP Type │    Player_ID     │
+│   0x08   │    (4 bytes)     │
+└──────────┴──────────────────┘
+</code></pre></div>
+<blockquote>
+<p><strong>Disambiguation</strong>: When the server receives a UDP 0x08 packet, it must check the length and first payload byte to determine if it's a simple keepalive or a D_ protocol packet. D_ protocol packets have a recognizable D_Type (0x01-0x04) as the first payload byte.</p>
+</blockquote>
+<hr />
+<h3 id="python-implementation">Python Implementation<a class="headerlink" href="#python-implementation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DProtocolPacket</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for D_ Protocol packets&quot;&quot;&quot;</span>
+
+    <span class="n">UDP_FRAME_TYPE</span> <span class="o">=</span> <span class="mh">0x08</span>
+
+    <span class="n">D_TYPE_IGNORE</span> <span class="o">=</span> <span class="mh">0x01</span>
+    <span class="n">D_TYPE_ACK</span> <span class="o">=</span> <span class="mh">0x02</span>
+    <span class="n">D_TYPE_HANDSHAKE</span> <span class="o">=</span> <span class="mh">0x03</span>
+    <span class="n">D_TYPE_SET_START</span> <span class="o">=</span> <span class="mh">0x04</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_d_protocol</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if UDP packet is a D_ protocol packet (vs simple keepalive)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x08</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># D_ types are 0x01-0x04</span>
+        <span class="k">return</span> <span class="mh">0x01</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mh">0x04</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DIgnorePacket</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;D_IGNORE packet builder&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="n">stream_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">UDP_FRAME_TYPE</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">D_TYPE_IGNORE</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_index</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DAckPacket</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;D_ACK packet builder and parser&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_handshake_ack</span><span class="p">(</span><span class="n">sequence</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sub-type 0: Acknowledge D_HANDSHAKE&quot;&quot;&quot;</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">UDP_FRAME_TYPE</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">D_TYPE_ACK</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>  <span class="c1"># Sub-type 0</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">sequence</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_ignore_ack</span><span class="p">(</span><span class="n">stream_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sub-type 1: Acknowledge D_IGNORE&quot;&quot;&quot;</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">UDP_FRAME_TYPE</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">D_TYPE_ACK</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x01</span><span class="p">)</span>  <span class="c1"># Sub-type 1</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_index</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_extended_ack</span><span class="p">(</span><span class="n">sequence</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">stream_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sub-type 2: Extended acknowledgment&quot;&quot;&quot;</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">UDP_FRAME_TYPE</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">D_TYPE_ACK</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x02</span><span class="p">)</span>  <span class="c1"># Sub-type 2</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">sequence</span><span class="p">))</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_index</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse incoming D_ACK packet&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x08</span> <span class="ow">or</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x02</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid D_ACK packet&quot;</span><span class="p">)</span>
+
+        <span class="n">sub_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sub_type&#39;</span><span class="p">:</span> <span class="n">sub_type</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">sub_type</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">sub_type</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;stream_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">sub_type</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;stream_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+            <span class="n">result</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">10</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DSetStartPacket</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;D_SET_START packet builder&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="n">stream_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">UDP_FRAME_TYPE</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">D_TYPE_SET_START</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stream_index</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleKeepalive</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple UDP keepalive (not part of D_ protocol)&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="n">player_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x08</span><span class="p">)</span>  <span class="c1"># UDP type</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">player_id</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse keepalive, return player_id&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x08</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid keepalive packet&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="c1"># Example: Dispatching incoming 0x08 packets</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_udp_0x08</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">client_addr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dispatch UDP type 0x08 packets&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">is_d_protocol</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">d_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">d_type</span> <span class="o">==</span> <span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">D_TYPE_ACK</span><span class="p">:</span>
+            <span class="n">ack</span> <span class="o">=</span> <span class="n">DAckPacket</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received D_ACK sub_type=</span><span class="si">{</span><span class="n">ack</span><span class="p">[</span><span class="s1">&#39;sub_type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Handle acknowledgment...</span>
+
+        <span class="k">elif</span> <span class="n">d_type</span> <span class="o">==</span> <span class="n">DProtocolPacket</span><span class="o">.</span><span class="n">D_TYPE_HANDSHAKE</span><span class="p">:</span>
+            <span class="c1"># See Part 9.6 for D_HANDSHAKE handling</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Received D_HANDSHAKE - see d-handshake.md&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Note: D_IGNORE and D_SET_START are typically S→C only</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Simple keepalive</span>
+        <span class="n">player_id</span> <span class="o">=</span> <span class="n">SimpleKeepalive</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keepalive from player </span><span class="si">{</span><span class="n">player_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="byte-level-examples">Byte-Level Examples<a class="headerlink" href="#byte-level-examples" title="Permanent link">&para;</a></h3>
+<h4 id="d_ignore-example">D_IGNORE Example<a class="headerlink" href="#d_ignore-example" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Hex: 08 01 05 00 64
+
+Breakdown:
+  08     = UDP type (D_ Protocol frame)
+  01     = D_Type: D_IGNORE
+  05     = Stream_Index: 5
+  00 64  = Value: 100
+</code></pre></div>
+<h4 id="d_ack-sub-type-0-example">D_ACK Sub-Type 0 Example<a class="headerlink" href="#d_ack-sub-type-0-example" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Hex: 08 02 00 00 00 00 42
+
+Breakdown:
+  08           = UDP type (D_ Protocol frame)
+  02           = D_Type: D_ACK
+  00           = Sub_Type: 0 (handshake ack)
+  00 00 00 42  = Sequence: 66
+</code></pre></div>
+<h4 id="d_ack-sub-type-1-example">D_ACK Sub-Type 1 Example<a class="headerlink" href="#d_ack-sub-type-1-example" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Hex: 08 02 01 05 00 64
+
+Breakdown:
+  08     = UDP type (D_ Protocol frame)
+  02     = D_Type: D_ACK
+  01     = Sub_Type: 1 (ignore ack)
+  05     = Stream_Index: 5
+  00 64  = Value: 100
+</code></pre></div>
+<h4 id="simple-keepalive-example">Simple Keepalive Example<a class="headerlink" href="#simple-keepalive-example" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Hex: 08 00 00 00 07
+
+Breakdown:
+  08           = UDP type
+  00 00 00 07  = Player_ID: 7
+
+Note: This is NOT a D_ protocol packet (no D_Type byte).
+      The 0x00 is the high byte of the player ID, not a D_Type.
+</code></pre></div>
+<hr />
+<h3 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="d-handshake.html">Part 9.6: D_HANDSHAKE Deep Dive</a> - Complete D_HANDSHAKE protocol</li>
+<li><a href="index.html">UDP Protocol Overview</a> - General UDP packet reference</li>
+<li><a href="../part-2-hello-handshake/index.html">Part 2: HELLO Handshake</a> - TCP handshake that precedes UDP</li>
+</ul>
+<hr />
+<p><em>Back to <a href="index.html">UDP Protocol Overview</a></em>
+<em>Next: <a href="d-handshake.html">D_HANDSHAKE Deep Dive</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>
