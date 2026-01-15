@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../index.html">
+        <link rel="prev" href="../part-8-structures/update-stats.html">
       
       
-        <link rel="next" href="../part-1-introduction/index.html">
+        <link rel="next" href="hello-ack.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Getting Started - Wulfram 2 Server Implementation Guide</title>
+        <title>UDP Protocol - Wulfram 2 Server Implementation Guide</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started" class="md-skip">
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting Started
+              UDP Protocol
             
           </span>
         </div>
@@ -227,8 +227,6 @@
       
   
   
-    
-  
   
   
     
@@ -253,15 +251,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="index.html" class="md-nav__link md-nav__link--active">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
               
   
   
@@ -274,13 +272,13 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Getting Started
@@ -889,6 +887,8 @@
       
   
   
+    
+  
   
   
     
@@ -917,15 +917,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../part-9-udp-protocol/index.html" class="md-nav__link ">
+            <a href="index.html" class="md-nav__link md-nav__link--active">
               
   
   
@@ -938,13 +938,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+              <label class="md-nav__link md-nav__link--active" for="__nav_6" id="__nav_6_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             UDP Protocol
@@ -960,7 +960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/hello-ack.html" class="md-nav__link">
+      <a href="hello-ack.html" class="md-nav__link">
         
   
   
@@ -983,7 +983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/graph.html" class="md-nav__link">
+      <a href="graph.html" class="md-nav__link">
         
   
   
@@ -1006,7 +1006,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/priority.html" class="md-nav__link">
+      <a href="priority.html" class="md-nav__link">
         
   
   
@@ -1029,7 +1029,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/voice.html" class="md-nav__link">
+      <a href="voice.html" class="md-nav__link">
         
   
   
@@ -1052,7 +1052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/weapons.html" class="md-nav__link">
+      <a href="weapons.html" class="md-nav__link">
         
   
   
@@ -1162,20 +1162,62 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#contents" class="md-nav__link">
+  <a href="#part-9-udp-protocol" class="md-nav__link">
     <span class="md-ellipsis">
-      Contents
+      Part 9: UDP Protocol
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 9: UDP Protocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#connection-flow-overview" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#udp-connection-establishment" class="md-nav__link">
     <span class="md-ellipsis">
-      Connection Flow Overview
+      UDP Connection Establishment
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#udp-packet-frame-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      UDP Packet Frame Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#udp-packet-type-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      UDP Packet Type Reference
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detailed-packet-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Detailed Packet Documentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1195,25 +1237,139 @@
 
 
 
-<h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
-<p>This section covers the initial connection flow for the Wulfram 2 protocol.</p>
-<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="part-9-udp-protocol">Part 9: UDP Protocol<a class="headerlink" href="#part-9-udp-protocol" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>Wulfram 2 uses UDP for low-latency game data that can tolerate occasional packet loss:</p>
 <ul>
-<li><strong><a href="../part-1-introduction/index.html">Part 1.0 - Introduction</a></strong> - Protocol fundamentals, byte order, packet structure</li>
-<li><strong><a href="../part-2-hello-handshake/index.html">Part 2.0 - HELLO Handshake</a></strong> - Initial server handshake (0x13)</li>
-<li><strong><a href="../part-3-login-authentication/index.html">Part 3.0 - Login Authentication</a></strong> - User authentication flow (0x11/0x12)</li>
+<li><strong>Voice chat</strong> (VOICE packets)</li>
+<li><strong>Real-time position/state updates</strong> (PRIORITY packets)  </li>
+<li><strong>Weapon state synchronization</strong> (WEAPONS packets)</li>
+<li><strong>Graph/telemetry data</strong> (GRAPH packets)</li>
 </ul>
-<h2 id="connection-flow-overview">Connection Flow Overview<a class="headerlink" href="#connection-flow-overview" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>Client                              Server
-  │                                   │
-  │◄──────── TCP CONNECT ────────────►│
-  │◄──────── HELLO (0x13) ────────────│
-  │───────── LOGIN (0x11) ───────────►│
-  │◄──────── LOGIN_STATUS (0x12) ─────│
-  │                                   │
-  └───────── Ready for BEHAVIOR ──────┘
+<blockquote>
+<p><strong>Important</strong>: UDP packet type codes exist in a <strong>separate namespace</strong> from TCP. Type <code>0x13</code> over TCP is HELLO, but over UDP it's GRAPH_DATA. See <a href="../part-1-introduction/index.html#fundamental-rule-6-tcp-vs-udp-packet-namespaces">Part 1</a> for the complete comparison table.</p>
+</blockquote>
+<hr />
+<h3 id="udp-connection-establishment">UDP Connection Establishment<a class="headerlink" href="#udp-connection-establishment" title="Permanent link">&para;</a></h3>
+<p>The UDP channel is established during the TCP handshake:</p>
+<div class="highlight"><pre><span></span><code>CLIENT                                    SERVER
+   │                                        │
+   │◄──── TCP: HELLO sub=1 (UDP port) ──────│
+   │                                        │
+   │───── UDP: HELLO_ACK (0x08) ───────────►│  Client confirms UDP works
+   │                                        │
+   │◄──── UDP: HELLO_ACK (0x08) ────────────│  Server acknowledges
+   │                                        │
+   │      UDP channel now established       │
+   │                                        │
 </code></pre></div>
-<p>Continue to the Introduction to learn the protocol fundamentals.</p>
+<p>After this, both TCP and UDP channels operate in parallel.</p>
+<hr />
+<h3 id="udp-packet-frame-structure">UDP Packet Frame Structure<a class="headerlink" href="#udp-packet-frame-structure" title="Permanent link">&para;</a></h3>
+<p>UDP packets use a similar but slightly different framing than TCP:</p>
+<div class="highlight"><pre><span></span><code>UDP Packet Structure:
+┌──────────┬─────────────────────────────────┐
+│  TYPE    │           PAYLOAD               │
+│ (1 byte) │         (variable)              │
+└──────────┴─────────────────────────────────┘
+</code></pre></div>
+<blockquote>
+<p><strong>Note</strong>: UDP packets may omit the 2-byte length prefix since UDP datagrams have implicit boundaries. Verify this against packet captures.</p>
+</blockquote>
+<hr />
+<h3 id="udp-packet-type-reference">UDP Packet Type Reference<a class="headerlink" href="#udp-packet-type-reference" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Direction</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0x08</code></td>
+<td>HELLO_ACK</td>
+<td>Bidirectional</td>
+<td>UDP channel keepalive/establishment</td>
+</tr>
+<tr>
+<td><code>0x09</code></td>
+<td>ROOT/START</td>
+<td>Client → Server</td>
+<td>Debug/start signal</td>
+</tr>
+<tr>
+<td><code>0x0A</code></td>
+<td>VOICE</td>
+<td>Client → Server</td>
+<td>Voice chat audio data</td>
+</tr>
+<tr>
+<td><code>0x0B</code></td>
+<td>PRIORITY</td>
+<td>Server → Client</td>
+<td>High-priority state updates</td>
+</tr>
+<tr>
+<td><code>0x0C</code></td>
+<td>WEAPONS</td>
+<td>Server → Client</td>
+<td>Weapon state data</td>
+</tr>
+<tr>
+<td><code>0x0D</code></td>
+<td>ACK_WPNS</td>
+<td>Server → Client</td>
+<td>Weapon acknowledgment</td>
+</tr>
+<tr>
+<td><code>0x0E</code></td>
+<td>PRIORITY2</td>
+<td>Server → Client</td>
+<td>Secondary priority updates</td>
+</tr>
+<tr>
+<td><code>0x10</code></td>
+<td>RESENDS</td>
+<td>Server → Client</td>
+<td>Retransmission requests</td>
+</tr>
+<tr>
+<td><code>0x12</code></td>
+<td>GRAPH_RESPONSE</td>
+<td>Server → Client</td>
+<td>Graph query response</td>
+</tr>
+<tr>
+<td><code>0x13</code></td>
+<td>GRAPH_DATA</td>
+<td>Server → Client</td>
+<td>Graph telemetry data</td>
+</tr>
+<tr>
+<td><code>0x14</code></td>
+<td>IGNORE</td>
+<td>Server → Client</td>
+<td>Placeholder/padding</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="detailed-packet-documentation">Detailed Packet Documentation<a class="headerlink" href="#detailed-packet-documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="hello-ack.html">HELLO_ACK (0x08)</a> - UDP channel establishment</li>
+<li><a href="voice.html">VOICE (0x0A)</a> - Voice chat transmission</li>
+<li><a href="priority.html">PRIORITY Updates (0x0B, 0x0E)</a> - Real-time game state</li>
+<li><a href="weapons.html">WEAPONS (0x0C, 0x0D)</a> - Weapon synchronization</li>
+<li><a href="graph.html">GRAPH Data (0x12, 0x13)</a> - Telemetry and debugging</li>
+</ul>
+<hr />
+<p><em>Previous: <a href="../part-8-structures/index.html">Part 8: Structures</a></em>
+<em>Next: <a href="../part-10-reference-files/index.html">Part 10: Reference Files</a></em></p>
 
 
 

@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../index.html">
+        <link rel="prev" href="index.html">
       
       
-        <link rel="next" href="../part-1-introduction/index.html">
+        <link rel="next" href="graph.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Getting Started - Wulfram 2 Server Implementation Guide</title>
+        <title>HELLO_ACK (UDP) - Wulfram 2 Server Implementation Guide</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started" class="md-skip">
+        <a href="#udp-hello_ack-0x08" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting Started
+              HELLO_ACK (UDP)
             
           </span>
         </div>
@@ -227,8 +227,6 @@
       
   
   
-    
-  
   
   
     
@@ -253,15 +251,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="index.html" class="md-nav__link md-nav__link--active">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
               
   
   
@@ -274,13 +272,13 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Getting Started
@@ -889,6 +887,8 @@
       
   
   
+    
+  
   
   
     
@@ -917,15 +917,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../part-9-udp-protocol/index.html" class="md-nav__link ">
+            <a href="index.html" class="md-nav__link ">
               
   
   
@@ -944,7 +944,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             UDP Protocol
@@ -957,10 +957,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/hello-ack.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 9.1 - HELLO_ACK
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="hello-ack.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -971,6 +993,89 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-its-sent" class="md-nav__link">
+    <span class="md-ellipsis">
+      When It's Sent
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#packet-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#client-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Client Implementation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Server Implementation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-from-decompiled-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification from Decompiled Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keepalive-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Keepalive Behavior
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -983,7 +1088,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/graph.html" class="md-nav__link">
+      <a href="graph.html" class="md-nav__link">
         
   
   
@@ -1006,7 +1111,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/priority.html" class="md-nav__link">
+      <a href="priority.html" class="md-nav__link">
         
   
   
@@ -1029,7 +1134,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/voice.html" class="md-nav__link">
+      <a href="voice.html" class="md-nav__link">
         
   
   
@@ -1052,7 +1157,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/weapons.html" class="md-nav__link">
+      <a href="weapons.html" class="md-nav__link">
         
   
   
@@ -1162,18 +1267,63 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#contents" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Contents
+      Overview
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#connection-flow-overview" class="md-nav__link">
+  <a href="#when-its-sent" class="md-nav__link">
     <span class="md-ellipsis">
-      Connection Flow Overview
+      When It's Sent
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#packet-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#client-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Client Implementation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#server-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Server Implementation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-from-decompiled-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification from Decompiled Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keepalive-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Keepalive Behavior
     </span>
   </a>
   
@@ -1195,25 +1345,110 @@
 
 
 
-<h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
-<p>This section covers the initial connection flow for the Wulfram 2 protocol.</p>
-<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><a href="../part-1-introduction/index.html">Part 1.0 - Introduction</a></strong> - Protocol fundamentals, byte order, packet structure</li>
-<li><strong><a href="../part-2-hello-handshake/index.html">Part 2.0 - HELLO Handshake</a></strong> - Initial server handshake (0x13)</li>
-<li><strong><a href="../part-3-login-authentication/index.html">Part 3.0 - Login Authentication</a></strong> - User authentication flow (0x11/0x12)</li>
-</ul>
-<h2 id="connection-flow-overview">Connection Flow Overview<a class="headerlink" href="#connection-flow-overview" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>Client                              Server
-  │                                   │
-  │◄──────── TCP CONNECT ────────────►│
-  │◄──────── HELLO (0x13) ────────────│
-  │───────── LOGIN (0x11) ───────────►│
-  │◄──────── LOGIN_STATUS (0x12) ─────│
-  │                                   │
-  └───────── Ready for BEHAVIOR ──────┘
+<h1 id="udp-hello_ack-0x08">UDP HELLO_ACK (0x08)<a class="headerlink" href="#udp-hello_ack-0x08" title="Permanent link">&para;</a></h1>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The HELLO_ACK packet is used to establish and maintain the UDP channel between client and server. It serves as both an initial handshake confirmation and a periodic keepalive.</p>
+<hr />
+<h3 id="when-its-sent">When It's Sent<a class="headerlink" href="#when-its-sent" title="Permanent link">&para;</a></h3>
+<p><strong>Client → Server:</strong>
+- After receiving TCP HELLO sub-type 1 (UDP port info)
+- Periodically as keepalive (approximately every 1000ms when no other UDP traffic)</p>
+<p><strong>Server → Client:</strong>
+- In response to client HELLO_ACK
+- To confirm UDP channel is operational</p>
+<hr />
+<h3 id="packet-structure">Packet Structure<a class="headerlink" href="#packet-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>HELLO_ACK Structure:
+┌──────────┬──────────────────┐
+│  TYPE    │   PLAYER_ID      │
+│  0x08    │   (4 bytes BE)   │
+└──────────┴──────────────────┘
 </code></pre></div>
-<p>Continue to the Introduction to learn the protocol fundamentals.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Offset</th>
+<th>Size</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td>0</td>
+<td>1</td>
+<td>uint8</td>
+<td>Always <code>0x08</code></td>
+</tr>
+<tr>
+<td>Player ID</td>
+<td>1</td>
+<td>4</td>
+<td>uint32 BE</td>
+<td>The sender's player ID</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="client-implementation">Client Implementation<a class="headerlink" href="#client-implementation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send_udp_hello_ack</span><span class="p">(</span><span class="n">udp_socket</span><span class="p">,</span> <span class="n">server_addr</span><span class="p">,</span> <span class="n">player_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Send UDP HELLO_ACK to establish/maintain UDP channel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x08</span><span class="p">])</span>  <span class="c1"># Type</span>
+    <span class="n">packet</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">player_id</span><span class="p">)</span>  <span class="c1"># Player ID, big-endian</span>
+
+    <span class="n">udp_socket</span><span class="o">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">packet</span><span class="p">,</span> <span class="n">server_addr</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="server-implementation">Server Implementation<a class="headerlink" href="#server-implementation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">handle_udp_hello_ack</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">client_addr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle incoming UDP HELLO_ACK from client</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="c1"># Invalid packet</span>
+
+    <span class="n">packet_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">player_id</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Associate this UDP address with the player&#39;s session</span>
+    <span class="n">register_udp_endpoint</span><span class="p">(</span><span class="n">player_id</span><span class="p">,</span> <span class="n">client_addr</span><span class="p">)</span>
+
+    <span class="c1"># Send acknowledgment back</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x08</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Server player ID = 0</span>
+    <span class="n">udp_socket</span><span class="o">.</span><span class="n">sendto</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">client_addr</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="verification-from-decompiled-code">Verification from Decompiled Code<a class="headerlink" href="#verification-from-decompiled-code" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_00414360 (line 19382-19396)</span>
+<span class="c1">// Client sending UDP HELLO (type 8)</span>
+<span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00506ca0</span><span class="p">();</span>
+<span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00509cf0</span><span class="p">(</span><span class="s">&quot;HELLO&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Type 8, UDP</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">param_1</span><span class="p">);</span><span class="w">      </span><span class="c1">// Write player ID</span>
+<span class="w">    </span><span class="n">thunk_FUN_00509520</span><span class="p">(</span><span class="n">uVar1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Write additional field</span>
+<span class="w">    </span><span class="n">FUN_0050a340</span><span class="p">(</span><span class="n">iVar2</span><span class="p">);</span><span class="w">        </span><span class="c1">// Send packet</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="keepalive-behavior">Keepalive Behavior<a class="headerlink" href="#keepalive-behavior" title="Permanent link">&para;</a></h3>
+<p>The client sends HELLO_ACK periodically to maintain the UDP channel:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_00417860 (line 21976-21983)</span>
+<span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">DAT_00677f1c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="mi">1000</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">uint</span><span class="p">)(</span><span class="n">DAT_005d5ee8</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_DAT_00677f20</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">iVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00509cf0</span><span class="p">(</span><span class="s">&quot;HELLO&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">  </span><span class="c1">// Send every 1000ms</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">FUN_00509520</span><span class="p">(</span><span class="n">uVar1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">FUN_0050a340</span><span class="p">(</span><span class="n">iVar3</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">_DAT_00677f20</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAT_005d5ee8</span><span class="p">;</span><span class="w">  </span><span class="c1">// Reset timer</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<p><em>Back to <a href="index.html">UDP Protocol Overview</a></em></p>
 
 
 

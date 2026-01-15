@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../index.html">
+        <link rel="prev" href="graph.html">
       
       
-        <link rel="next" href="../part-1-introduction/index.html">
+        <link rel="next" href="voice.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Getting Started - Wulfram 2 Server Implementation Guide</title>
+        <title>PRIORITY Updates (UDP) - Wulfram 2 Server Implementation Guide</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started" class="md-skip">
+        <a href="#udp-priority-0x0b-and-priority2-0x0e" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting Started
+              PRIORITY Updates (UDP)
             
           </span>
         </div>
@@ -227,8 +227,6 @@
       
   
   
-    
-  
   
   
     
@@ -253,15 +251,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="index.html" class="md-nav__link md-nav__link--active">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
               
   
   
@@ -274,13 +272,13 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Getting Started
@@ -889,6 +887,8 @@
       
   
   
+    
+  
   
   
     
@@ -917,15 +917,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../part-9-udp-protocol/index.html" class="md-nav__link ">
+            <a href="index.html" class="md-nav__link ">
               
   
   
@@ -944,7 +944,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             UDP Protocol
@@ -960,7 +960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/hello-ack.html" class="md-nav__link">
+      <a href="hello-ack.html" class="md-nav__link">
         
   
   
@@ -983,7 +983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/graph.html" class="md-nav__link">
+      <a href="graph.html" class="md-nav__link">
         
   
   
@@ -1003,10 +1003,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/priority.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 9.3 - PRIORITY Updates
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="priority.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1017,6 +1039,71 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#priority-0x0b-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      PRIORITY (0x0B) Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#priority2-0x0e-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      PRIORITY2 (0x0E) Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-from-decompiled-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification from Decompiled Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Notes
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1029,7 +1116,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/voice.html" class="md-nav__link">
+      <a href="voice.html" class="md-nav__link">
         
   
   
@@ -1052,7 +1139,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-9-udp-protocol/weapons.html" class="md-nav__link">
+      <a href="weapons.html" class="md-nav__link">
         
   
   
@@ -1162,18 +1249,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#contents" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Contents
+      Overview
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#connection-flow-overview" class="md-nav__link">
+  <a href="#priority-0x0b-structure" class="md-nav__link">
     <span class="md-ellipsis">
-      Connection Flow Overview
+      PRIORITY (0x0B) Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#priority2-0x0e-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      PRIORITY2 (0x0E) Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-from-decompiled-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification from Decompiled Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Notes
     </span>
   </a>
   
@@ -1195,25 +1309,116 @@
 
 
 
-<h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
-<p>This section covers the initial connection flow for the Wulfram 2 protocol.</p>
-<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><a href="../part-1-introduction/index.html">Part 1.0 - Introduction</a></strong> - Protocol fundamentals, byte order, packet structure</li>
-<li><strong><a href="../part-2-hello-handshake/index.html">Part 2.0 - HELLO Handshake</a></strong> - Initial server handshake (0x13)</li>
-<li><strong><a href="../part-3-login-authentication/index.html">Part 3.0 - Login Authentication</a></strong> - User authentication flow (0x11/0x12)</li>
-</ul>
-<h2 id="connection-flow-overview">Connection Flow Overview<a class="headerlink" href="#connection-flow-overview" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>Client                              Server
-  │                                   │
-  │◄──────── TCP CONNECT ────────────►│
-  │◄──────── HELLO (0x13) ────────────│
-  │───────── LOGIN (0x11) ───────────►│
-  │◄──────── LOGIN_STATUS (0x12) ─────│
-  │                                   │
-  └───────── Ready for BEHAVIOR ──────┘
+<h1 id="udp-priority-0x0b-and-priority2-0x0e">UDP PRIORITY (0x0B) and PRIORITY2 (0x0E)<a class="headerlink" href="#udp-priority-0x0b-and-priority2-0x0e" title="Permanent link">&para;</a></h1>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>PRIORITY packets transmit real-time game state updates that need low latency but can tolerate occasional packet loss. These include player positions, velocities, and other frequently-changing state.</p>
+<hr />
+<h3 id="priority-0x0b-structure">PRIORITY (0x0B) Structure<a class="headerlink" href="#priority-0x0b-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>PRIORITY Packet Structure:
+┌──────────┬──────────────┬──────────────┬──────────────┬─────────────────────┐
+│  TYPE    │  OBJECT_ID   │  STRING_1    │  STRING_2    │  POSITION/STATE     │
+│  0x0B    │  (4 bytes)   │  (variable)  │  (variable)  │  (3 × 4 bytes)      │
+└──────────┴──────────────┴──────────────┴──────────────┴─────────────────────┘
 </code></pre></div>
-<p>Continue to the Introduction to learn the protocol fundamentals.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Size</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td>1</td>
+<td>uint8</td>
+<td><code>0x0B</code></td>
+</tr>
+<tr>
+<td>Object ID</td>
+<td>4</td>
+<td>uint32 BE</td>
+<td>Entity being updated</td>
+</tr>
+<tr>
+<td>String 1</td>
+<td>variable</td>
+<td>length-prefixed</td>
+<td>Position data as string (parsed as floats)</td>
+</tr>
+<tr>
+<td>String 2</td>
+<td>variable</td>
+<td>length-prefixed</td>
+<td>Additional position/velocity data</td>
+</tr>
+<tr>
+<td>Field 3</td>
+<td>4</td>
+<td>uint32 BE</td>
+<td>Unknown</td>
+</tr>
+<tr>
+<td>Field 4</td>
+<td>4</td>
+<td>uint32 BE</td>
+<td>Unknown</td>
+</tr>
+<tr>
+<td>Field 5</td>
+<td>4</td>
+<td>uint32 BE</td>
+<td>Unknown</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="priority2-0x0e-structure">PRIORITY2 (0x0E) Structure<a class="headerlink" href="#priority2-0x0e-structure" title="Permanent link">&para;</a></h3>
+<p>PRIORITY2 appears to be a simpler variant:</p>
+<div class="highlight"><pre><span></span><code>PRIORITY2 Packet Structure:
+┌──────────┬──────────────┬──────────────┐
+│  TYPE    │  STRING_1    │  STRING_2    │
+│  0x0E    │  (variable)  │  (variable)  │
+└──────────┴──────────────┴──────────────┘
+</code></pre></div>
+<hr />
+<h3 id="verification-from-decompiled-code">Verification from Decompiled Code<a class="headerlink" href="#verification-from-decompiled-code" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// PRIORITY handler - FUN_00413be0 (line 19053-19095)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">FUN_00413be0</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;PRIORITY&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_18</span><span class="p">);</span><span class="w">     </span><span class="c1">// Object ID (4 bytes)</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_1c</span><span class="p">);</span><span class="w">     </span><span class="c1">// String 1 (length-prefixed)</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="n">local_30</span><span class="p">);</span><span class="w">      </span><span class="c1">// String 2 (length-prefixed)</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_20</span><span class="p">);</span><span class="w">     </span><span class="c1">// Field 3</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_24</span><span class="p">);</span><span class="w">     </span><span class="c1">// Field 4</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_28</span><span class="p">);</span><span class="w">     </span><span class="c1">// Field 5</span>
+<span class="w">    </span><span class="c1">// String contains position like &quot;1.0 2.0 3.0&quot; - parsed with sscanf</span>
+<span class="w">    </span><span class="n">FID_conflict__sscanf</span><span class="p">(</span><span class="n">local_30</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;%lf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_10</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="c1">// PRIORITY2 handler - FUN_00413f80 (line 19225-19256)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">FUN_00413f80</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;PRIORITY&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Note: same debug name</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_30</span><span class="p">);</span><span class="w">     </span><span class="c1">// String 1: &quot;%f %f %f&quot; format</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="n">local_2c</span><span class="p">);</span><span class="w">      </span><span class="c1">// String 2: &quot;%f %f %f&quot; format</span>
+<span class="w">    </span><span class="c1">// Parses as 3D vectors</span>
+<span class="w">    </span><span class="n">FID_conflict__sscanf</span><span class="p">(</span><span class="n">local_30</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%f %f %f&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_24</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_20</span><span class="p">,</span><span class="w"> </span><span class="n">local_1c</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FID_conflict__sscanf</span><span class="p">(</span><span class="n">local_2c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="s">&quot;%f %f %f&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_c</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_8</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="usage-notes">Usage Notes<a class="headerlink" href="#usage-notes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Position strings use space-separated float format: <code>"123.456 789.012 345.678"</code></li>
+<li>These packets are sent frequently (potentially every frame for moving objects)</li>
+<li>Server should throttle/aggregate updates to avoid flooding clients</li>
+</ul>
+<hr />
+<p><em>Back to <a href="index.html">UDP Protocol Overview</a></em></p>
 
 
 

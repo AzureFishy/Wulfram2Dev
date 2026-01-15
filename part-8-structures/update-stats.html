@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../index.html">
+        <link rel="prev" href="birth-notice.html">
       
       
-        <link rel="next" href="../part-1-introduction/index.html">
+        <link rel="next" href="../part-9-udp-protocol/index.html">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Getting Started - Wulfram 2 Server Implementation Guide</title>
+        <title>UPDATE_STATS - Wulfram 2 Server Implementation Guide</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started" class="md-skip">
+        <a href="#update_stats-0x1c" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting Started
+              UPDATE_STATS
             
           </span>
         </div>
@@ -227,8 +227,6 @@
       
   
   
-    
-  
   
   
     
@@ -253,15 +251,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="index.html" class="md-nav__link md-nav__link--active">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
               
   
   
@@ -274,13 +272,13 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Getting Started
@@ -749,6 +747,8 @@
       
   
   
+    
+  
   
   
     
@@ -773,15 +773,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../part-8-structures/index.html" class="md-nav__link ">
+            <a href="index.html" class="md-nav__link ">
               
   
   
@@ -800,7 +800,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Structures
@@ -816,7 +816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+      <a href="add-to-roster.html" class="md-nav__link">
         
   
   
@@ -839,7 +839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+      <a href="birth-notice.html" class="md-nav__link">
         
   
   
@@ -859,10 +859,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../part-8-structures/update-stats.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 8.3 - UPDATE_STATS
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="update-stats.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -873,6 +895,80 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#packet-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Layout
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-from-decompiled-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification from Decompiled Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python Implementation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1162,18 +1258,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#contents" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Contents
+      Overview
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#connection-flow-overview" class="md-nav__link">
+  <a href="#packet-structure" class="md-nav__link">
     <span class="md-ellipsis">
-      Connection Flow Overview
+      Packet Structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Layout
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-from-decompiled-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification from Decompiled Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python Implementation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes
     </span>
   </a>
   
@@ -1195,25 +1327,158 @@
 
 
 
-<h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
-<p>This section covers the initial connection flow for the Wulfram 2 protocol.</p>
-<h2 id="contents">Contents<a class="headerlink" href="#contents" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><a href="../part-1-introduction/index.html">Part 1.0 - Introduction</a></strong> - Protocol fundamentals, byte order, packet structure</li>
-<li><strong><a href="../part-2-hello-handshake/index.html">Part 2.0 - HELLO Handshake</a></strong> - Initial server handshake (0x13)</li>
-<li><strong><a href="../part-3-login-authentication/index.html">Part 3.0 - Login Authentication</a></strong> - User authentication flow (0x11/0x12)</li>
-</ul>
-<h2 id="connection-flow-overview">Connection Flow Overview<a class="headerlink" href="#connection-flow-overview" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>Client                              Server
-  │                                   │
-  │◄──────── TCP CONNECT ────────────►│
-  │◄──────── HELLO (0x13) ────────────│
-  │───────── LOGIN (0x11) ───────────►│
-  │◄──────── LOGIN_STATUS (0x12) ─────│
-  │                                   │
-  └───────── Ready for BEHAVIOR ──────┘
+<h1 id="update_stats-0x1c">UPDATE_STATS (0x1C)<a class="headerlink" href="#update_stats-0x1c" title="Permanent link">&para;</a></h1>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The UPDATE_STATS packet updates player statistics in the game roster. This packet is sent from the server to clients when a player's stats change (kills, deaths, score, etc.).</p>
+<hr />
+<h3 id="packet-structure">Packet Structure<a class="headerlink" href="#packet-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>UPDATE_STATS Packet Structure:
+┌──────────┬──────────────┬──────────────┬──────────────┬──────────────┐
+│  TYPE    │   LENGTH     │  FIELD_1     │  FIELD_2     │  STATS...    │
+│  0x1C    │  (2 bytes)   │  (4 bytes)   │  (4 bytes)   │  (variable)  │
+└──────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 </code></pre></div>
-<p>Continue to the Introduction to learn the protocol fundamentals.</p>
+<h3 id="field-layout">Field Layout<a class="headerlink" href="#field-layout" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Offset</th>
+<th>Size</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>uint8</td>
+<td>Packet type: <code>0x1C</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>uint16 BE</td>
+<td>Payload length</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4</td>
+<td>int32 BE</td>
+<td>Field 1 (possibly player_id)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>4</td>
+<td>int32 BE</td>
+<td>Field 2 (possibly object_id)</td>
+</tr>
+<tr>
+<td>11</td>
+<td>2</td>
+<td>uint16 BE</td>
+<td>Stat field 1</td>
+</tr>
+<tr>
+<td>13</td>
+<td>2</td>
+<td>uint16 BE</td>
+<td>Stat field 2</td>
+</tr>
+<tr>
+<td>15</td>
+<td>2</td>
+<td>uint16 BE</td>
+<td>Stat field 3</td>
+</tr>
+<tr>
+<td>17</td>
+<td>2</td>
+<td>uint16 BE</td>
+<td>Stat field 4</td>
+</tr>
+<tr>
+<td>19</td>
+<td>2</td>
+<td>uint16 BE</td>
+<td>Stat field 5</td>
+</tr>
+<tr>
+<td>21</td>
+<td>8</td>
+<td>fixed64</td>
+<td>Extended stat 1 (position/score?)</td>
+</tr>
+<tr>
+<td>29</td>
+<td>8</td>
+<td>fixed64</td>
+<td>Extended stat 2</td>
+</tr>
+<tr>
+<td>37</td>
+<td>4</td>
+<td>int32 BE</td>
+<td>Final field</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total payload size</strong>: ~38 bytes (variable)</p>
+<hr />
+<h3 id="verification-from-decompiled-code">Verification from Decompiled Code<a class="headerlink" href="#verification-from-decompiled-code" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_0046d730 (line 77776-77791)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0046d730</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;UPDATE_STATS&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">();</span><span class="w">      </span><span class="c1">// int32 - field 1</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">();</span><span class="w">      </span><span class="c1">// int32 - field 2  </span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">();</span><span class="w">      </span><span class="c1">// uint16 - stat 1</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">();</span><span class="w">      </span><span class="c1">// uint16 - stat 2</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">();</span><span class="w">      </span><span class="c1">// uint16 - stat 3</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">();</span><span class="w">      </span><span class="c1">// uint16 - stat 4</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">();</span><span class="w">      </span><span class="c1">// uint16 - stat 5</span>
+<span class="w">    </span><span class="n">FUN_004e51d0</span><span class="p">();</span><span class="w">      </span><span class="c1">// extended value (likely 8-byte fixed point)</span>
+<span class="w">    </span><span class="n">FUN_004e51d0</span><span class="p">();</span><span class="w">      </span><span class="c1">// extended value</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">();</span><span class="w">      </span><span class="c1">// int32 - final field</span>
+<span class="w">    </span><span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">param_3</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FUN_00475ec0</span><span class="p">(...);</span><span class="w">   </span><span class="c1">// Apply stats update</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="python-implementation">Python Implementation<a class="headerlink" href="#python-implementation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_update_stats</span><span class="p">(</span><span class="n">player_id</span><span class="p">,</span> <span class="n">object_id</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an UPDATE_STATS packet</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        player_id: Player identifier</span>
+<span class="sd">        object_id: Object/entity identifier</span>
+<span class="sd">        stats: Dictionary with stat fields</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">player_id</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">object_id</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stat1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stat2&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stat3&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stat4&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stat5&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;q&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extended1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;q&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extended2&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">make_packet</span><span class="p">(</span><span class="mh">0x1C</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>This packet is critical for maintaining roster state</li>
+<li>The uint16 fields likely represent kills, deaths, assists, score components</li>
+<li>Extended fields may contain floating-point values encoded as 64-bit fixed point</li>
+<li>Further packet capture analysis needed to confirm field meanings</li>
+</ul>
+<hr />
+<p><em>Back to <a href="index.html">Structures Overview</a></em></p>
 
 
 
