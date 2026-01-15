@@ -1,0 +1,2030 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="part-4-3-entity-core-stats.html">
+      
+      
+        <link rel="next" href="part-4-5-physics-tables.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Vehicle Type Data - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Vehicle Type Data
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="part-4-4-vehicle-type-data.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-4-behavior-packet-vehicle-type-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 4-4: BEHAVIOR Packet - Vehicle Type Data
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4-4: BEHAVIOR Packet - Vehicle Type Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vehicle-type-count-2-fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vehicle Type Count: 2 (Fixed)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vehicle-info-structure-memory-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vehicle Info Structure (Memory Layout)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wire-format-36-bytes-per-vehicle" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wire Format (36 bytes per vehicle)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-purpose-analysis-speculative" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Purpose Analysis (Speculative)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-size-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Size Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-values-from-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default Values from Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-vehicle-type-data-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building Vehicle Type Data in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simplified-version-default-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simplified Version (Default Values)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-vehicle-type-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Vehicle Type Bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-2-playable-vehicle-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      The 2 Playable Vehicle Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cumulative-offset-after-section-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cumulative Offset After Section 4
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-4-behavior-packet-vehicle-type-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 4-4: BEHAVIOR Packet - Vehicle Type Data
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4-4: BEHAVIOR Packet - Vehicle Type Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vehicle-type-count-2-fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vehicle Type Count: 2 (Fixed)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vehicle-info-structure-memory-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vehicle Info Structure (Memory Layout)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wire-format-36-bytes-per-vehicle" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wire Format (36 bytes per vehicle)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-purpose-analysis-speculative" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Purpose Analysis (Speculative)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-size-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Size Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-values-from-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default Values from Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-vehicle-type-data-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building Vehicle Type Data in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simplified-version-default-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simplified Version (Default Values)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-vehicle-type-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Vehicle Type Bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-2-playable-vehicle-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      The 2 Playable Vehicle Types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cumulative-offset-after-section-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cumulative Offset After Section 4
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="part-4-4-behavior-packet-vehicle-type-data">Part 4-4: BEHAVIOR Packet - Vehicle Type Data<a class="headerlink" href="#part-4-4-behavior-packet-vehicle-type-data" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The Vehicle Type Data section transmits physics and movement parameters for the <strong>2 playable vehicle types</strong>: Tank and Scout (Medic). </p>
+<blockquote>
+<p><strong>Historical Note</strong>: Wulfram 2 was designed to support additional vehicles (Bomber, Transport, Assault Platform), but these were either gameplay-broken (Bomber was too overpowered) or incomplete. In the released game, only Tank and Scout are playable. The client still registers exactly 2 vehicle types.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>Position in BEHAVIOR Packet:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  SECTION 1: Fixed Header (95 bytes)                        ✓ Complete  │
+│  SECTION 2: Entity Weapon Data (2,340 bytes)               ✓ Complete  │
+│  SECTION 3: Entity Core Stats (468 bytes)                  ✓ Complete  │
+├─────────────────────────────────────────────────────────────────────────┤
+│  SECTION 4: Vehicle Type Data (72 bytes)                   ◄ YOU ARE   │
+│             2 vehicle types × 36 bytes each                    HERE    │
+├─────────────────────────────────────────────────────────────────────────┤
+│  SECTION 5: Physics Tables + Vehicle Models (variable)                 │
+│  PACKET FINALIZATION: Byte Alignment                                   │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="the-handler-code">The Handler Code<a class="headerlink" href="#the-handler-code" title="Permanent link">&para;</a></h3>
+<p>From FUN_004e5ce0 (lines 157822-157847):</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_004e5ce0</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="n">puVar1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iVar2</span><span class="p">;</span>
+<span class="w">    </span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="n">puVar3</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">FUN_004e5080</span><span class="p">();</span><span class="w">                                </span><span class="c1">// Initialize context</span>
+<span class="w">    </span><span class="n">FUN_004e5090</span><span class="p">(</span><span class="n">param_1</span><span class="p">);</span><span class="w">                         </span><span class="c1">// Set context pointer</span>
+
+<span class="w">    </span><span class="c1">// Get first element from vehicle type linked list</span>
+<span class="w">    </span><span class="n">puVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">**</span><span class="p">)(</span><span class="n">DAT_005ba124</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">puVar3</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="mh">0x0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">puVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">*</span><span class="n">puVar3</span><span class="p">;</span><span class="w">            </span><span class="c1">// Next pointer</span>
+<span class="w">        </span><span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">puVar3</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span><span class="w">           </span><span class="c1">// Vehicle info structure pointer</span>
+
+<span class="w">        </span><span class="c1">// Read 9 fields (36 bytes total):</span>
+<span class="w">        </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x00</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: fixed-point (field 1)</span>
+<span class="w">        </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x08</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: fixed-point (field 2)</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: uint32 BE   (field 3)</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x14</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: uint32 BE   (field 4)</span>
+<span class="w">        </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x18</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: fixed-point (field 5)</span>
+<span class="w">        </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x20</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: fixed-point (field 6)</span>
+<span class="w">        </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x28</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: fixed-point (field 7)</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x30</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: uint32 BE   (field 8)</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x34</span><span class="p">);</span><span class="w">    </span><span class="c1">// 4 bytes: uint32 BE   (field 9)</span>
+
+<span class="w">        </span><span class="n">puVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">puVar1</span><span class="p">;</span><span class="w">               </span><span class="c1">// Move to next vehicle type</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="vehicle-type-count-2-fixed">Vehicle Type Count: 2 (Fixed)<a class="headerlink" href="#vehicle-type-count-2-fixed" title="Permanent link">&para;</a></h3>
+<p>The client registers exactly <strong>2 vehicle types</strong> during initialization:</p>
+<p>From FUN_004e5b50 (lines 157814-157815):
+<div class="highlight"><pre><span></span><code><span class="n">FUN_004e5ad0</span><span class="p">();</span><span class="w">    </span><span class="c1">// Register vehicle type 0 (Tank)</span>
+<span class="n">FUN_004e5ad0</span><span class="p">();</span><span class="w">    </span><span class="c1">// Register vehicle type 1 (Scout)</span>
+</code></pre></div></p>
+<p>The registration function FUN_004e5ad0 adds each vehicle to a linked list, which FUN_004e5ce0 then iterates through.</p>
+<blockquote>
+<p><strong>Important</strong>: The linked list is traversed in <strong>registration order</strong>. Since <code>FUN_004e5ad0()</code> is called for Tank first (index 0), then Scout (index 1), the server must send Tank data before Scout data. Reversing this order will cause the client to apply Tank physics to Scout and vice versa.</p>
+</blockquote>
+<hr />
+<h3 id="vehicle-info-structure-memory-layout">Vehicle Info Structure (Memory Layout)<a class="headerlink" href="#vehicle-info-structure-memory-layout" title="Permanent link">&para;</a></h3>
+<p>Each vehicle type has a 0x38 (56) byte structure in memory:</p>
+<div class="highlight"><pre><span></span><code>Vehicle Info Memory Structure (56 bytes / 0x38):
+┌─────────┬──────┬─────────────────────────────────────────────────────────┐
+│ Offset  │ Size │ Description                                             │
+├─────────┼──────┼─────────────────────────────────────────────────────────┤
+│ 0x00    │ 8    │ Field 1 (double) - Default: 20.0                        │
+│ 0x08    │ 8    │ Field 2 (double) - Default: 4.0                         │
+│ 0x10    │ 4    │ Field 3 (uint32) - Default: 700                         │
+│ 0x14    │ 4    │ Field 4 (uint32) - Default: 550 (0x226)                 │
+│ 0x18    │ 8    │ Field 5 (double) - Default: 1.0                         │
+│ 0x20    │ 8    │ Field 6 (double) - Default: 0.5                         │
+│ 0x28    │ 8    │ Field 7 (double) - Default: 2.0                         │
+│ 0x30    │ 4    │ Field 8 (uint32) - Default: 0                           │
+│ 0x34    │ 4    │ Field 9 (uint32) - Default: 0                           │
+└─────────┴──────┴─────────────────────────────────────────────────────────┘
+Total Memory: 56 bytes (0x38)
+</code></pre></div>
+<hr />
+<h3 id="wire-format-36-bytes-per-vehicle">Wire Format (36 bytes per vehicle)<a class="headerlink" href="#wire-format-36-bytes-per-vehicle" title="Permanent link">&para;</a></h3>
+<p>The wire format is more compact - doubles are sent as 4-byte fixed-point values:</p>
+<div class="highlight"><pre><span></span><code>Vehicle Type Wire Format (36 bytes):
+┌───────────┬──────┬────────────────┬─────────────────────────────────────┐
+│ Wire Byte │ Size │ Reader Func    │ Description                         │
+├───────────┼──────┼────────────────┼─────────────────────────────────────┤
+│ 0-3       │ 4    │ FUN_004e51d0   │ Field 1 (fixed-point → double)      │
+│ 4-7       │ 4    │ FUN_004e51d0   │ Field 2 (fixed-point → double)      │
+│ 8-11      │ 4    │ FUN_00509310   │ Field 3 (uint32 big-endian)         │
+│ 12-15     │ 4    │ FUN_00509310   │ Field 4 (uint32 big-endian)         │
+│ 16-19     │ 4    │ FUN_004e51d0   │ Field 5 (fixed-point → double)      │
+│ 20-23     │ 4    │ FUN_004e51d0   │ Field 6 (fixed-point → double)      │
+│ 24-27     │ 4    │ FUN_004e51d0   │ Field 7 (fixed-point → double)      │
+│ 28-31     │ 4    │ FUN_00509310   │ Field 8 (uint32 big-endian)         │
+│ 32-35     │ 4    │ FUN_00509310   │ Field 9 (uint32 big-endian)         │
+└───────────┴──────┴────────────────┴─────────────────────────────────────┘
+Total Wire: 36 bytes per vehicle type
+</code></pre></div>
+<hr />
+<h3 id="field-purpose-analysis-speculative">Field Purpose Analysis (Speculative)<a class="headerlink" href="#field-purpose-analysis-speculative" title="Permanent link">&para;</a></h3>
+<p>Based on code analysis patterns, these fields likely control:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Tank</th>
+<th>Scout</th>
+<th>Likely Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>20.0</td>
+<td>20.0</td>
+<td>20.0</td>
+<td>Max speed or base velocity multiplier</td>
+</tr>
+<tr>
+<td>2</td>
+<td>4.0</td>
+<td>4.0</td>
+<td>4.0</td>
+<td>Acceleration rate</td>
+</tr>
+<tr>
+<td>3</td>
+<td>700</td>
+<td>700</td>
+<td>700</td>
+<td>Turn rate or rotation speed</td>
+</tr>
+<tr>
+<td>4</td>
+<td>550</td>
+<td>550</td>
+<td>550</td>
+<td>Unknown (consistent between vehicles)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>1.0</td>
+<td>0.8</td>
+<td>0.8</td>
+<td>Handling/traction factor</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0.5</td>
+<td>0.05</td>
+<td>0.15</td>
+<td>Braking/friction coefficient</td>
+</tr>
+<tr>
+<td>7</td>
+<td>2.0</td>
+<td>1.3</td>
+<td>1.1</td>
+<td>Mass/inertia factor</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>Timer/cooldown related</td>
+</tr>
+<tr>
+<td>9</td>
+<td>0</td>
+<td>33000</td>
+<td>13000</td>
+<td>Fuel/energy capacity</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note</strong>: These purposes are inferred from code context and may not be exact. The Scout's higher Field 6 (0.15 vs 0.05) and lower Field 9 (13000 vs 33000) align with it being a faster, lighter vehicle with less fuel capacity.</p>
+</blockquote>
+<hr />
+<h3 id="section-size-calculation">Section Size Calculation<a class="headerlink" href="#section-size-calculation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Vehicle Type Data Size:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  2 vehicle types × 36 bytes = 72 bytes                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+This size is FIXED - always exactly 72 bytes.
+</code></pre></div>
+<hr />
+<h3 id="default-values-from-code">Default Values from Code<a class="headerlink" href="#default-values-from-code" title="Permanent link">&para;</a></h3>
+<p>From FUN_004e5a20 (lines 157669-157702) and FUN_004e5b50 (lines 157761-157773):</p>
+<h4 id="default-values-all-vehicles">Default Values (All Vehicles):<a class="headerlink" href="#default-values-all-vehicles" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Memory Offset</th>
+<th>Hex Value</th>
+<th>Decoded Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0x00</td>
+<td>0x4034000000000000</td>
+<td>20.0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0x08</td>
+<td>0x4010000000000000</td>
+<td>4.0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x10</td>
+<td>0x000002BC</td>
+<td>700</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0x14</td>
+<td>0x00000226</td>
+<td>550</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0x18</td>
+<td>0x3FF0000000000000</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0x20</td>
+<td>0x3FE0000000000000</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x28</td>
+<td>0x4000000000000000</td>
+<td>2.0</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x30</td>
+<td>0x00000000</td>
+<td>0</td>
+</tr>
+<tr>
+<td>9</td>
+<td>0x34</td>
+<td>0x00000000</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tank-specific-overrides-vehicle-type-0">Tank-Specific Overrides (Vehicle Type 0):<a class="headerlink" href="#tank-specific-overrides-vehicle-type-0" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Memory Offset</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>0x18</td>
+<td>0.8</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>0x20</td>
+<td>0.05</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x28</td>
+<td>1.3</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>0x34</td>
+<td>33000</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="scout-specific-overrides-vehicle-type-1">Scout-Specific Overrides (Vehicle Type 1):<a class="headerlink" href="#scout-specific-overrides-vehicle-type-1" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Memory Offset</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>0x18</td>
+<td>0.8</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>0x20</td>
+<td>0.15</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x28</td>
+<td>1.1</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>0x34</td>
+<td>13000</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Implementation Note</strong>: Field 8 (offset 0x30) is not explicitly initialized in the code—it relies on <code>operator_new</code> returning zero-initialized memory. Your server should explicitly set Field 8 to 0 rather than relying on implicit behavior.</p>
+</blockquote>
+<hr />
+<h3 id="data-flow-diagram">Data Flow Diagram<a class="headerlink" href="#data-flow-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Vehicle Type Data Reading Order:
+═══════════════════════════════════════════════════════════════════════════
+
+Vehicle Type 0 (Tank):
+  [field1][field2][field3][field4][field5][field6][field7][field8][field9]
+  [  4   ][  4   ][  4   ][  4   ][  4   ][  4   ][  4   ][  4   ][  4   ]
+  = 36 bytes
+
+Vehicle Type 1 (Scout):
+  [field1][field2][field3][field4][field5][field6][field7][field8][field9]
+  [  4   ][  4   ][  4   ][  4   ][  4   ][  4   ][  4   ][  4   ][  4   ]
+  = 36 bytes
+
+═══════════════════════════════════════════════════════════════════════════
+Total: 2 × 36 = 72 bytes
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="building-vehicle-type-data-in-python">Building Vehicle Type Data in Python<a class="headerlink" href="#building-vehicle-type-data-in-python" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_fixed_point</span><span class="p">(</span><span class="n">float_value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a float/double to fixed-point format (4 bytes big-endian).&quot;&quot;&quot;</span>
+    <span class="n">wire_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">float_value</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">wire_value</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_vehicle_type_data</span><span class="p">(</span><span class="n">field1</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">field2</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">field3</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">field4</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span>
+                              <span class="n">field5</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">field6</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">field7</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> 
+                              <span class="n">field8</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">field9</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create data for a single vehicle type (36 bytes).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field1-field7: Physics parameters (doubles, sent as fixed-point)</span>
+<span class="sd">        field3-field4, field8-field9: Integer parameters (uint32)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        36 bytes of vehicle type data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># Field 1: fixed-point (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_fixed_point</span><span class="p">(</span><span class="n">field1</span><span class="p">))</span>
+
+    <span class="c1"># Field 2: fixed-point (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_fixed_point</span><span class="p">(</span><span class="n">field2</span><span class="p">))</span>
+
+    <span class="c1"># Field 3: uint32 big-endian (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">field3</span><span class="p">))</span>
+
+    <span class="c1"># Field 4: uint32 big-endian (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">field4</span><span class="p">))</span>
+
+    <span class="c1"># Field 5: fixed-point (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_fixed_point</span><span class="p">(</span><span class="n">field5</span><span class="p">))</span>
+
+    <span class="c1"># Field 6: fixed-point (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_fixed_point</span><span class="p">(</span><span class="n">field6</span><span class="p">))</span>
+
+    <span class="c1"># Field 7: fixed-point (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_fixed_point</span><span class="p">(</span><span class="n">field7</span><span class="p">))</span>
+
+    <span class="c1"># Field 8: uint32 big-endian (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">field8</span><span class="p">))</span>
+
+    <span class="c1"># Field 9: uint32 big-endian (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">field9</span><span class="p">))</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">36</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Vehicle type should be 36 bytes, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_behavior_vehicle_type_data</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the complete Vehicle Type Data section (2 vehicles = 72 bytes).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        72 bytes of vehicle type data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># Vehicle Type 0: Tank</span>
+    <span class="c1"># Uses defaults except: field5=0.8, field6=0.05, field7=1.3, field9=33000</span>
+    <span class="n">tank_data</span> <span class="o">=</span> <span class="n">create_vehicle_type_data</span><span class="p">(</span>
+        <span class="n">field1</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
+        <span class="n">field2</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+        <span class="n">field3</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
+        <span class="n">field4</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span>
+        <span class="n">field5</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">field6</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">field7</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>
+        <span class="n">field8</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">field9</span><span class="o">=</span><span class="mi">33000</span>
+    <span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tank_data</span><span class="p">)</span>
+
+    <span class="c1"># Vehicle Type 1: Scout (Medic)</span>
+    <span class="c1"># Uses defaults except: field5=0.8, field6=0.15, field7=1.1, field9=13000</span>
+    <span class="n">scout_data</span> <span class="o">=</span> <span class="n">create_vehicle_type_data</span><span class="p">(</span>
+        <span class="n">field1</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
+        <span class="n">field2</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+        <span class="n">field3</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
+        <span class="n">field4</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span>
+        <span class="n">field5</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="n">field6</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+        <span class="n">field7</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
+        <span class="n">field8</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">field9</span><span class="o">=</span><span class="mi">13000</span>
+    <span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">scout_data</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">72</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Vehicle type data should be 72 bytes, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="simplified-version-default-values">Simplified Version (Default Values)<a class="headerlink" href="#simplified-version-default-values" title="Permanent link">&para;</a></h3>
+<p>For initial testing, you can use default values for both vehicles:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_default_vehicle_type_data</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create 72 bytes using default values for both vehicle types.&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># Both vehicles with defaults</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_vehicle_type_data</span><span class="p">())</span>  <span class="c1"># All defaults</span>
+
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="example-vehicle-type-bytes">Example Vehicle Type Bytes<a class="headerlink" href="#example-vehicle-type-bytes" title="Permanent link">&para;</a></h3>
+<p>Here's the Tank (Vehicle Type 0) with its specific values:
+<div class="highlight"><pre><span></span><code>Tank Vehicle Type Data (36 bytes):
+
+Field 1 (20.0):     00 14 00 00    (20.0 × 65536 = 1,310,720 = 0x00140000)
+Field 2 (4.0):      00 04 00 00    (4.0 × 65536 = 262,144 = 0x00040000)
+Field 3 (700):      00 00 02 BC    (700 = 0x000002BC)
+Field 4 (550):      00 00 02 26    (550 = 0x00000226)
+Field 5 (0.8):      00 00 CC CC    (0.8 × 65536 ≈ 52,428 = 0x0000CCCC)*
+Field 6 (0.05):     00 00 0C CC    (0.05 × 65536 ≈ 3,276 = 0x00000CCC)*
+Field 7 (1.3):      00 01 4C CC    (1.3 × 65536 ≈ 85,196 = 0x00014CCC)*
+Field 8 (0):        00 00 00 00
+Field 9 (33000):    00 00 80 E8    (33000 = 0x000080E8)
+
+* Using int() truncation. Use round() for 0xCCCD/0xCCD values if preferred.
+</code></pre></div></p>
+<hr />
+<h3 id="the-2-playable-vehicle-types">The 2 Playable Vehicle Types<a class="headerlink" href="#the-2-playable-vehicle-types" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th>Vehicle Name</th>
+<th>Role</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Tank</td>
+<td>Main combat vehicle</td>
+<td>Default spawn, heavy armor</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Scout</td>
+<td>Fast reconnaissance / Medic</td>
+<td>Can heal teammates</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note</strong>: Other vehicles (Bomber, Transport, Assault Platform) exist in entity definitions but were never enabled for player use. The Bomber was tested but deemed too overpowered.</p>
+</blockquote>
+<hr />
+<h3 id="common-mistakes">Common Mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wrong vehicle count</td>
+<td>Data misalignment</td>
+<td>Send exactly 2 vehicle types</td>
+</tr>
+<tr>
+<td>Wrong bytes per vehicle</td>
+<td>Corruption of next section</td>
+<td>Send exactly 36 bytes each</td>
+</tr>
+<tr>
+<td>Little-endian integers</td>
+<td>Garbled values</td>
+<td>Use big-endian (<code>&gt;I</code>)</td>
+</tr>
+<tr>
+<td>Missing fixed-point conversion</td>
+<td>Physics values 65536× wrong</td>
+<td>Multiply floats by 65536</td>
+</tr>
+<tr>
+<td>Sending more vehicles</td>
+<td>Client reads garbage</td>
+<td>Only Tank and Scout are registered</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="verification-checklist">Verification Checklist<a class="headerlink" href="#verification-checklist" title="Permanent link">&para;</a></h3>
+<p>Before moving to Section 5, verify:</p>
+<ul>
+<li>[ ] Exactly 2 vehicle types (Tank, then Scout)</li>
+<li>[ ] Exactly 36 bytes per vehicle type</li>
+<li>[ ] Total size is exactly 72 bytes</li>
+<li>[ ] Fields 1, 2, 5, 6, 7: fixed-point encoded (4 bytes each)</li>
+<li>[ ] Fields 3, 4, 8, 9: uint32 big-endian (4 bytes each)</li>
+<li>[ ] Order: Tank first (index 0), Scout second (index 1)</li>
+</ul>
+<hr />
+<h3 id="section-summary">Section Summary<a class="headerlink" href="#section-summary" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Section Number</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Handler Function</td>
+<td>FUN_004e5ce0</td>
+</tr>
+<tr>
+<td>Vehicle Type Count</td>
+<td>2 (fixed: Tank and Scout)</td>
+</tr>
+<tr>
+<td>Bytes per Vehicle</td>
+<td>36</td>
+</tr>
+<tr>
+<td>Total Section Size</td>
+<td>72 bytes (fixed)</td>
+</tr>
+<tr>
+<td>Position After</td>
+<td>Entity Core Stats (offset 2,903)</td>
+</tr>
+<tr>
+<td>Position Before</td>
+<td>Physics Tables + Vehicle Models</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="cumulative-offset-after-section-4">Cumulative Offset After Section 4<a class="headerlink" href="#cumulative-offset-after-section-4" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>After Section 4:
+  Fixed Header:        95 bytes
+  Entity Weapon Data:  2,340 bytes
+  Entity Core Stats:   468 bytes
+  Vehicle Type Data:   72 bytes
+  ─────────────────────────────
+  Total:               2,975 bytes
+</code></pre></div>
+<hr />
+<p><em>Previous: <a href="part-4-3-entity-core-stats.html">Part 4-3: BEHAVIOR - Entity Core Stats</a></em><br />
+<em>Next: <a href="part-4-5-physics-tables.html">Part 4-5: BEHAVIOR - Physics Tables + Vehicle Models</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

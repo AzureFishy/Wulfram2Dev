@@ -1,0 +1,1898 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="../part-1-introduction/index.html">
+      
+      
+        <link rel="next" href="../part-3-login-authentication/index.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>HELLO Handshake - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              HELLO Handshake
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="index.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-the-hello-handshake" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 2: The HELLO Handshake
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: The HELLO Handshake">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-type-hello-0x13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Type: HELLO (0x13)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello-sub-type-0-version-check-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      HELLO Sub-Type 0: Version Check (REQUIRED)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello-sub-type-1-udp-port-information-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      HELLO Sub-Type 1: UDP Port Information (REQUIRED)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello-sub-type-2-server-name-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      HELLO Sub-Type 2: Server Name (OPTIONAL)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello-sub-type-3-acknowledgment-client-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      HELLO Sub-Type 3: Acknowledgment (Client → Server)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-hello-handshake-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete HELLO Handshake Implementation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expected-wire-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      Expected Wire Output
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-hello-packet-sizes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: HELLO Packet Sizes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-2-the-hello-handshake" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 2: The HELLO Handshake
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 2: The HELLO Handshake">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-type-hello-0x13" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Type: HELLO (0x13)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello-sub-type-0-version-check-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      HELLO Sub-Type 0: Version Check (REQUIRED)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello-sub-type-1-udp-port-information-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      HELLO Sub-Type 1: UDP Port Information (REQUIRED)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello-sub-type-2-server-name-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      HELLO Sub-Type 2: Server Name (OPTIONAL)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hello-sub-type-3-acknowledgment-client-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      HELLO Sub-Type 3: Acknowledgment (Client → Server)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-hello-handshake-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete HELLO Handshake Implementation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expected-wire-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      Expected Wire Output
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-hello-packet-sizes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: HELLO Packet Sizes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="part-2-the-hello-handshake">Part 2: The HELLO Handshake<a class="headerlink" href="#part-2-the-hello-handshake" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The HELLO handshake is the first exchange between server and client. When a client connects, the server must send a series of HELLO packets to:</p>
+<ol>
+<li><strong>Validate protocol version</strong> (REQUIRED - or client shows version error)</li>
+<li><strong>Provide UDP port info</strong> (REQUIRED - for voice/UDP features)</li>
+<li><strong>Identify the server</strong> (OPTIONAL - but recommended)</li>
+</ol>
+<div class="highlight"><pre><span></span><code>CLIENT                                    SERVER
+   │                                        │
+   │◄──────── TCP Connection ───────────────│
+   │                                        │
+   │◄──── HELLO sub=0 (version check) ──────│  REQUIRED
+   │                                        │
+   │◄──── HELLO sub=1 (UDP port info) ──────│  REQUIRED
+   │                                        │
+   │◄──── HELLO sub=2 (server name) ────────│  OPTIONAL
+   │                                        │
+</code></pre></div>
+<hr />
+<h3 id="packet-type-hello-0x13">Packet Type: HELLO (0x13)<a class="headerlink" href="#packet-type-hello-0x13" title="Permanent link">&para;</a></h3>
+<p>The HELLO packet is a <strong>polymorphic</strong> packet - its structure changes based on a sub-type byte.</p>
+<div class="highlight"><pre><span></span><code>HELLO Packet General Structure:
+┌──────────┬──────────────┬───────────┬─────────────────────┐
+│  TYPE    │   LENGTH     │ SUB_TYPE  │   SUB_TYPE DATA     │
+│  0x13    │  (2 bytes)   │ (1 byte)  │   (variable)        │
+└──────────┴──────────────┴───────────┴─────────────────────┘
+</code></pre></div>
+<h4 id="known-sub-types">Known Sub-Types<a class="headerlink" href="#known-sub-types" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Sub-Type</th>
+<th>Name</th>
+<th>Direction</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Version Check</td>
+<td>Server → Client</td>
+<td>Validate protocol version</td>
+</tr>
+<tr>
+<td>1</td>
+<td>UDP Info</td>
+<td>Server → Client</td>
+<td>Provide UDP port and interfaces</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Server Name</td>
+<td>Server → Client</td>
+<td>Identify server name</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Acknowledgment</td>
+<td>Client → Server</td>
+<td>Keep-alive/acknowledgment</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="hello-sub-type-0-version-check-required">HELLO Sub-Type 0: Version Check (REQUIRED)<a class="headerlink" href="#hello-sub-type-0-version-check-required" title="Permanent link">&para;</a></h3>
+<p>This is the <strong>most critical</strong> HELLO packet. If you don't send this, or send the wrong version, the client will display a "Version Mismatch" error and refuse to continue.</p>
+<h4 id="what-the-client-does">What the Client Does<a class="headerlink" href="#what-the-client-does" title="Permanent link">&para;</a></h4>
+<p>When the client receives HELLO sub-type 0:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_0046d020 (line 77553-77586 in wulfram2_exe.c)</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sub_type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_10</span><span class="p">);</span><span class="w">  </span><span class="c1">// Read 32-bit version number</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_10</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mh">0x4e89</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// VERSION MISMATCH!</span>
+<span class="w">        </span><span class="n">DAT_005dd67c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_10</span><span class="p">;</span><span class="w">    </span><span class="c1">// Store received version</span>
+<span class="w">        </span><span class="n">DAT_005dd674</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x4e89</span><span class="p">;</span><span class="w">      </span><span class="c1">// Store expected version</span>
+<span class="w">        </span><span class="n">DAT_00677f1d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">           </span><span class="c1">// Set error flag</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w">                      </span><span class="c1">// Show error screen</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// Version OK, continue...</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The magic number <strong>0x4E89</strong> (decimal 20105) is hardcoded in the client. You MUST send this exact value.</p>
+<h4 id="packet-structure">Packet Structure<a class="headerlink" href="#packet-structure" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>HELLO Sub-Type 0 Structure:
+┌──────────┬──────────────┬───────────┬─────────────────────────┐
+│  TYPE    │   LENGTH     │ SUB_TYPE  │   VERSION (uint32 BE)   │
+│  0x13    │   00 05      │   0x00    │   00 00 4E 89           │
+└──────────┴──────────────┴───────────┴─────────────────────────┘
+   1 byte     2 bytes       1 byte         4 bytes
+
+Total: 8 bytes on wire
+</code></pre></div>
+<h4 id="byte-by-byte-breakdown">Byte-by-Byte Breakdown<a class="headerlink" href="#byte-by-byte-breakdown" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Hex: 13 00 05 00 00 00 4E 89
+
+Position:  0  1  2  3  4  5  6  7
+           │  │  │  │  │  │  │  │
+           │  │  │  │  └──┴──┴──┴─ Version: 0x00004E89 = 20105
+           │  │  │  └─ Sub-type: 0 (version check)
+           │  └──┴─ Length: 0x0005 = 5 bytes
+           └─ Type: 0x13 (HELLO)
+</code></pre></div>
+<h4 id="python-implementation">Python Implementation<a class="headerlink" href="#python-implementation" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_hello_version</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create HELLO sub-type 0 packet (version check)</span>
+
+<span class="sd">    The client expects version 0x4E89. Any other value</span>
+<span class="sd">    triggers a &quot;Version Mismatch&quot; error screen.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PROTOCOL_VERSION</span> <span class="o">=</span> <span class="mh">0x4E89</span>
+
+    <span class="c1"># Build payload: sub_type (1 byte) + version (4 bytes BE)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x00</span><span class="p">])</span>  <span class="c1"># Sub-type 0</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">PROTOCOL_VERSION</span><span class="p">)</span>  <span class="c1"># Version as big-endian uint32</span>
+
+    <span class="c1"># Build complete packet: type + length + payload</span>
+    <span class="n">packet_type</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x13</span><span class="p">])</span>  <span class="c1"># HELLO</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>  <span class="c1"># Length as big-endian uint16</span>
+
+    <span class="k">return</span> <span class="n">packet_type</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="n">payload</span>
+
+<span class="c1"># Result: b&#39;\x13\x00\x05\x00\x00\x00\x4e\x89&#39;</span>
+</code></pre></div>
+<h4 id="verification">Verification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Expected output: 13 00 05 00 00 00 4E 89
+                 │  └──┬──┘ │  └────┬────┘
+                 │     │    │       │
+                 │     │    │       └─ 0x4E89 = 20105 (version)
+                 │     │    └─ Sub-type 0
+                 │     └─ Length = 5
+                 └─ Type 0x13 (HELLO)
+</code></pre></div>
+<hr />
+<h3 id="hello-sub-type-1-udp-port-information-required">HELLO Sub-Type 1: UDP Port Information (REQUIRED)<a class="headerlink" href="#hello-sub-type-1-udp-port-information-required" title="Permanent link">&para;</a></h3>
+<p>This packet tells the client which UDP port to use for voice chat and other UDP-based features.</p>
+<h4 id="what-the-client-does_1">What the Client Does<a class="headerlink" href="#what-the-client-does_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_0046d020 (line 77557-77570)</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_c</span><span class="p">);</span><span class="w">     </span><span class="c1">// Read 16-bit UDP port</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_14</span><span class="p">);</span><span class="w">    </span><span class="c1">// Read 16-bit interface count</span>
+<span class="w">    </span><span class="n">pvVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_malloc</span><span class="p">((</span><span class="n">local_14</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xffff</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pvVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pvVar1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="kt">short</span><span class="p">)</span><span class="n">local_14</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="n">pvVar3</span><span class="p">);</span><span class="w">   </span><span class="c1">// Read LENGTH-PREFIXED string!</span>
+<span class="w">            </span><span class="n">iVar4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">pvVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)((</span><span class="kt">int</span><span class="p">)</span><span class="n">pvVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">iVar4</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">local_14</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xffff</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>IMPORTANT</strong>: Interface strings use <strong>FUN_00509340</strong>, which reads length-prefixed strings (16-bit length + data including null terminator), NOT simple null-terminated strings!</p>
+<h4 id="packet-structure_1">Packet Structure<a class="headerlink" href="#packet-structure_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>HELLO Sub-Type 1 Structure:
+┌──────────┬──────────────┬───────────┬────────────┬─────────────┬────────────────────┐
+│  TYPE    │   LENGTH     │ SUB_TYPE  │ UDP_PORT   │ IFACE_COUNT │ INTERFACE_STRINGS  │
+│  0x13    │  (2 bytes)   │   0x01    │ (2 bytes)  │ (2 bytes)   │ (len-prefixed each)│
+└──────────┴──────────────┴───────────┴────────────┴─────────────┴────────────────────┘
+</code></pre></div>
+<p>Each interface string is encoded as:
+<div class="highlight"><pre><span></span><code>┌─────────────────┬──────────────────────────────┐
+│  STRING_LENGTH  │  STRING DATA (with \0)       │
+│  (2 bytes BE)   │  (LENGTH bytes)              │
+└─────────────────┴──────────────────────────────┘
+</code></pre></div></p>
+<h4 id="example-server-on-port-2627-with-one-interface-127001">Example: Server on port 2627 with one interface (127.0.0.1)<a class="headerlink" href="#example-server-on-port-2627-with-one-interface-127001" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Building the payload:
+├─ Sub-type:        01                              (1 byte)
+├─ UDP Port:        0A 43                           (2627 as big-endian uint16)
+├─ Interface count: 00 01                           (1 interface)
+└─ Interface #1:    00 0A 31 32 37 2E 30 2E 30 2E 31 00
+                    ───── ─────────────────────────────
+                      │              │
+                      │              └─ &quot;127.0.0.1\0&quot; (10 bytes)
+                      └─ Length: 10 (0x000A)
+
+Payload bytes: 01 0A 43 00 01 00 0A 31 32 37 2E 30 2E 30 2E 31 00
+               ── ───── ───── ───── ───────────────────────────────
+               │    │     │     │              │
+               │    │     │     │              └─ &quot;127.0.0.1&quot; + null (10 bytes)
+               │    │     │     └─ String length: 10
+               │    │     └─ Count: 1 interface
+               │    └─ Port: 2627 (0x0A43)
+               └─ Sub-type: 1
+
+Payload length: 1 + 2 + 2 + 2 + 10 = 17 bytes
+</code></pre></div>
+<h4 id="complete-packet">Complete Packet<a class="headerlink" href="#complete-packet" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Hex: 13 00 11 01 0A 43 00 01 00 0A 31 32 37 2E 30 2E 30 2E 31 00
+
+     13           - Type: HELLO
+     00 11        - Length: 17 bytes (0x0011)
+     01           - Sub-type: 1 (UDP info)
+     0A 43        - UDP Port: 2627
+     00 01        - Interface count: 1
+     00 0A        - String length: 10 bytes
+     31 32 37 2E 30 2E 30 2E 31 00 - &quot;127.0.0.1\0&quot;
+
+Total: 20 bytes on wire
+</code></pre></div>
+<blockquote>
+<p><strong>Note</strong>: After processing sub-type 1, the client may send back a HELLO 
+sub-type 0 packet containing the version number. This is normal client 
+behavior and can be logged but doesn't require a response.</p>
+</blockquote>
+<h4 id="python-implementation_1">Python Implementation<a class="headerlink" href="#python-implementation_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">encode_string</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encode a string for Wulfram 2 protocol.</span>
+<span class="sd">    Format: [length:2 bytes BE][string data with null terminator]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">string_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_bytes</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">length</span> <span class="o">+</span> <span class="n">string_bytes</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_hello_udp_info</span><span class="p">(</span><span class="n">udp_port</span><span class="o">=</span><span class="mi">2627</span><span class="p">,</span> <span class="n">interfaces</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create HELLO sub-type 1 packet (UDP port information)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        udp_port: The UDP port for voice/real-time features</span>
+<span class="sd">        interfaces: List of IP address strings (default: [&quot;127.0.0.1&quot;])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">interfaces</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">interfaces</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Build payload</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x01</span><span class="p">])</span>  <span class="c1"># Sub-type 1</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">udp_port</span><span class="p">)</span>  <span class="c1"># Port as big-endian uint16</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">interfaces</span><span class="p">))</span>  <span class="c1"># Count as big-endian uint16</span>
+
+    <span class="c1"># Add each interface string (LENGTH-PREFIXED, not just null-terminated!)</span>
+    <span class="k">for</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">interfaces</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">+=</span> <span class="n">encode_string</span><span class="p">(</span><span class="n">interface</span><span class="p">)</span>
+
+    <span class="c1"># Build complete packet</span>
+    <span class="n">packet_type</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x13</span><span class="p">])</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">packet_type</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="n">payload</span>
+
+<span class="c1"># Example output for port 2627, interface &quot;127.0.0.1&quot;:</span>
+<span class="c1"># b&#39;\x13\x00\x11\x01\x0a\x43\x00\x01\x00\x0a127.0.0.1\x00&#39;</span>
+<span class="c1">#                              ─────</span>
+<span class="c1">#                                │</span>
+<span class="c1">#                                └─ Length prefix (was missing in v4!)</span>
+</code></pre></div>
+<h4 id="multiple-interfaces-example">Multiple Interfaces Example<a class="headerlink" href="#multiple-interfaces-example" title="Permanent link">&para;</a></h4>
+<p>If your server has multiple network interfaces:</p>
+<div class="highlight"><pre><span></span><code><span class="n">packet</span> <span class="o">=</span> <span class="n">create_hello_udp_info</span><span class="p">(</span><span class="mi">2627</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span> <span class="s2">&quot;10.0.0.1&quot;</span><span class="p">])</span>
+
+<span class="c1"># Payload breakdown:</span>
+<span class="c1"># 01                    - Sub-type 1</span>
+<span class="c1"># 0A 43                 - Port 2627</span>
+<span class="c1"># 00 02                 - 2 interfaces</span>
+<span class="c1"># 00 0E                 - First string length: 14</span>
+<span class="c1"># 31 39 32 2E 31 36 38 2E 31 2E 31 30 30 00  - &quot;192.168.1.100\0&quot;</span>
+<span class="c1"># 00 0A                 - Second string length: 10</span>
+<span class="c1"># 31 30 2E 30 2E 30 2E 31 00                 - &quot;10.0.0.1\0&quot;</span>
+</code></pre></div>
+<hr />
+<h3 id="hello-sub-type-2-server-name-optional">HELLO Sub-Type 2: Server Name (OPTIONAL)<a class="headerlink" href="#hello-sub-type-2-server-name-optional" title="Permanent link">&para;</a></h3>
+<p>This packet identifies your server to the client. While not required for the connection to work, it's good practice to send it.</p>
+<h4 id="what-the-client-does_2">What the Client Does<a class="headerlink" href="#what-the-client-does_2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_0046d020 (line 77572-77573)</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_8</span><span class="p">);</span><span class="w">  </span><span class="c1">// Read LENGTH-PREFIXED string!</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>IMPORTANT</strong>: The server name uses <strong>FUN_00509340</strong>, which reads a length-prefixed string, NOT a simple null-terminated string!</p>
+<h4 id="packet-structure_2">Packet Structure<a class="headerlink" href="#packet-structure_2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>HELLO Sub-Type 2 Structure:
+┌──────────┬──────────────┬───────────┬─────────────┬─────────────────────────┐
+│  TYPE    │   LENGTH     │ SUB_TYPE  │ NAME_LENGTH │ SERVER_NAME (with \0)   │
+│  0x13    │  (2 bytes)   │   0x02    │ (2 bytes)   │ &quot;My Server\0&quot;           │
+└──────────┴──────────────┴───────────┴─────────────┴─────────────────────────┘
+</code></pre></div>
+<h4 id="example-server-named-wulfram2-dev-server">Example: Server named "Wulfram2 Dev Server"<a class="headerlink" href="#example-server-named-wulfram2-dev-server" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Building the payload:
+├─ Sub-type:     02                                        (1 byte)
+├─ Name length:  00 14                                     (20 bytes = 19 chars + null)
+└─ Server name:  57 75 6C 66 72 61 6D 32 20 44 65 76 20 53 65 72 76 65 72 00
+                 W  u  l  f  r  a  m  2     D  e  v     S  e  r  v  e  r  \0
+
+Payload length: 1 + 2 + 20 = 23 bytes
+</code></pre></div>
+<h4 id="complete-packet_1">Complete Packet<a class="headerlink" href="#complete-packet_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Hex: 13 00 17 02 00 14 57 75 6C 66 72 61 6D 32 20 44 65 76 20 53 65 72 76 65 72 00
+
+     13           - Type: HELLO
+     00 17        - Length: 23 bytes (0x0017)
+     02           - Sub-type: 2 (server name)
+     00 14        - String length: 20 bytes
+     57 75 6C ... - &quot;Wulfram2 Dev Server\0&quot; (20 bytes)
+
+Total: 26 bytes on wire
+</code></pre></div>
+<h4 id="python-implementation_2">Python Implementation<a class="headerlink" href="#python-implementation_2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_hello_server_name</span><span class="p">(</span><span class="n">server_name</span><span class="o">=</span><span class="s2">&quot;Wulfram2 Server&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create HELLO sub-type 2 packet (server name)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        server_name: Human-readable server name string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Build payload</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x02</span><span class="p">])</span>  <span class="c1"># Sub-type 2</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="n">encode_string</span><span class="p">(</span><span class="n">server_name</span><span class="p">)</span>  <span class="c1"># LENGTH-PREFIXED string!</span>
+
+    <span class="c1"># Build complete packet</span>
+    <span class="n">packet_type</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x13</span><span class="p">])</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">packet_type</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="n">payload</span>
+
+<span class="c1"># Example output for &quot;Test Server&quot;:</span>
+<span class="c1"># b&#39;\x13\x00\x0f\x02\x00\x0cTest Server\x00&#39;</span>
+<span class="c1">#                  ─────</span>
+<span class="c1">#                    │</span>
+<span class="c1">#                    └─ Length prefix: 12 (11 chars + null)</span>
+</code></pre></div>
+<hr />
+<h3 id="hello-sub-type-3-acknowledgment-client-server">HELLO Sub-Type 3: Acknowledgment (Client → Server)<a class="headerlink" href="#hello-sub-type-3-acknowledgment-client-server" title="Permanent link">&para;</a></h3>
+<p>This sub-type is sent by the <strong>client</strong> to the server, typically as a keep-alive or acknowledgment signal. The server should be prepared to receive this but doesn't need to send it.</p>
+<h4 id="what-the-client-sends">What the Client Sends<a class="headerlink" href="#what-the-client-sends" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_0046d020 (line 77599-77600)</span>
+<span class="k">case</span><span class="w"> </span><span class="mi">3</span><span class="p">:</span>
+<span class="w">    </span><span class="n">FUN_0046b750</span><span class="p">();</span><span class="w">  </span><span class="c1">// Triggers acknowledgment handling</span>
+</code></pre></div>
+<p>The sub-type 3 packet contains no additional data beyond the sub-type byte itself.</p>
+<h4 id="packet-structure_3">Packet Structure<a class="headerlink" href="#packet-structure_3" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>HELLO Sub-Type 3 Structure:
+┌──────────┬──────────────┬───────────┐
+│  TYPE    │   LENGTH     │ SUB_TYPE  │
+│  0x13    │   00 01      │   0x03    │
+└──────────┴──────────────┴───────────┘
+   1 byte     2 bytes       1 byte
+
+Total: 4 bytes on wire
+</code></pre></div>
+<h4 id="server-handling">Server Handling<a class="headerlink" href="#server-handling" title="Permanent link">&para;</a></h4>
+<p>When your server receives a HELLO sub-type 3 packet, you can safely acknowledge it or ignore it. It's primarily used by the client to signal it's ready or as a keep-alive mechanism.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">handle_hello_subtype_3</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle HELLO sub-type 3 (acknowledgment from client)</span>
+
+<span class="sd">    This packet has no payload beyond the sub-type byte.</span>
+<span class="sd">    The server can acknowledge or simply ignore it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Log for debugging</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Received HELLO acknowledgment from client&quot;</span><span class="p">)</span>
+    <span class="c1"># No response required</span>
+</code></pre></div>
+<hr />
+<h3 id="complete-hello-handshake-implementation">Complete HELLO Handshake Implementation<a class="headerlink" href="#complete-hello-handshake-implementation" title="Permanent link">&para;</a></h3>
+<p>Here's how to send all HELLO packets when a client connects:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_string</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode a length-prefixed, null-terminated string&quot;&quot;&quot;</span>
+    <span class="n">string_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_bytes</span><span class="p">))</span> <span class="o">+</span> <span class="n">string_bytes</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_packet</span><span class="p">(</span><span class="n">packet_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap payload in a complete packet frame&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">packet_type</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span> <span class="o">+</span> <span class="n">payload</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Wulfram2Server</span><span class="p">:</span>
+    <span class="n">PROTOCOL_VERSION</span> <span class="o">=</span> <span class="mh">0x4E89</span>
+    <span class="n">PACKET_HELLO</span> <span class="o">=</span> <span class="mh">0x13</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">2627</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_packet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send raw packet data to client&quot;&quot;&quot;</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TX: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_hello_handshake</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send the complete HELLO handshake sequence.</span>
+<span class="sd">        This must be the FIRST thing sent after TCP connection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="c1"># HELLO Sub-type 0: Version Check (REQUIRED)</span>
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="c1"># Client will show &quot;Version Mismatch&quot; error if this is wrong</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x00</span><span class="p">])</span>  <span class="c1"># Sub-type: 0</span>
+        <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PROTOCOL_VERSION</span><span class="p">)</span>  <span class="c1"># Version: 0x4E89</span>
+
+        <span class="n">hello_version</span> <span class="o">=</span> <span class="n">make_packet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PACKET_HELLO</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_packet</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">hello_version</span><span class="p">)</span>
+        <span class="c1"># Expected: 13 00 05 00 00 00 4E 89</span>
+
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="c1"># HELLO Sub-type 1: UDP Port Info (REQUIRED)</span>
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x01</span><span class="p">])</span>  <span class="c1"># Sub-type: 1</span>
+        <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>  <span class="c1"># UDP port</span>
+        <span class="n">payload</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Interface count: 1</span>
+        <span class="n">payload</span> <span class="o">+=</span> <span class="n">encode_string</span><span class="p">(</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">)</span>  <span class="c1"># Length-prefixed interface string</span>
+
+        <span class="n">hello_udp</span> <span class="o">=</span> <span class="n">make_packet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PACKET_HELLO</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_packet</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">hello_udp</span><span class="p">)</span>
+        <span class="c1"># Expected: 13 00 11 01 0A 43 00 01 00 0A 31 32 37 2E 30 2E 30 2E 31 00</span>
+
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="c1"># HELLO Sub-type 2: Server Name (OPTIONAL but recommended)</span>
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x02</span><span class="p">])</span>  <span class="c1"># Sub-type: 2</span>
+        <span class="n">payload</span> <span class="o">+=</span> <span class="n">encode_string</span><span class="p">(</span><span class="s2">&quot;Wulfram2 Dev Server&quot;</span><span class="p">)</span>  <span class="c1"># Length-prefixed server name</span>
+
+        <span class="n">hello_name</span> <span class="o">=</span> <span class="n">make_packet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PACKET_HELLO</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_packet</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">hello_name</span><span class="p">)</span>
+        <span class="c1"># Expected: 13 00 17 02 00 14 57 75 6C 66 72 61 6D 32 20 44 65 76 ...</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;HELLO handshake complete!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="expected-wire-output">Expected Wire Output<a class="headerlink" href="#expected-wire-output" title="Permanent link">&para;</a></h3>
+<p>After the HELLO handshake, your server should have sent exactly these bytes:</p>
+<div class="highlight"><pre><span></span><code>Packet 1 - HELLO Version (8 bytes):
+13 00 05 00 00 00 4E 89
+
+Breakdown:
+  13       = Type: HELLO
+  00 05    = Length: 5 bytes
+  00       = Sub-type: 0 (version)
+  00 00 4E 89 = Version: 0x4E89
+
+───────────────────────────────────────────────────────────────
+
+Packet 2 - HELLO UDP Info (20 bytes for &quot;127.0.0.1&quot;):
+13 00 11 01 0A 43 00 01 00 0A 31 32 37 2E 30 2E 30 2E 31 00
+
+Breakdown:
+  13       = Type: HELLO
+  00 11    = Length: 17 bytes
+  01       = Sub-type: 1 (UDP info)
+  0A 43    = Port: 2627
+  00 01    = Interface count: 1
+  00 0A    = String length: 10
+  31 32 37 2E 30 2E 30 2E 31 00 = &quot;127.0.0.1\0&quot;
+
+───────────────────────────────────────────────────────────────
+
+Packet 3 - HELLO Server Name (26 bytes for &quot;Wulfram2 Dev Server&quot;):
+13 00 17 02 00 14 57 75 6C 66 72 61 6D 32 20 44 65 76 20 53 65 72 76 65 72 00
+
+Breakdown:
+  13       = Type: HELLO
+  00 17    = Length: 23 bytes
+  02       = Sub-type: 2 (server name)
+  00 14    = String length: 20
+  57 75 6C ... 00 = &quot;Wulfram2 Dev Server\0&quot;
+</code></pre></div>
+<hr />
+<h3 id="quick-reference-hello-packet-sizes">Quick Reference: HELLO Packet Sizes<a class="headerlink" href="#quick-reference-hello-packet-sizes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Sub-Type</th>
+<th>Description</th>
+<th>Payload Formula</th>
+<th>Example Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Version</td>
+<td>1 + 4 = 5 bytes</td>
+<td>8 bytes total</td>
+</tr>
+<tr>
+<td>1</td>
+<td>UDP Info</td>
+<td>1 + 2 + 2 + Σ(2 + len(iface)+1)</td>
+<td>20 bytes (1 interface)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Server Name</td>
+<td>1 + 2 + len(name) + 1</td>
+<td>26 bytes ("Wulfram2 Dev Server")</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ack (client→server)</td>
+<td>1 byte</td>
+<td>4 bytes total</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
+<h4 id="problem-client-shows-version-mismatch-error">Problem: Client Shows "Version Mismatch" Error<a class="headerlink" href="#problem-client-shows-version-mismatch-error" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: You sent the wrong version number, or forgot to send HELLO sub-type 0.</p>
+<p><strong>Solution</strong>: Ensure you're sending exactly <code>00 00 4E 89</code> as the version bytes.</p>
+<div class="highlight"><pre><span></span><code>WRONG: 13 00 05 00 89 4E 00 00   ← Little-endian (reversed)
+RIGHT: 13 00 05 00 00 00 4E 89   ← Big-endian (correct)
+</code></pre></div>
+<h4 id="problem-client-connects-but-nothing-happens">Problem: Client Connects But Nothing Happens<a class="headerlink" href="#problem-client-connects-but-nothing-happens" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: You didn't send any HELLO packets.</p>
+<p><strong>Solution</strong>: The server must initiate by sending HELLO packets. The client waits for them.</p>
+<h4 id="problem-client-crashes-or-disconnects-after-hello">Problem: Client Crashes or Disconnects After HELLO<a class="headerlink" href="#problem-client-crashes-or-disconnects-after-hello" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: Strings are missing length prefixes.</p>
+<p><strong>Solution</strong>: All strings in HELLO packets (interface addresses, server name) must be length-prefixed:</p>
+<div class="highlight"><pre><span></span><code>WRONG: 01 0A 43 00 01 31 32 37 2E 30 2E 30 2E 31 00
+                     ↑
+                     Missing length prefix!
+
+RIGHT: 01 0A 43 00 01 00 0A 31 32 37 2E 30 2E 30 2E 31 00
+                     ─────
+                       ↑
+                       Length prefix (10 bytes)
+</code></pre></div>
+<h4 id="problem-udp-features-dont-work">Problem: UDP Features Don't Work<a class="headerlink" href="#problem-udp-features-dont-work" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: HELLO sub-type 1 not sent or has invalid port/interface.</p>
+<p><strong>Solution</strong>: Make sure you're sending a valid port number and at least one properly-encoded interface string.</p>
+<hr />
+<h3 id="common-mistakes">Common Mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Missing length prefix on strings</td>
+<td>Client crash/disconnect</td>
+<td>Use <code>encode_string()</code> for all strings</td>
+</tr>
+<tr>
+<td>Wrong byte order for version</td>
+<td>"Version Mismatch" error</td>
+<td>Use big-endian (<code>&gt;I</code>)</td>
+</tr>
+<tr>
+<td>Forgetting null terminator</td>
+<td>String parsing errors</td>
+<td>Include <code>\x00</code> in string data</td>
+</tr>
+<tr>
+<td>Wrong payload length</td>
+<td>Packet parsing fails</td>
+<td>Recalculate after adding length prefixes</td>
+</tr>
+<tr>
+<td>Not sending sub-type 0 first</td>
+<td>Client hangs</td>
+<td>Always send version check first</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="whats-next">What's Next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h3>
+<p>After the HELLO handshake, the client will send a LOGIN packet with credentials. In <strong>Part 3</strong>, we'll handle the LOGIN/LOGIN_STATUS exchange to authenticate the player.</p>
+<hr />
+<p><em>Previous: <a href="../part-1-introduction/index.html">Part 1: Introduction</a></em>
+<em>Next: <a href="../part-3-login-authentication/index.html">Part 3: Login Authentication</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

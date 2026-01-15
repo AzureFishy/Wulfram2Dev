@@ -1,0 +1,19 @@
+/* Hide the right-hand Table of Contents completely */
+.md-sidebar--secondary {
+    display: none !important;
+}
+
+/* Expand main content to use full width */
+.md-content {
+    max-width: 100%;
+}
+
+/* Make the main content area wider since no right sidebar */
+.md-main__inner {
+    max-width: 1400px;
+}
+
+/* Clean navigation styling */
+.md-nav__item {
+    padding: 0.1rem 0;
+}

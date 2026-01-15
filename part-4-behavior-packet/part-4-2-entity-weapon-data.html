@@ -1,0 +1,1919 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="part-4-1-fixed-header.html">
+      
+      
+        <link rel="next" href="part-4-3-entity-core-stats.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Entity Weapon Data - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Entity Weapon Data
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="part-4-2-entity-weapon-data.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-2-behavior-packet-entity-weapon-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 4-2: BEHAVIOR Packet - Entity Weapon Data
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4-2: BEHAVIOR Packet - Entity Weapon Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Constants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-entities-have-weapon-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      How Many Entities Have Weapon Data?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-size-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Size Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weapon-slot-structure-45-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Weapon Slot Structure (45 bytes)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-vs-wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Memory vs Wire Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-entity-weapon-data-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building Entity Weapon Data in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-weapon-slot-with-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Weapon Slot with Values
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-values-all-zeros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default Values (All Zeros)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-processing-fun_004e27d0" class="md-nav__link">
+    <span class="md-ellipsis">
+      Post-Processing: FUN_004e27d0
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Summary
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-4-2-behavior-packet-entity-weapon-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 4-2: BEHAVIOR Packet - Entity Weapon Data
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 4-2: BEHAVIOR Packet - Entity Weapon Data">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Constants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-entities-have-weapon-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      How Many Entities Have Weapon Data?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-size-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Size Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weapon-slot-structure-45-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Weapon Slot Structure (45 bytes)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-vs-wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Memory vs Wire Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-entity-weapon-data-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building Entity Weapon Data in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-weapon-slot-with-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Weapon Slot with Values
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-values-all-zeros" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default Values (All Zeros)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-processing-fun_004e27d0" class="md-nav__link">
+    <span class="md-ellipsis">
+      Post-Processing: FUN_004e27d0
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Summary
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="part-4-2-behavior-packet-entity-weapon-data">Part 4-2: BEHAVIOR Packet - Entity Weapon Data<a class="headerlink" href="#part-4-2-behavior-packet-entity-weapon-data" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The Entity Weapon Data section is the <strong>first variable-length section</strong> of the BEHAVIOR packet. It configures weapon loadouts for each playable vehicle type in the game.</p>
+<div class="highlight"><pre><span></span><code>Position in BEHAVIOR Packet:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  SECTION 1: Fixed Header (95 bytes)                        ✓ Complete  │
+├─────────────────────────────────────────────────────────────────────────┤
+│  SECTION 2: Entity Weapon Data (2,340 bytes)               ◄ YOU ARE   │
+│             4 entities × 13 weapon slots × 45 bytes            HERE    │
+├─────────────────────────────────────────────────────────────────────────┤
+│  SECTION 3: Entity Core Stats (468 bytes)                              │
+│  SECTION 4: Vehicle Type Data (variable)                               │
+│  SECTION 5: Physics Tables + Vehicle Models (variable)                 │
+│  PACKET FINALIZATION: Byte Alignment                                   │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="the-handler-code">The Handler Code<a class="headerlink" href="#the-handler-code" title="Permanent link">&para;</a></h3>
+<p>From FUN_004e2f90 (lines 155752-155801):</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_004e2f90</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_004e5080</span><span class="p">();</span><span class="w">                    </span><span class="c1">// Initialize context</span>
+<span class="w">    </span><span class="n">FUN_004e5090</span><span class="p">(</span><span class="n">param_1</span><span class="p">);</span><span class="w">             </span><span class="c1">// Set context pointer</span>
+
+<span class="w">    </span><span class="c1">// Get linked list of entity types with weapon data</span>
+<span class="w">    </span><span class="n">local_4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">**</span><span class="p">)(</span><span class="n">DAT_005b9a4c</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_4</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="mh">0x0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">local_8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">iVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_4</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">        </span><span class="c1">// Get entity data pointer</span>
+<span class="w">            </span><span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="n">local_4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">*</span><span class="n">local_4</span><span class="p">;</span><span class="w">  </span><span class="c1">// Advance to next entity</span>
+
+<span class="w">            </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">            </span><span class="c1">// Read 13 weapon slots for this entity</span>
+<span class="w">            </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">            </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">iVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">iVar2</span><span class="p">;</span><span class="w">  </span><span class="c1">// Weapon slot pointer</span>
+
+<span class="w">                </span><span class="c1">// --- 5 boolean flags (5 bytes) ---</span>
+<span class="w">                </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="n">local_d</span><span class="p">);</span>
+<span class="w">                </span><span class="o">*</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Enabled flag</span>
+<span class="w">                </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="n">local_d</span><span class="p">);</span>
+<span class="w">                </span><span class="o">*</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x11</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Flag 2</span>
+<span class="w">                </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="n">local_d</span><span class="p">);</span>
+<span class="w">                </span><span class="o">*</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x12</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Flag 3</span>
+<span class="w">                </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="n">local_d</span><span class="p">);</span>
+<span class="w">                </span><span class="o">*</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x13</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Flag 4</span>
+<span class="w">                </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="n">local_d</span><span class="p">);</span>
+<span class="w">                </span><span class="o">*</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x14</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Flag 5</span>
+
+<span class="w">                </span><span class="c1">// --- 1 fixed-point double (4 bytes) ---</span>
+<span class="w">                </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x18</span><span class="p">);</span><span class="w">  </span><span class="c1">// Weapon parameter 1</span>
+
+<span class="w">                </span><span class="c1">// --- 5 uint32 integers (20 bytes) ---</span>
+<span class="w">                </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x20</span><span class="p">);</span><span class="w">  </span><span class="c1">// Integer param 1</span>
+<span class="w">                </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x24</span><span class="p">);</span><span class="w">  </span><span class="c1">// Integer param 2</span>
+<span class="w">                </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x28</span><span class="p">);</span><span class="w">  </span><span class="c1">// Integer param 3</span>
+<span class="w">                </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x2c</span><span class="p">);</span><span class="w">  </span><span class="c1">// Integer param 4</span>
+<span class="w">                </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x30</span><span class="p">);</span><span class="w">  </span><span class="c1">// Integer param 5</span>
+
+<span class="w">                </span><span class="c1">// --- 4 fixed-point doubles (16 bytes) ---</span>
+<span class="w">                </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x38</span><span class="p">);</span><span class="w">  </span><span class="c1">// Double param 1</span>
+<span class="w">                </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x40</span><span class="p">);</span><span class="w">  </span><span class="c1">// Double param 2</span>
+<span class="w">                </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x48</span><span class="p">);</span><span class="w">  </span><span class="c1">// Double param 3</span>
+<span class="w">                </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x50</span><span class="p">);</span><span class="w">  </span><span class="c1">// Double param 4</span>
+
+<span class="w">                </span><span class="n">iVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_8</span><span class="p">;</span>
+<span class="w">                </span><span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x58</span><span class="p">;</span><span class="w">  </span><span class="c1">// Next weapon slot (stride = 88 bytes)</span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">0x478</span><span class="p">);</span><span class="w">   </span><span class="c1">// 0x478 / 0x58 = 13 slots</span>
+
+<span class="w">            </span><span class="n">FUN_004e27d0</span><span class="p">();</span><span class="w">             </span><span class="c1">// Process weapon flags</span>
+<span class="w">            </span><span class="n">local_8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x10</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">local_4</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="mh">0x0</span><span class="p">);</span><span class="w">  </span><span class="c1">// Until end of linked list</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="key-constants">Key Constants<a class="headerlink" href="#key-constants" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Constant</th>
+<th>Value (Hex)</th>
+<th>Value (Decimal)</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Weapon slot stride</td>
+<td><code>0x58</code></td>
+<td>88</td>
+<td>Bytes per slot in memory</td>
+</tr>
+<tr>
+<td>Total weapon array</td>
+<td><code>0x478</code></td>
+<td>1144</td>
+<td>Total bytes for all slots (88 × 13)</td>
+</tr>
+<tr>
+<td>Number of slots</td>
+<td><code>0x0D</code></td>
+<td>13</td>
+<td>Weapon slots per entity</td>
+</tr>
+<tr>
+<td>Bytes per slot (wire)</td>
+<td>-</td>
+<td>45</td>
+<td>Actual bytes read per slot</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="how-many-entities-have-weapon-data">How Many Entities Have Weapon Data?<a class="headerlink" href="#how-many-entities-have-weapon-data" title="Permanent link">&para;</a></h3>
+<p>The weapon registry is initialized in FUN_004e2e60 (lines 155679-155720):</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_004e2e60</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Allocate weapon slot arrays (5 times, but only 4 used)</span>
+<span class="w">    </span><span class="n">FUN_004e2d70</span><span class="p">();</span><span class="w">  </span><span class="c1">// Allocates 0x478 bytes</span>
+<span class="w">    </span><span class="n">FUN_004e2d70</span><span class="p">();</span>
+<span class="w">    </span><span class="n">FUN_004e2d70</span><span class="p">();</span>
+<span class="w">    </span><span class="n">FUN_004e2d70</span><span class="p">();</span>
+<span class="w">    </span><span class="n">FUN_004e2d70</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Initialize DAT_005b9900 array for 39 entities</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">iVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x27</span><span class="p">;</span><span class="w"> </span><span class="n">iVar3</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">iVar3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="o">*</span><span class="n">puVar4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uVar1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">puVar4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">puVar4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Create weapon entity registry (linked list)</span>
+<span class="w">    </span><span class="n">DAT_005b9a4c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_004dc7c0</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Register 4 entity types with weapon data</span>
+<span class="w">    </span><span class="n">FUN_004e2cd0</span><span class="p">();</span><span class="w">  </span><span class="c1">// Entity type 0 (Tank)</span>
+<span class="w">    </span><span class="n">FUN_004e2cd0</span><span class="p">();</span><span class="w">  </span><span class="c1">// Entity type 1 (Scout)</span>
+<span class="w">    </span><span class="n">FUN_004e2cd0</span><span class="p">();</span><span class="w">  </span><span class="c1">// Entity type 2 (Medic/Assault Platform)</span>
+<span class="w">    </span><span class="n">FUN_004e2cd0</span><span class="p">();</span><span class="w">  </span><span class="c1">// Entity type 3 (Bomber)</span>
+
+<span class="w">    </span><span class="n">FUN_004e2840</span><span class="p">();</span><span class="w">  </span><span class="c1">// Build entity index</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Important</strong>: The client expects weapon data for exactly <strong>4 entity types</strong>. These correspond to the playable vehicle types:</p>
+<table>
+<thead>
+<tr>
+<th>Entity Index</th>
+<th>Entity Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Tank</td>
+<td>Main battle vehicle</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Scout</td>
+<td>Fast reconnaissance vehicle</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Medic / Assault Platform</td>
+<td>Support vehicle</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Bomber</td>
+<td>Air attack vehicle</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="section-size-calculation">Section Size Calculation<a class="headerlink" href="#section-size-calculation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Entity Weapon Data Size:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  4 entities × 13 slots × 45 bytes = 2,340 bytes                        │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Breakdown per entity (585 bytes):
+  - 13 weapon slots
+  - Each slot: 45 bytes
+
+Breakdown per weapon slot (45 bytes):
+  - 5 boolean flags:    5 × 1 byte  =  5 bytes
+  - 1 fixed-point:      1 × 4 bytes =  4 bytes
+  - 5 integers:         5 × 4 bytes = 20 bytes
+  - 4 fixed-points:     4 × 4 bytes = 16 bytes
+  - Total:                          = 45 bytes
+</code></pre></div>
+<hr />
+<h3 id="weapon-slot-structure-45-bytes">Weapon Slot Structure (45 bytes)<a class="headerlink" href="#weapon-slot-structure-45-bytes" title="Permanent link">&para;</a></h3>
+<p>Each weapon slot contains configuration for one weapon/ability:</p>
+<div class="highlight"><pre><span></span><code>Weapon Slot Wire Format (45 bytes):
+┌─────────┬──────┬────────────────┬───────────────────────────────────────────┐
+│ Offset  │ Size │ Reader Func    │ Description                               │
+├─────────┼──────┼────────────────┼───────────────────────────────────────────┤
+│ 0       │ 1    │ FUN_005092e0   │ Weapon enabled flag (bool)                │
+│ 1       │ 1    │ FUN_005092e0   │ Slot flag 2 (bool)                        │
+│ 2       │ 1    │ FUN_005092e0   │ Slot flag 3 (bool)                        │
+│ 3       │ 1    │ FUN_005092e0   │ Slot flag 4 (bool)                        │
+│ 4       │ 1    │ FUN_005092e0   │ Slot flag 5 (bool)                        │
+├─────────┼──────┼────────────────┼───────────────────────────────────────────┤
+│ 5       │ 4    │ FUN_004e51d0   │ Weapon parameter (fixed-point double)     │
+├─────────┼──────┼────────────────┼───────────────────────────────────────────┤
+│ 9       │ 4    │ FUN_00509310   │ Integer param 1 (uint32 BE)               │
+│ 13      │ 4    │ FUN_00509310   │ Integer param 2 (uint32 BE)               │
+│ 17      │ 4    │ FUN_00509310   │ Integer param 3 (uint32 BE)               │
+│ 21      │ 4    │ FUN_00509310   │ Integer param 4 (uint32 BE)               │
+│ 25      │ 4    │ FUN_00509310   │ Integer param 5 (uint32 BE)               │
+├─────────┼──────┼────────────────┼───────────────────────────────────────────┤
+│ 29      │ 4    │ FUN_004e51d0   │ Double param 1 (fixed-point)              │
+│ 33      │ 4    │ FUN_004e51d0   │ Double param 2 (fixed-point)              │
+│ 37      │ 4    │ FUN_004e51d0   │ Double param 3 (fixed-point)              │
+│ 41      │ 4    │ FUN_004e51d0   │ Double param 4 (fixed-point)              │
+└─────────┴──────┴────────────────┴───────────────────────────────────────────┘
+Total: 5 + 4 + 20 + 16 = 45 bytes
+</code></pre></div>
+<hr />
+<h3 id="memory-vs-wire-format">Memory vs Wire Format<a class="headerlink" href="#memory-vs-wire-format" title="Permanent link">&para;</a></h3>
+<p>The weapon slot structure in memory is 88 bytes (<code>0x58</code>), but only 45 bytes are transmitted over the network:</p>
+<div class="highlight"><pre><span></span><code>Memory Layout (88 bytes):          Wire Format (45 bytes):
+┌─────────────────────────────┐    ┌─────────────────────────────┐
+│ Offset 0x00-0x0F: Reserved  │    │ NOT SENT                    │
+├─────────────────────────────┤    ├─────────────────────────────┤
+│ Offset 0x10: Bool 1         │───►│ Byte 0: Bool 1              │
+│ Offset 0x11: Bool 2         │───►│ Byte 1: Bool 2              │
+│ Offset 0x12: Bool 3         │───►│ Byte 2: Bool 3              │
+│ Offset 0x13: Bool 4         │───►│ Byte 3: Bool 4              │
+│ Offset 0x14: Bool 5         │───►│ Byte 4: Bool 5              │
+│ Offset 0x15-0x17: Padding   │    │ NOT SENT                    │
+│ Offset 0x18: Double (8b)    │───►│ Bytes 5-8: Fixed-point      │
+│ Offset 0x20: Int 1          │───►│ Bytes 9-12: Int 1           │
+│ Offset 0x24: Int 2          │───►│ Bytes 13-16: Int 2          │
+│ Offset 0x28: Int 3          │───►│ Bytes 17-20: Int 3          │
+│ Offset 0x2C: Int 4          │───►│ Bytes 21-24: Int 4          │
+│ Offset 0x30: Int 5          │───►│ Bytes 25-28: Int 5          │
+│ Offset 0x34-0x37: Padding   │    │ NOT SENT                    │
+│ Offset 0x38: Double 1 (8b)  │───►│ Bytes 29-32: Fixed-point    │
+│ Offset 0x40: Double 2 (8b)  │───►│ Bytes 33-36: Fixed-point    │
+│ Offset 0x48: Double 3 (8b)  │───►│ Bytes 37-40: Fixed-point    │
+│ Offset 0x50: Double 4 (8b)  │───►│ Bytes 41-44: Fixed-point    │
+└─────────────────────────────┘    └─────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="data-flow-diagram">Data Flow Diagram<a class="headerlink" href="#data-flow-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Entity Weapon Data Reading Order:
+═══════════════════════════════════════════════════════════════════════════
+
+Entity 0 (Tank):
+├── Slot 0:  [5 bools][1 double][5 ints][4 doubles] = 45 bytes
+├── Slot 1:  [5 bools][1 double][5 ints][4 doubles] = 45 bytes
+├── Slot 2:  [5 bools][1 double][5 ints][4 doubles] = 45 bytes
+│   ... (slots 3-11)
+└── Slot 12: [5 bools][1 double][5 ints][4 doubles] = 45 bytes
+                                           Total: 585 bytes
+
+Entity 1 (Scout):
+├── Slot 0-12: Same structure as above
+                                           Total: 585 bytes
+
+Entity 2 (Medic):
+├── Slot 0-12: Same structure as above
+                                           Total: 585 bytes
+
+Entity 3 (Bomber):
+├── Slot 0-12: Same structure as above
+                                           Total: 585 bytes
+
+═══════════════════════════════════════════════════════════════════════════
+Grand Total: 4 × 585 = 2,340 bytes
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="building-entity-weapon-data-in-python">Building Entity Weapon Data in Python<a class="headerlink" href="#building-entity-weapon-data-in-python" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_fixed_point</span><span class="p">(</span><span class="n">float_value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a float to fixed-point format (4 bytes big-endian)&quot;&quot;&quot;</span>
+    <span class="n">wire_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">float_value</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">wire_value</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_weapon_slot</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                       <span class="n">param1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ints</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                       <span class="n">doubles</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a single weapon slot (45 bytes).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        enabled: Whether this weapon slot is active</span>
+<span class="sd">        flags: Tuple of 4 additional boolean flags</span>
+<span class="sd">        param1: First fixed-point parameter</span>
+<span class="sd">        ints: Tuple of 5 integer parameters</span>
+<span class="sd">        doubles: Tuple of 4 fixed-point double parameters</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        45 bytes of weapon slot data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># 5 boolean flags (5 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x01</span> <span class="k">if</span> <span class="n">enabled</span> <span class="k">else</span> <span class="mh">0x00</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">flags</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x01</span> <span class="k">if</span> <span class="n">flag</span> <span class="k">else</span> <span class="mh">0x00</span><span class="p">)</span>
+
+    <span class="c1"># 1 fixed-point double (4 bytes)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_fixed_point</span><span class="p">(</span><span class="n">param1</span><span class="p">))</span>
+
+    <span class="c1"># 5 uint32 integers (20 bytes)</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ints</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="c1"># 4 fixed-point doubles (16 bytes)</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">doubles</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_fixed_point</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">45</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Weapon slot should be 45 bytes, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_entity_weapons</span><span class="p">(</span><span class="n">slot_configs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create weapon data for a single entity (13 slots = 585 bytes).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        slot_configs: List of 13 slot configurations, or None for defaults</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        585 bytes of entity weapon data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">slot_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">slot_configs</span> <span class="ow">and</span> <span class="n">slot_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">slot_configs</span><span class="p">):</span>
+            <span class="n">slot_data</span> <span class="o">=</span> <span class="n">create_weapon_slot</span><span class="p">(</span><span class="o">**</span><span class="n">slot_configs</span><span class="p">[</span><span class="n">slot_idx</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Default: disabled weapon slot</span>
+            <span class="n">slot_data</span> <span class="o">=</span> <span class="n">create_weapon_slot</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">slot_data</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">585</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Entity weapons should be 585 bytes, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_behavior_entity_weapon_data</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the complete Entity Weapon Data section (4 entities = 2,340 bytes).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        2,340 bytes of entity weapon configuration data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># Entity 0: Tank</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_entity_weapons</span><span class="p">())</span>
+
+    <span class="c1"># Entity 1: Scout</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_entity_weapons</span><span class="p">())</span>
+
+    <span class="c1"># Entity 2: Medic/Assault Platform</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_entity_weapons</span><span class="p">())</span>
+
+    <span class="c1"># Entity 3: Bomber</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_entity_weapons</span><span class="p">())</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2340</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Entity weapon data should be 2340 bytes, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="example-weapon-slot-with-values">Example Weapon Slot with Values<a class="headerlink" href="#example-weapon-slot-with-values" title="Permanent link">&para;</a></h3>
+<p>Here's an example of a configured weapon slot (slot 0 for Tank):</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Example: Tank&#39;s primary weapon (slot 0)</span>
+<span class="n">tank_slot_0</span> <span class="o">=</span> <span class="n">create_weapon_slot</span><span class="p">(</span>
+    <span class="n">enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>           <span class="c1"># Weapon is active</span>
+    <span class="n">flags</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>  <span class="c1"># Slot flags</span>
+    <span class="n">param1</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>             <span class="c1"># Weapon parameter</span>
+    <span class="n">ints</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>   <span class="c1"># Damage, range, cooldown, etc.</span>
+    <span class="n">doubles</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>  <span class="c1"># Accuracy, spread, etc.</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Hex dump of this slot (45 bytes):
+<div class="highlight"><pre><span></span><code>01 01 01 00 00              Bools: enabled=T, flags=T,T,F,F
+00 01 00 00                 Param1: 1.0
+00 00 00 64                 Int1: 100
+00 00 00 32                 Int2: 50
+00 00 00 0A                 Int3: 10
+00 00 00 05                 Int4: 5
+00 00 00 00                 Int5: 0
+00 01 00 00                 Double1: 1.0
+00 01 00 00                 Double2: 1.0
+00 00 80 00                 Double3: 0.5
+00 00 00 00                 Double4: 0.0
+</code></pre></div></p>
+<hr />
+<h3 id="default-values-all-zeros">Default Values (All Zeros)<a class="headerlink" href="#default-values-all-zeros" title="Permanent link">&para;</a></h3>
+<p>For a basic implementation, you can send all weapon slots as disabled (zeros):</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_empty_weapon_data</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create 2,340 bytes of empty weapon data (all disabled).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="mi">2340</span><span class="p">)</span>  <span class="c1"># All zeros</span>
+</code></pre></div>
+<p>This creates valid data where:
+- All 5 booleans = <code>0x00</code> (false)
+- All fixed-point values = <code>0x00000000</code> (0.0)
+- All integers = <code>0x00000000</code> (0)</p>
+<hr />
+<h3 id="post-processing-fun_004e27d0">Post-Processing: FUN_004e27d0<a class="headerlink" href="#post-processing-fun_004e27d0" title="Permanent link">&para;</a></h3>
+<p>After reading all 13 weapon slots for an entity, the client calls FUN_004e27d0 to count up enabled weapons:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_004e27d0 (lines 155372-155403)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">FUN_004e27d0</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">param_1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="o">*</span><span class="n">in_EAX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">      </span><span class="c1">// Counter 1</span>
+<span class="w">    </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">    </span><span class="c1">// Counter 2</span>
+<span class="w">    </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">    </span><span class="c1">// Counter 3</span>
+<span class="w">    </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">    </span><span class="c1">// Counter 4</span>
+
+<span class="w">    </span><span class="n">pcVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x11</span><span class="p">);</span>
+<span class="w">    </span><span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0xd</span><span class="p">;</span><span class="w">  </span><span class="c1">// 13 iterations</span>
+
+<span class="w">    </span><span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pcVar1</span><span class="p">[</span><span class="mi">-1</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// If slot enabled (offset 0x10)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">pcVar1</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// Check flag at offset 0x11</span>
+<span class="w">                </span><span class="o">*</span><span class="n">in_EAX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">in_EAX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pcVar1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Check flag at offset 0x12</span>
+<span class="w">                </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pcVar1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Check flag at offset 0x13</span>
+<span class="w">                </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pcVar1</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Check flag at offset 0x14</span>
+<span class="w">                </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in_EAX</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">pcVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pcVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x58</span><span class="p">;</span><span class="w">  </span><span class="c1">// Next slot</span>
+<span class="w">        </span><span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">iVar2</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This counts how many weapon slots have each flag set, which is used for UI display and game logic.</p>
+<hr />
+<h3 id="common-mistakes">Common Mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wrong entity count</td>
+<td>Data misalignment, crash</td>
+<td>Send exactly 4 entities</td>
+</tr>
+<tr>
+<td>Wrong slot count</td>
+<td>Missing/extra data</td>
+<td>Send exactly 13 slots per entity</td>
+</tr>
+<tr>
+<td>Wrong byte count per slot</td>
+<td>Corruption of following sections</td>
+<td>Ensure 45 bytes per slot</td>
+</tr>
+<tr>
+<td>Little-endian integers</td>
+<td>Garbled values</td>
+<td>Use big-endian (<code>&gt;I</code>)</td>
+</tr>
+<tr>
+<td>Forgetting fixed-point</td>
+<td>Values 65536× too small</td>
+<td>Multiply floats by 65536</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="verification-checklist">Verification Checklist<a class="headerlink" href="#verification-checklist" title="Permanent link">&para;</a></h3>
+<p>Before moving to Section 3, verify:</p>
+<ul>
+<li>[ ] Exactly 4 entities worth of data</li>
+<li>[ ] Exactly 13 weapon slots per entity</li>
+<li>[ ] Exactly 45 bytes per weapon slot</li>
+<li>[ ] Total size is exactly 2,340 bytes</li>
+<li>[ ] All integers are big-endian</li>
+<li>[ ] All floats/doubles are fixed-point encoded</li>
+<li>[ ] Booleans are 1 byte each (0x00 or 0x01)</li>
+</ul>
+<hr />
+<h3 id="section-summary">Section Summary<a class="headerlink" href="#section-summary" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Section Number</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Handler Function</td>
+<td>FUN_004e2f90</td>
+</tr>
+<tr>
+<td>Entity Count</td>
+<td>4 (Tank, Scout, Medic, Bomber)</td>
+</tr>
+<tr>
+<td>Slots per Entity</td>
+<td>13</td>
+</tr>
+<tr>
+<td>Bytes per Slot</td>
+<td>45</td>
+</tr>
+<tr>
+<td>Bytes per Entity</td>
+<td>585</td>
+</tr>
+<tr>
+<td>Total Section Size</td>
+<td>2,340 bytes</td>
+</tr>
+<tr>
+<td>Position After</td>
+<td>Fixed Header (offset 95)</td>
+</tr>
+<tr>
+<td>Position Before</td>
+<td>Entity Core Stats</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Previous: <a href="part-4-1-fixed-header.html">Part 4-1: BEHAVIOR - Fixed Header</a></em><br />
+<em>Next: <a href="part-4-3-entity-core-stats.html">Part 4-3: BEHAVIOR - Entity Core Stats</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2679 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="../part-6-reincarnate/index.html">
+      
+      
+        <link rel="next" href="../part-8-structures/index.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>UPDATE ARRAY Game State - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              UPDATE ARRAY Game State
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="index.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-7-update_array-game-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 7: UPDATE_ARRAY &amp; Game State
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 7: UPDATE_ARRAY &amp; Game State">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-concept-bit-stream-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Critical Concept: Bit-Stream Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-1-update_array-packet-0x0e" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 1: UPDATE_ARRAY Packet (0x0E)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 1: UPDATE_ARRAY Packet (0x0E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packet-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Registration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-parsing-function-fun_0047d760" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Parsing Function (FUN_0047d760)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-2-wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 2: Wire Format
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 2: Wire Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packet-structure-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Structure Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payload-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      Payload Header
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-entity-update-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Per-Entity Update Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presence-flags-10-bits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Presence Flags (10 bits)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-3-behavior-configured-bit-widths" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 3: BEHAVIOR-Configured Bit Widths
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 3: BEHAVIOR-Configured Bit Widths">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#position-data-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Position Data Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-4-related-packets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 4: Related Packets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 4: Related Packets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#birth_notice-0x1e" class="md-nav__link">
+    <span class="md-ellipsis">
+      BIRTH_NOTICE (0x1E)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_object-0x15" class="md-nav__link">
+    <span class="md-ellipsis">
+      DELETE_OBJECT (0x15)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transient_array-0x0d" class="md-nav__link">
+    <span class="md-ellipsis">
+      TRANSIENT_ARRAY (0x0D)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-5-implementation-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 5: Implementation Strategy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 5: Implementation Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simplified-update_array-for-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simplified UPDATE_ARRAY for Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-implementation-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full Implementation Notes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-6-server-game-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 6: Server Game Loop
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 6: Server Game Loop">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-game-loop-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Game Loop Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handling-client-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      Handling Client Input
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-7-packet-timing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 7: Packet Timing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 7: Packet Timing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-frequency" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update Frequency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandwidth-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bandwidth Optimization
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-8-complete-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 8: Complete Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 8: Complete Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal-gameplay-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minimal Gameplay Server
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-client-shows-wrong-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem: Client Shows Wrong Positions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-client-crashes-during-update_array" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem: Client Crashes During UPDATE_ARRAY
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-entities-dont-move" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem: Entities Don't Move
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-client-disconnects-after-first-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem: Client Disconnects After First UPDATE
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-gameplay-packets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: Gameplay Packets
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation Priority
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation Priority">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-7-update_array-game-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 7: UPDATE_ARRAY &amp; Game State
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 7: UPDATE_ARRAY &amp; Game State">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-concept-bit-stream-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Critical Concept: Bit-Stream Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-1-update_array-packet-0x0e" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 1: UPDATE_ARRAY Packet (0x0E)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 1: UPDATE_ARRAY Packet (0x0E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packet-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Registration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-parsing-function-fun_0047d760" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Parsing Function (FUN_0047d760)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-2-wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 2: Wire Format
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 2: Wire Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packet-structure-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Structure Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payload-header" class="md-nav__link">
+    <span class="md-ellipsis">
+      Payload Header
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-entity-update-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Per-Entity Update Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presence-flags-10-bits" class="md-nav__link">
+    <span class="md-ellipsis">
+      Presence Flags (10 bits)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-3-behavior-configured-bit-widths" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 3: BEHAVIOR-Configured Bit Widths
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 3: BEHAVIOR-Configured Bit Widths">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#position-data-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Position Data Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-4-related-packets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 4: Related Packets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 4: Related Packets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#birth_notice-0x1e" class="md-nav__link">
+    <span class="md-ellipsis">
+      BIRTH_NOTICE (0x1E)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete_object-0x15" class="md-nav__link">
+    <span class="md-ellipsis">
+      DELETE_OBJECT (0x15)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transient_array-0x0d" class="md-nav__link">
+    <span class="md-ellipsis">
+      TRANSIENT_ARRAY (0x0D)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-5-implementation-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 5: Implementation Strategy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 5: Implementation Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simplified-update_array-for-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simplified UPDATE_ARRAY for Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-implementation-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full Implementation Notes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-6-server-game-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 6: Server Game Loop
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 6: Server Game Loop">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-game-loop-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Game Loop Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handling-client-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      Handling Client Input
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-7-packet-timing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 7: Packet Timing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 7: Packet Timing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-frequency" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update Frequency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bandwidth-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bandwidth Optimization
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#section-8-complete-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section 8: Complete Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Section 8: Complete Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#minimal-gameplay-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minimal Gameplay Server
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problem-client-shows-wrong-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem: Client Shows Wrong Positions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-client-crashes-during-update_array" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem: Client Crashes During UPDATE_ARRAY
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-entities-dont-move" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem: Entities Don't Move
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#problem-client-disconnects-after-first-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem: Client Disconnects After First UPDATE
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference-gameplay-packets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: Gameplay Packets
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation-priority" class="md-nav__link">
+    <span class="md-ellipsis">
+      Implementation Priority
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation Priority">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="part-7-update_array-game-state">Part 7: UPDATE_ARRAY &amp; Game State<a class="headerlink" href="#part-7-update_array-game-state" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>Once the client enters gameplay (after receiving PLAYER and WORLD_STATS), the server must continuously send <strong>UPDATE_ARRAY (0x0E)</strong> packets to update entity positions, states, and other dynamic game data. This is the primary packet for maintaining game state synchronization between server and all connected clients.</p>
+<div class="highlight"><pre><span></span><code>Position in Connection Flow:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  PHASE 3: GAME ENTRY                                                    │
+│  ───────────────────                                                    │
+│  ... PLAYER, GAME_CLOCK, WORLD_STATS sent ...                          │
+│  Client sends WANT_UPDATES (0x39) automatically                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│  PHASE 4: ACTIVE GAMEPLAY                                ◄ YOU ARE      │
+│  ────────────────────────                                    HERE       │
+│  Server ──► UPDATE_ARRAY (0x0E)              Entity state updates       │
+│  Server ──► BIRTH_NOTICE (0x1E)              New entity spawns          │
+│  Server ──► DELETE_OBJECT (0x15)             Entity removals            │
+│  Server ──► TRANSIENT_ARRAY (0x0D)           Projectiles/effects        │
+│  Client ──► ACTION_UPDATE (0x0A)             Player inputs              │
+│             ... continuous bidirectional traffic ...                    │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="critical-concept-bit-stream-format">Critical Concept: Bit-Stream Format<a class="headerlink" href="#critical-concept-bit-stream-format" title="Permanent link">&para;</a></h3>
+<p>The UPDATE_ARRAY packet uses a <strong>bit-stream format</strong> where field sizes are configured by the BEHAVIOR packet. This means:</p>
+<ol>
+<li>Field widths are NOT fixed - they depend on values sent in BEHAVIOR</li>
+<li>Data is packed at the bit level, not byte level</li>
+<li>The client uses DAT_00678134 (BEHAVIOR config) to know how to parse</li>
+</ol>
+<p><strong>This is why BEHAVIOR must be sent correctly before gameplay!</strong></p>
+<hr />
+<h2 id="section-1-update_array-packet-0x0e">Section 1: UPDATE_ARRAY Packet (0x0E)<a class="headerlink" href="#section-1-update_array-packet-0x0e" title="Permanent link">&para;</a></h2>
+<h3 id="packet-registration">Packet Registration<a class="headerlink" href="#packet-registration" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// From line 77032</span>
+<span class="n">FUN_00509b40</span><span class="p">(</span><span class="mh">0x0E</span><span class="p">,</span><span class="w"> </span><span class="n">FUN_0046cca0</span><span class="p">);</span><span class="w">    </span><span class="c1">// Register type 0x0E → UPDATE_ARRAY handler</span>
+</code></pre></div>
+<h3 id="the-handler-code">The Handler Code<a class="headerlink" href="#the-handler-code" title="Permanent link">&para;</a></h3>
+<p>From FUN_0046cca0 (lines 77435-77442):</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0046cca0</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;UPDATE_ARRAY&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Set packet name</span>
+<span class="w">    </span><span class="n">FUN_0047d760</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span><span class="w">            </span><span class="c1">// Parse update data</span>
+<span class="w">    </span><span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">param_3</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span><span class="w">         </span><span class="c1">// Byte alignment</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The actual parsing happens in FUN_0047d760, which is a complex 270+ line function.</p>
+<h3 id="the-parsing-function-fun_0047d760">The Parsing Function (FUN_0047d760)<a class="headerlink" href="#the-parsing-function-fun_0047d760" title="Permanent link">&para;</a></h3>
+<p>From FUN_0047d760 (lines 88119-88391), simplified and annotated:</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0047d760</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// HEADER: Read timestamp and entity count</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">();</span><span class="w">                    </span><span class="c1">// Read 4 bytes: Timestamp</span>
+<span class="w">    </span><span class="n">_DAT_0067d0c4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_d0</span><span class="p">;</span><span class="w">          </span><span class="c1">// Store timestamp</span>
+
+<span class="w">    </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_c4</span><span class="p">);</span><span class="w">        </span><span class="c1">// Read 8 bits: Entity count</span>
+
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// LOOP: Process each entity update</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">entity_count</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Read entity ID using BEHAVIOR-configured bit width</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">();</span><span class="w">                </span><span class="c1">// 4 bytes: Entity ID</span>
+
+<span class="w">        </span><span class="c1">// Read presence flags (1 bit each, packed)</span>
+<span class="w">        </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_a0</span><span class="p">);</span><span class="w">    </span><span class="c1">// Has extended data?</span>
+<span class="w">        </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_dc</span><span class="p">);</span><span class="w">   </span><span class="c1">// 10 presence flags</span>
+
+<span class="w">        </span><span class="c1">// Parse based on presence flags (bit mask)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x001</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 0: Full entity data</span>
+<span class="w">            </span><span class="c1">// Entity type, team, spawn info</span>
+<span class="w">            </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="o">*</span><span class="n">DAT_00678134</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">entity_type</span><span class="p">);</span>
+<span class="w">            </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">DAT_00678134</span><span class="p">[</span><span class="mh">0x20</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">team_id</span><span class="p">);</span>
+<span class="w">            </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">DAT_00678134</span><span class="p">[</span><span class="mh">0x30</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">spawn_param1</span><span class="p">);</span>
+<span class="w">            </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">DAT_00678134</span><span class="p">[</span><span class="mh">0x30</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">spawn_param2</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x002</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 1: Position X</span>
+<span class="w">            </span><span class="n">FUN_0047cfa0</span><span class="p">(...);</span><span class="w">  </span><span class="c1">// Read position component</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x004</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 2: Position Y</span>
+<span class="w">            </span><span class="n">FUN_0047cfa0</span><span class="p">(...);</span><span class="w">  </span><span class="c1">// Read position component</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x008</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 3: Position Z</span>
+<span class="w">            </span><span class="n">FUN_0047cfa0</span><span class="p">(...);</span><span class="w">  </span><span class="c1">// Read position component</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x010</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 4: Velocity/Orientation set 1</span>
+<span class="w">            </span><span class="n">FUN_0047cfa0</span><span class="p">(...);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x020</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 5: Speed/movement</span>
+<span class="w">            </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">DAT_00678134</span><span class="p">[</span><span class="mh">0x50</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">speed</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x040</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 6: Weapon state</span>
+<span class="w">            </span><span class="n">FUN_0047d110</span><span class="p">(</span><span class="n">param_3</span><span class="p">);</span><span class="w">  </span><span class="c1">// Read weapon data</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x080</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 7: Health/damage</span>
+<span class="w">            </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">DAT_00678134</span><span class="p">[</span><span class="mh">0x80</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">health</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x100</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 8: Target/aim</span>
+<span class="w">            </span><span class="n">FUN_00509310</span><span class="p">();</span><span class="w">  </span><span class="c1">// Read target data</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">flags</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x200</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// Bit 9: Extended state</span>
+<span class="w">            </span><span class="c1">// Additional state data</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Apply updates to entity</span>
+<span class="w">        </span><span class="n">FUN_0047d2f0</span><span class="p">(</span><span class="n">local_a8</span><span class="p">,</span><span class="w"> </span><span class="n">local_bc</span><span class="p">,</span><span class="w"> </span><span class="n">_Memory</span><span class="p">,</span><span class="w"> </span><span class="n">local_b0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="section-2-wire-format">Section 2: Wire Format<a class="headerlink" href="#section-2-wire-format" title="Permanent link">&para;</a></h2>
+<h3 id="packet-structure-overview">Packet Structure Overview<a class="headerlink" href="#packet-structure-overview" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>UPDATE_ARRAY Packet Structure:
+┌──────────┬──────────────┬─────────────────────────────────────────────────┐
+│  TYPE    │   LENGTH     │   PAYLOAD (bit-stream)                          │
+│  0x0E    │  (2 bytes)   │   [header][entity updates...]                   │
+└──────────┴──────────────┴─────────────────────────────────────────────────┘
+   1 byte     2 bytes BE         variable (bit-packed)
+</code></pre></div>
+<h3 id="payload-header">Payload Header<a class="headerlink" href="#payload-header" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>UPDATE_ARRAY Header:
+┌─────────┬────────┬────────────────────────────────────────────────────────┐
+│ Offset  │ Size   │ Description                                            │
+├─────────┼────────┼────────────────────────────────────────────────────────┤
+│ 0-3     │ 32 bits│ Timestamp (uint32 big-endian)                          │
+│ 4       │ 8 bits │ Entity count (number of entity updates in packet)     │
+└─────────┴────────┴────────────────────────────────────────────────────────┘
+Total header: 5 bytes (40 bits)
+</code></pre></div>
+<h3 id="per-entity-update-structure">Per-Entity Update Structure<a class="headerlink" href="#per-entity-update-structure" title="Permanent link">&para;</a></h3>
+<p>Each entity update has the following structure:</p>
+<div class="highlight"><pre><span></span><code>Entity Update Structure (variable length, bit-packed):
+┌─────────────────────────────────────────────────────────────────────────┐
+│  ENTITY ID (4 bytes / 32 bits)                                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│  EXTENDED FLAG (1 bit)                                                  │
+├─────────────────────────────────────────────────────────────────────────┤
+│  PRESENCE FLAGS (10 bits) - indicates which fields follow               │
+├─────────────────────────────────────────────────────────────────────────┤
+│  FIELD DATA (variable) - only fields indicated by presence flags        │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="presence-flags-10-bits">Presence Flags (10 bits)<a class="headerlink" href="#presence-flags-10-bits" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Bit</th>
+<th>Mask</th>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0x001</td>
+<td>Full Data</td>
+<td>Entity type, team, spawn params</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0x002</td>
+<td>Position X</td>
+<td>X coordinate data</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0x004</td>
+<td>Position Y</td>
+<td>Y coordinate data</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x008</td>
+<td>Position Z</td>
+<td>Z coordinate data</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0x010</td>
+<td>Velocity</td>
+<td>Velocity/orientation set</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0x020</td>
+<td>Speed</td>
+<td>Movement speed</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0x040</td>
+<td>Weapon</td>
+<td>Weapon state data</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x080</td>
+<td>Health</td>
+<td>Health/damage value</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x100</td>
+<td>Target</td>
+<td>Targeting data</td>
+</tr>
+<tr>
+<td>9</td>
+<td>0x200</td>
+<td>Extended</td>
+<td>Additional state</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="section-3-behavior-configured-bit-widths">Section 3: BEHAVIOR-Configured Bit Widths<a class="headerlink" href="#section-3-behavior-configured-bit-widths" title="Permanent link">&para;</a></h2>
+<p>The bit widths used in UPDATE_ARRAY come from the BEHAVIOR packet and are stored in DAT_00678134. Here's the mapping:</p>
+<div class="highlight"><pre><span></span><code>Bit Width Configuration (from BEHAVIOR):
+┌────────────────────┬─────────────────────────────────────────────────────┐
+│ Config Offset      │ Used For                                            │
+├────────────────────┼─────────────────────────────────────────────────────┤
+│ DAT_00678134[0x00] │ Entity type index bit width                        │
+│ DAT_00678134[0x20] │ Team ID bit width                                  │
+│ DAT_00678134[0x30] │ Spawn parameter bit width                          │
+│ DAT_00678134[0x40] │ Position component base bit width                  │
+│ DAT_00678134[0x50] │ Speed value bit width                              │
+│ DAT_00678134[0x80] │ Health value bit width                             │
+└────────────────────┴─────────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="position-data-format">Position Data Format<a class="headerlink" href="#position-data-format" title="Permanent link">&para;</a></h3>
+<p>Position components use a more complex format that combines a base value with additional precision bits:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_0047cfa0 (lines 87727-87758)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0047cfa0</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Read base component value</span>
+<span class="w">    </span><span class="n">iVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">entity_type</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mh">0x40</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">param_1</span><span class="p">);</span><span class="w">      </span><span class="c1">// Base width</span>
+<span class="w">    </span><span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">entity_type</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mh">0x40</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">param_1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Extra width</span>
+
+<span class="w">    </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">iVar1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_10</span><span class="p">);</span><span class="w">  </span><span class="c1">// Read base value</span>
+<span class="w">    </span><span class="n">iVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">iVar2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">local_10</span><span class="p">;</span><span class="w">        </span><span class="c1">// Calculate total width</span>
+
+<span class="w">    </span><span class="c1">// Read X, Y, Z with calculated width</span>
+<span class="w">    </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">iVar2</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_c</span><span class="p">);</span><span class="w">   </span><span class="c1">// X</span>
+<span class="w">    </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">iVar2</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_8</span><span class="p">);</span><span class="w">   </span><span class="c1">// Y</span>
+<span class="w">    </span><span class="n">FUN_00509320</span><span class="p">(</span><span class="n">iVar2</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span><span class="w">   </span><span class="c1">// Z</span>
+
+<span class="w">    </span><span class="c1">// Convert from fixed-point</span>
+<span class="w">    </span><span class="o">*</span><span class="n">param_5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">FUN_004f8f40</span><span class="p">(</span><span class="n">iVar2</span><span class="p">,</span><span class="w"> </span><span class="n">local_c</span><span class="p">);</span>
+<span class="w">    </span><span class="o">*</span><span class="n">param_6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">FUN_004f8f40</span><span class="p">(</span><span class="n">iVar2</span><span class="p">,</span><span class="w"> </span><span class="n">local_8</span><span class="p">);</span>
+<span class="w">    </span><span class="o">*</span><span class="n">param_7</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">FUN_004f8f40</span><span class="p">(</span><span class="n">iVar2</span><span class="p">,</span><span class="w"> </span><span class="n">local_4</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="section-4-related-packets">Section 4: Related Packets<a class="headerlink" href="#section-4-related-packets" title="Permanent link">&para;</a></h2>
+<h3 id="birth_notice-0x1e">BIRTH_NOTICE (0x1E)<a class="headerlink" href="#birth_notice-0x1e" title="Permanent link">&para;</a></h3>
+<p>Sent when a new entity spawns in the world.</p>
+<p><strong>Handler</strong>: FUN_0046d880 (lines 77796-77819)</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0046d880</span><span class="p">(</span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;BIRTH_NOTICE&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span><span class="w">     </span><span class="c1">// 4 bytes: Entity ID</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_8</span><span class="p">);</span><span class="w">     </span><span class="c1">// 4 bytes: Birth time/flags</span>
+<span class="w">    </span><span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">param_3</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Find entity and mark as spawned</span>
+<span class="w">    </span><span class="c1">// Sets entity flags at offset 0x3c and 0x40</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Wire Format:</strong>
+<div class="highlight"><pre><span></span><code>BIRTH_NOTICE Payload:
+┌─────────┬──────┬──────────────────────────────────────────────────────────┐
+│ Offset  │ Size │ Description                                              │
+├─────────┼──────┼──────────────────────────────────────────────────────────┤
+│ 0-3     │ 4    │ Entity ID (uint32 big-endian)                           │
+│ 4-7     │ 4    │ Birth data/timestamp (uint32 big-endian)                │
+└─────────┴──────┴──────────────────────────────────────────────────────────┘
+Total: 8 bytes payload
+</code></pre></div></p>
+<h3 id="delete_object-0x15">DELETE_OBJECT (0x15)<a class="headerlink" href="#delete_object-0x15" title="Permanent link">&para;</a></h3>
+<p>Sent when entities are removed from the world.</p>
+<p><strong>Handler</strong>: FUN_0046d4b0 (lines 77679-77719)</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0046d4b0</span><span class="p">(</span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;DELETE_OBJECT&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span><span class="w">     </span><span class="c1">// 4 bytes: Timestamp</span>
+<span class="w">    </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_e</span><span class="p">);</span><span class="w">     </span><span class="c1">// 1 byte:  Deletion count</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">deletion_count</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_c</span><span class="p">);</span><span class="w">     </span><span class="c1">// 4 bytes: Entity ID</span>
+<span class="w">        </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_d</span><span class="p">);</span><span class="w">     </span><span class="c1">// 1 byte:  Deletion flags</span>
+
+<span class="w">        </span><span class="c1">// Play destruction effect if flags set</span>
+<span class="w">        </span><span class="c1">// Remove entity from world</span>
+<span class="w">        </span><span class="n">FUN_00419310</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">param_3</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Wire Format:</strong>
+<div class="highlight"><pre><span></span><code>DELETE_OBJECT Payload:
+┌─────────┬──────┬──────────────────────────────────────────────────────────┐
+│ Offset  │ Size │ Description                                              │
+├─────────┼──────┼──────────────────────────────────────────────────────────┤
+│ 0-3     │ 4    │ Timestamp (uint32 big-endian)                           │
+│ 4       │ 1    │ Deletion count                                          │
+├─────────┼──────┼──────────────────────────────────────────────────────────┤
+│         │      │ Per deletion (repeated &#39;count&#39; times):                  │
+│ varies  │ 4    │   Entity ID (uint32 big-endian)                         │
+│ varies  │ 1    │   Deletion flags (show explosion, etc.)                 │
+└─────────┴──────┴──────────────────────────────────────────────────────────┘
+</code></pre></div></p>
+<h3 id="transient_array-0x0d">TRANSIENT_ARRAY (0x0D)<a class="headerlink" href="#transient_array-0x0d" title="Permanent link">&para;</a></h3>
+<p>Sent for temporary entities like projectiles, effects, and particles.</p>
+<p><strong>Registration</strong>: Line 77031 - <code>FUN_00509b40(0x0D, FUN_0046cc10)</code></p>
+<p>Similar structure to UPDATE_ARRAY but for short-lived entities that don't need full entity management.</p>
+<hr />
+<h2 id="section-5-implementation-strategy">Section 5: Implementation Strategy<a class="headerlink" href="#section-5-implementation-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="simplified-update_array-for-testing">Simplified UPDATE_ARRAY for Testing<a class="headerlink" href="#simplified-update_array-for-testing" title="Permanent link">&para;</a></h3>
+<p>For initial testing, you can create a simplified UPDATE_ARRAY that sends minimal data:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BitWriter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write data at the bit level.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_byte</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bit_position</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">num_bits</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write a value using the specified number of bits.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_bits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">bit</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">&gt;&gt;</span> <span class="n">i</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_byte</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_byte</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="n">bit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bit_position</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bit_position</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_byte</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_byte</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bit_position</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_uint32</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write a 32-bit value (byte-aligned).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>  <span class="c1"># Align to byte boundary first</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_fixed_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">float_value</span><span class="p">,</span> <span class="n">num_bits</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write a fixed-point value.&quot;&quot;&quot;</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">num_bits</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="c1"># Scale float to integer range</span>
+        <span class="n">int_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">float_value</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">max_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_bits</span><span class="p">(</span><span class="n">int_val</span><span class="p">,</span> <span class="n">num_bits</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pad remaining bits to byte boundary.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bit_position</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_byte</span> <span class="o">&lt;&lt;=</span> <span class="p">(</span><span class="mi">8</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bit_position</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_byte</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_byte</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bit_position</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the final byte array.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_update_array_simple</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">entities</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a simplified UPDATE_ARRAY packet.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        timestamp: Current game timestamp</span>
+<span class="sd">        entities: List of (entity_id, x, y, z) tuples</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Complete packet bytes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">BitWriter</span><span class="p">()</span>
+
+    <span class="c1"># Header</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">write_uint32</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">write_bits</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">entities</span><span class="p">),</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># Entity count</span>
+
+    <span class="k">for</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">:</span>
+        <span class="c1"># Entity ID (32 bits)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write_uint32</span><span class="p">(</span><span class="n">entity_id</span><span class="p">)</span>
+
+        <span class="c1"># Extended flag (1 bit) - not extended</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write_bits</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Presence flags (10 bits) - only position bits set (0x00E)</span>
+        <span class="c1"># Bits 1, 2, 3 = X, Y, Z position</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write_bits</span><span class="p">(</span><span class="mh">0x00E</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="c1"># Position data (simplified - using fixed bit widths)</span>
+        <span class="c1"># In real implementation, use BEHAVIOR-configured widths</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write_fixed_point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write_fixed_point</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write_fixed_point</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">get_bytes</span><span class="p">()</span>
+
+    <span class="c1"># Create packet frame</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x0E</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span> <span class="o">+</span> <span class="n">payload</span>
+</code></pre></div>
+<h3 id="full-implementation-notes">Full Implementation Notes<a class="headerlink" href="#full-implementation-notes" title="Permanent link">&para;</a></h3>
+<p>For a complete implementation:</p>
+<ol>
+<li><strong>Track BEHAVIOR configuration</strong>: Store the bit widths from BEHAVIOR packet</li>
+<li><strong>Entity management</strong>: Maintain a server-side entity list with positions, states</li>
+<li><strong>Delta compression</strong>: Only send fields that changed (using presence flags)</li>
+<li><strong>Tick rate</strong>: Send UPDATE_ARRAY at regular intervals (e.g., 20-60 Hz)</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GameState</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># entity_id -&gt; EntityState</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">behavior_config</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># From BEHAVIOR packet</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_update_packet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create UPDATE_ARRAY with all active entities.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Build entity list</span>
+        <span class="n">entity_updates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+                <span class="n">entity_updates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span>
+                    <span class="n">entity_id</span><span class="p">,</span>
+                    <span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">z</span>
+                <span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">create_update_array_simple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">entity_updates</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="section-6-server-game-loop">Section 6: Server Game Loop<a class="headerlink" href="#section-6-server-game-loop" title="Permanent link">&para;</a></h2>
+<h3 id="basic-game-loop-structure">Basic Game Loop Structure<a class="headerlink" href="#basic-game-loop-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Wulfram2Server</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_state</span> <span class="o">=</span> <span class="n">GameState</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clients</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tick_rate</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># Updates per second</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_game_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the game update loop.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">tick_time</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_rate</span>
+
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+            <span class="c1"># Update game state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_game_state</span><span class="p">()</span>
+
+            <span class="c1"># Send updates to all clients</span>
+            <span class="n">update_packet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_state</span><span class="o">.</span><span class="n">create_update_packet</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">client</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clients</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">client</span><span class="o">.</span><span class="n">in_game</span><span class="p">:</span>
+                    <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">update_packet</span><span class="p">)</span>
+
+            <span class="c1"># Sleep to maintain tick rate</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+            <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&lt;</span> <span class="n">tick_time</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">tick_time</span> <span class="o">-</span> <span class="n">elapsed</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_game_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update all entity positions, handle physics, etc.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">entity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_state</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Apply velocity</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="n">entity</span><span class="o">.</span><span class="n">vx</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_rate</span><span class="p">)</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="n">entity</span><span class="o">.</span><span class="n">vy</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_rate</span><span class="p">)</span>
+            <span class="n">entity</span><span class="o">.</span><span class="n">z</span> <span class="o">+=</span> <span class="n">entity</span><span class="o">.</span><span class="n">vz</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tick_rate</span><span class="p">)</span>
+
+            <span class="c1"># Apply gravity, collisions, etc.</span>
+            <span class="c1"># ...</span>
+</code></pre></div>
+<h3 id="handling-client-input">Handling Client Input<a class="headerlink" href="#handling-client-input" title="Permanent link">&para;</a></h3>
+<p>When clients send ACTION_UPDATE (0x0A), process their inputs:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">handle_action_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle player input from client.&quot;&quot;&quot;</span>
+    <span class="c1"># Parse the action data</span>
+    <span class="c1"># ... parse bit-stream similar to UPDATE_ARRAY</span>
+
+    <span class="c1"># Apply to player&#39;s entity</span>
+    <span class="n">entity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_state</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">entity_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">entity</span><span class="p">:</span>
+        <span class="n">entity</span><span class="o">.</span><span class="n">target_velocity</span> <span class="o">=</span> <span class="n">parsed_velocity</span>
+        <span class="n">entity</span><span class="o">.</span><span class="n">weapon_state</span> <span class="o">=</span> <span class="n">parsed_weapon</span>
+        <span class="c1"># etc.</span>
+</code></pre></div>
+<hr />
+<h2 id="section-7-packet-timing">Section 7: Packet Timing<a class="headerlink" href="#section-7-packet-timing" title="Permanent link">&para;</a></h2>
+<h3 id="update-frequency">Update Frequency<a class="headerlink" href="#update-frequency" title="Permanent link">&para;</a></h3>
+<p>The server should send UPDATE_ARRAY at a consistent rate:</p>
+<table>
+<thead>
+<tr>
+<th>Tick Rate</th>
+<th>Interval</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10 Hz</td>
+<td>100ms</td>
+<td>Low bandwidth, slow-paced</td>
+</tr>
+<tr>
+<td>20 Hz</td>
+<td>50ms</td>
+<td>Standard gameplay</td>
+</tr>
+<tr>
+<td>30 Hz</td>
+<td>33ms</td>
+<td>Fast-paced action</td>
+</tr>
+<tr>
+<td>60 Hz</td>
+<td>16ms</td>
+<td>High precision (LAN)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bandwidth-optimization">Bandwidth Optimization<a class="headerlink" href="#bandwidth-optimization" title="Permanent link">&para;</a></h3>
+<p>Use presence flags efficiently:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">calculate_presence_flags</span><span class="p">(</span><span class="n">old_state</span><span class="p">,</span> <span class="n">new_state</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Only set flags for changed fields.&quot;&quot;&quot;</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">new_state</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">old_state</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
+        <span class="n">flags</span> <span class="o">|=</span> <span class="mh">0x002</span>  <span class="c1"># X changed</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">new_state</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">old_state</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
+        <span class="n">flags</span> <span class="o">|=</span> <span class="mh">0x004</span>  <span class="c1"># Y changed</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">new_state</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">old_state</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
+        <span class="n">flags</span> <span class="o">|=</span> <span class="mh">0x008</span>  <span class="c1"># Z changed</span>
+
+    <span class="k">if</span> <span class="n">new_state</span><span class="o">.</span><span class="n">health</span> <span class="o">!=</span> <span class="n">old_state</span><span class="o">.</span><span class="n">health</span><span class="p">:</span>
+        <span class="n">flags</span> <span class="o">|=</span> <span class="mh">0x080</span>  <span class="c1"># Health changed</span>
+
+    <span class="c1"># ... other fields</span>
+
+    <span class="k">return</span> <span class="n">flags</span>
+</code></pre></div>
+<hr />
+<h2 id="section-8-complete-example">Section 8: Complete Example<a class="headerlink" href="#section-8-complete-example" title="Permanent link">&para;</a></h2>
+<h3 id="minimal-gameplay-server">Minimal Gameplay Server<a class="headerlink" href="#minimal-gameplay-server" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MinimalGameServer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Minimal server that gets a client into gameplay with UPDATE_ARRAY.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entities</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">},</span>  <span class="c1"># Player entity</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mf">200.0</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mf">200.0</span><span class="p">},</span>  <span class="c1"># Another entity</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_update_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a simple UPDATE_ARRAY packet.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Simple fixed-width implementation for testing</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+        <span class="c1"># Timestamp (4 bytes)</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="p">))</span>
+
+        <span class="c1"># Entity count (1 byte for simplicity)</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">))</span>
+
+        <span class="c1"># For each entity, send a minimal update</span>
+        <span class="k">for</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Entity ID (4 bytes)</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">))</span>
+
+            <span class="c1"># Simplified presence flags (2 bytes) - position only</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="mh">0x000E</span><span class="p">))</span>
+
+            <span class="c1"># Position as fixed-point (4 bytes each)</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)))</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)))</span>
+            <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x0E</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span> <span class="o">+</span> <span class="n">payload</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">game_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send updates at 10 Hz.&quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="c1"># Update entity positions (simple circular motion for testing)</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">*</span> <span class="mf">0.1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">200.0</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="mi">50</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entities</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">200.0</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="mi">50</span>
+
+            <span class="c1"># Send update</span>
+            <span class="n">update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_update_array</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># 10 Hz</span>
+</code></pre></div>
+<hr />
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="problem-client-shows-wrong-positions">Problem: Client Shows Wrong Positions<a class="headerlink" href="#problem-client-shows-wrong-positions" title="Permanent link">&para;</a></h3>
+<p><strong>Cause</strong>: Bit widths don't match BEHAVIOR configuration.</p>
+<p><strong>Solution</strong>: Use the exact bit widths configured in your BEHAVIOR packet:
+<div class="highlight"><pre><span></span><code><span class="c1"># Store these from your BEHAVIOR packet</span>
+<span class="n">entity_type_bits</span> <span class="o">=</span> <span class="n">DAT_00678134</span><span class="p">[</span><span class="mh">0x00</span><span class="p">]</span>
+<span class="n">team_bits</span> <span class="o">=</span> <span class="n">DAT_00678134</span><span class="p">[</span><span class="mh">0x20</span><span class="p">]</span>
+<span class="c1"># ... etc</span>
+</code></pre></div></p>
+<h3 id="problem-client-crashes-during-update_array">Problem: Client Crashes During UPDATE_ARRAY<a class="headerlink" href="#problem-client-crashes-during-update_array" title="Permanent link">&para;</a></h3>
+<p><strong>Cause</strong>: Malformed bit-stream or wrong entity count.</p>
+<p><strong>Solution</strong>: 
+- Verify entity count matches actual entities sent
+- Ensure all presence flag bits have corresponding data
+- Check bit alignment at packet end</p>
+<h3 id="problem-entities-dont-move">Problem: Entities Don't Move<a class="headerlink" href="#problem-entities-dont-move" title="Permanent link">&para;</a></h3>
+<p><strong>Cause</strong>: UPDATE_ARRAY not being sent, or wrong entity IDs.</p>
+<p><strong>Solution</strong>:
+- Verify server is calling game loop
+- Check entity IDs match those assigned via PLAYER packet
+- Confirm presence flags include position bits (0x00E)</p>
+<h3 id="problem-client-disconnects-after-first-update">Problem: Client Disconnects After First UPDATE<a class="headerlink" href="#problem-client-disconnects-after-first-update" title="Permanent link">&para;</a></h3>
+<p><strong>Cause</strong>: Server not handling client packets (WANT_UPDATES, ACTION_UPDATE).</p>
+<p><strong>Solution</strong>: Implement handlers for all client packet types during gameplay.</p>
+<hr />
+<h2 id="common-mistakes">Common Mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wrong bit widths</td>
+<td>Garbled positions</td>
+<td>Match BEHAVIOR config exactly</td>
+</tr>
+<tr>
+<td>Missing entities</td>
+<td>Player invisible</td>
+<td>Include player entity in updates</td>
+</tr>
+<tr>
+<td>No game loop</td>
+<td>Frozen game</td>
+<td>Start update thread after WANT_UPDATES</td>
+</tr>
+<tr>
+<td>Bad timestamp</td>
+<td>Time desync</td>
+<td>Increment timestamp each update</td>
+</tr>
+<tr>
+<td>Missing BIRTH_NOTICE</td>
+<td>Entities don't appear</td>
+<td>Send BIRTH_NOTICE for new entities</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="verification-checklist">Verification Checklist<a class="headerlink" href="#verification-checklist" title="Permanent link">&para;</a></h2>
+<p>Before considering gameplay working:</p>
+<ul>
+<li>[ ] Server handles WANT_UPDATES from client</li>
+<li>[ ] Server starts game loop after WANT_UPDATES</li>
+<li>[ ] UPDATE_ARRAY sent at consistent rate</li>
+<li>[ ] Player's entity included in updates</li>
+<li>[ ] Entity positions update over time</li>
+<li>[ ] Client can see themselves in game world</li>
+<li>[ ] BIRTH_NOTICE sent for new entities</li>
+<li>[ ] DELETE_OBJECT sent when entities removed</li>
+</ul>
+<hr />
+<h2 id="quick-reference-gameplay-packets">Quick Reference: Gameplay Packets<a class="headerlink" href="#quick-reference-gameplay-packets" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Packet</th>
+<th>Type</th>
+<th>Direction</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UPDATE_ARRAY</td>
+<td>0x0E</td>
+<td>S→C</td>
+<td>Entity state updates</td>
+</tr>
+<tr>
+<td>TRANSIENT_ARRAY</td>
+<td>0x0D</td>
+<td>S→C</td>
+<td>Projectiles/effects</td>
+</tr>
+<tr>
+<td>BIRTH_NOTICE</td>
+<td>0x1E</td>
+<td>S→C</td>
+<td>Entity spawned</td>
+</tr>
+<tr>
+<td>DELETE_OBJECT</td>
+<td>0x15</td>
+<td>S→C</td>
+<td>Entity removed</td>
+</tr>
+<tr>
+<td>ACTION_UPDATE</td>
+<td>0x0A</td>
+<td>C→S</td>
+<td>Player input</td>
+</tr>
+<tr>
+<td>WANT_UPDATES</td>
+<td>0x39</td>
+<td>C→S</td>
+<td>Request updates (auto)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="implementation-priority">Implementation Priority<a class="headerlink" href="#implementation-priority" title="Permanent link">&para;</a></h2>
+<p>For a minimal working game:</p>
+<ol>
+<li><strong>UPDATE_ARRAY</strong> (0x0E) - <strong>REQUIRED</strong> - Send entity positions</li>
+<li><strong>Handle WANT_UPDATES</strong> (0x39) - Trigger game loop start</li>
+<li><strong>BIRTH_NOTICE</strong> (0x1E) - Required for new entity visibility</li>
+<li><strong>DELETE_OBJECT</strong> (0x15) - Required for entity cleanup</li>
+</ol>
+<p>Optional but recommended:
+- TRANSIENT_ARRAY (0x0D) - For projectiles
+- ACTION_UPDATE handling (0x0A) - For player control</p>
+<hr />
+<h3 id="whats-next">What's Next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h3>
+<hr />
+<p><em>Previous: <a href="../part-6-reincarnate/index.html">Part 6: REINCARNATE &amp; Game Entry</a></em>  </p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

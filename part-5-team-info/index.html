@@ -1,0 +1,2225 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="../part-0-game-state/index.html">
+      
+      
+        <link rel="next" href="../part-6-reincarnate/index.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>TEAM INFO - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              TEAM INFO
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="index.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-team_info-packet" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 5: TEAM_INFO Packet
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 5: TEAM_INFO Packet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Registration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-the-reader-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the Reader Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team_info-wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      TEAM_INFO Wire Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#string-fields-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      String Fields Explained
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#length-prefixed-string-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Length-Prefixed String Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-team-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Internal Team Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-team_info-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building TEAM_INFO in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configurable-team-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configurable Team Builder
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-packet-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Packet Bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-hex-dump-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full Hex Dump Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-integration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Server Integration Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-after-team_info" class="md-nav__link">
+    <span class="md-ellipsis">
+      What Happens After TEAM_INFO
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-payload-size-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: Payload Size Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-connection-flow-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete Connection Flow Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-5-team_info-packet" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 5: TEAM_INFO Packet
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 5: TEAM_INFO Packet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Registration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-the-reader-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the Reader Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#team_info-wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      TEAM_INFO Wire Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#string-fields-explained" class="md-nav__link">
+    <span class="md-ellipsis">
+      String Fields Explained
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#length-prefixed-string-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Length-Prefixed String Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-team-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Internal Team Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-team_info-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building TEAM_INFO in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configurable-team-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configurable Team Builder
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-packet-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Packet Bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-hex-dump-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full Hex Dump Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-integration-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Server Integration Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-after-team_info" class="md-nav__link">
+    <span class="md-ellipsis">
+      What Happens After TEAM_INFO
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Section Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-payload-size-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: Payload Size Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-connection-flow-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete Connection Flow Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="part-5-team_info-packet">Part 5: TEAM_INFO Packet<a class="headerlink" href="#part-5-team_info-packet" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The TEAM_INFO packet (0x28) is sent <strong>immediately after the BEHAVIOR packet</strong> to provide the client with team information needed to display the team selection screen. Without this packet, the client will remain stuck waiting for game configuration data.</p>
+<div class="highlight"><pre><span></span><code>Position in Connection Flow:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  PHASE 2: AUTHENTICATION                                                │
+│  ─────────────────────────────────────────────────────────────          │
+│  Server ──► LOGIN_STATUS (0x22)              Status=8 (success)         │
+│  Server ──► BEHAVIOR (0x24)                  Game configuration         │
+├─────────────────────────────────────────────────────────────────────────┤
+│  PHASE 2B: TEAM SELECTION SETUP                          ◄ YOU ARE      │
+│  ───────────────────────────────────────                     HERE       │
+│  Server ──► TEAM_INFO (0x28)                 Team data for selection    │
+│                                                                         │
+│             Client now shows TEAM SELECTION screen                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│  PHASE 3: GAME ENTRY                                                    │
+│  ───────────────────                                                    │
+│  Client ──► REINCARNATE (0x25)               Player chooses team        │
+│  Server ──► PLAYER (0x17)                    Assigns player entity      │
+│  ...                                                                    │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="the-handler-code">The Handler Code<a class="headerlink" href="#the-handler-code" title="Permanent link">&para;</a></h3>
+<p>From FUN_0046dfb0 (lines 78006-78077):</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0046dfb0</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">undefined1</span><span class="w"> </span><span class="o">*</span><span class="n">puVar1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">undefined1</span><span class="w"> </span><span class="o">*</span><span class="n">puVar2</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">pcVar3</span><span class="p">;</span>
+<span class="w">    </span><span class="n">undefined1</span><span class="w"> </span><span class="n">local_2a</span><span class="p">;</span><span class="w">         </span><span class="c1">// Team 1 ID</span>
+<span class="w">    </span><span class="n">undefined1</span><span class="w"> </span><span class="n">local_29</span><span class="p">;</span><span class="w">         </span><span class="c1">// Team 2 ID</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_28</span><span class="p">;</span><span class="w">              </span><span class="c1">// Team 1 color name</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_24</span><span class="p">;</span><span class="w">              </span><span class="c1">// Team 1 name</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_20</span><span class="p">;</span><span class="w">              </span><span class="c1">// Team 1 adjective</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_1c</span><span class="p">;</span><span class="w">              </span><span class="c1">// Team 1 noun</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_18</span><span class="p">;</span><span class="w">              </span><span class="c1">// Team 1 possessive</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_14</span><span class="p">;</span><span class="w">              </span><span class="c1">// Team 2 color name</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_10</span><span class="p">;</span><span class="w">              </span><span class="c1">// Team 2 name</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_c</span><span class="p">;</span><span class="w">               </span><span class="c1">// Team 2 adjective</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_8</span><span class="p">;</span><span class="w">               </span><span class="c1">// Team 2 noun</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">local_4</span><span class="p">;</span><span class="w">               </span><span class="c1">// Team 2 possessive</span>
+
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;TEAM_INFO&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span><span class="w">    </span><span class="c1">// Set packet name for error messages</span>
+
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// TEAM 1 DATA</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_2a</span><span class="p">);</span><span class="w">      </span><span class="c1">// 1 byte:  Team 1 ID</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_24</span><span class="p">);</span><span class="w">      </span><span class="c1">// String:  Team 1 name</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_28</span><span class="p">);</span><span class="w">      </span><span class="c1">// String:  Team 1 color name</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_20</span><span class="p">);</span><span class="w">      </span><span class="c1">// String:  Team 1 adjective</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_1c</span><span class="p">);</span><span class="w">      </span><span class="c1">// String:  Team 1 noun</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_18</span><span class="p">);</span><span class="w">      </span><span class="c1">// String:  Team 1 possessive</span>
+
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// TEAM 2 DATA</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_29</span><span class="p">);</span><span class="w">      </span><span class="c1">// 1 byte:  Team 2 ID</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_10</span><span class="p">);</span><span class="w">      </span><span class="c1">// String:  Team 2 name</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_14</span><span class="p">);</span><span class="w">      </span><span class="c1">// String:  Team 2 color name</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_c</span><span class="p">);</span><span class="w">       </span><span class="c1">// String:  Team 2 adjective</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_8</span><span class="p">);</span><span class="w">       </span><span class="c1">// String:  Team 2 noun</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span><span class="w">       </span><span class="c1">// String:  Team 2 possessive</span>
+
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// BYTE ALIGNMENT</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">param_3</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span><span class="w">    </span><span class="c1">// Align bit stream to byte boundary</span>
+
+<span class="w">    </span><span class="c1">// ... Creates team structures with flag values 1 and 2 ...</span>
+<span class="w">    </span><span class="c1">// ... Also creates &quot;Neutral&quot; team via FUN_00417c90() ...</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="packet-registration">Packet Registration<a class="headerlink" href="#packet-registration" title="Permanent link">&para;</a></h3>
+<p>The TEAM_INFO packet handler is registered at startup:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From line 77053</span>
+<span class="n">FUN_00509b40</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span><span class="w"> </span><span class="n">FUN_0046dfb0</span><span class="p">);</span><span class="w">    </span><span class="c1">// Register type 0x28 → TEAM_INFO handler</span>
+</code></pre></div>
+<hr />
+<h3 id="understanding-the-reader-functions">Understanding the Reader Functions<a class="headerlink" href="#understanding-the-reader-functions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Bits Read</th>
+<th>Wire Bytes</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FUN_005092e0</code></td>
+<td>8 bits</td>
+<td>1 byte</td>
+<td>Reads team ID (uint8)</td>
+</tr>
+<tr>
+<td><code>FUN_00509340</code></td>
+<td>variable</td>
+<td>2 + N bytes</td>
+<td>Reads length-prefixed string</td>
+</tr>
+<tr>
+<td><code>FUN_00509dc0</code></td>
+<td>0-7 bits</td>
+<td>0 bytes</td>
+<td>Byte alignment (padding)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="team_info-wire-format">TEAM_INFO Wire Format<a class="headerlink" href="#team_info-wire-format" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>TEAM_INFO Packet Structure:
+┌──────────┬──────────────┬─────────────────────────────────────────────────┐
+│  TYPE    │   LENGTH     │   PAYLOAD                                       │
+│  0x28    │  (2 bytes)   │   (variable - team data)                        │
+└──────────┴──────────────┴─────────────────────────────────────────────────┘
+   1 byte     2 bytes BE         N bytes
+
+Payload Structure:
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  TEAM 1 DATA                                                                │
+├─────────┬──────────────────────────────────────────────────────────────────┤
+│ Offset  │ Content                                                          │
+├─────────┼──────────────────────────────────────────────────────────────────┤
+│ 0       │ Team 1 ID (1 byte, uint8)                                        │
+│ 1       │ Team 1 Name (length-prefixed string)                             │
+│ varies  │ Team 1 Color Name (length-prefixed string)                       │
+│ varies  │ Team 1 Adjective (length-prefixed string)                        │
+│ varies  │ Team 1 Noun (length-prefixed string)                             │
+│ varies  │ Team 1 Possessive (length-prefixed string)                       │
+├─────────┴──────────────────────────────────────────────────────────────────┤
+│  TEAM 2 DATA                                                                │
+├─────────┬──────────────────────────────────────────────────────────────────┤
+│ varies  │ Team 2 ID (1 byte, uint8)                                        │
+│ varies  │ Team 2 Name (length-prefixed string)                             │
+│ varies  │ Team 2 Color Name (length-prefixed string)                       │
+│ varies  │ Team 2 Adjective (length-prefixed string)                        │
+│ varies  │ Team 2 Noun (length-prefixed string)                             │
+│ varies  │ Team 2 Possessive (length-prefixed string)                       │
+└─────────┴──────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="string-fields-explained">String Fields Explained<a class="headerlink" href="#string-fields-explained" title="Permanent link">&para;</a></h3>
+<p>Each team has <strong>five string fields</strong> used in different UI contexts:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+<th>Example (Red Team)</th>
+<th>Example (Blue Team)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Name</strong></td>
+<td>Full team name</td>
+<td>"Red Team"</td>
+<td>"Blue Team"</td>
+</tr>
+<tr>
+<td><strong>Color Name</strong></td>
+<td>Color identifier</td>
+<td>"Red"</td>
+<td>"Blue"</td>
+</tr>
+<tr>
+<td><strong>Adjective</strong></td>
+<td>Describes team members</td>
+<td>"Red"</td>
+<td>"Blue"</td>
+</tr>
+<tr>
+<td><strong>Noun</strong></td>
+<td>Collective noun</td>
+<td>"Reds"</td>
+<td>"Blues"</td>
+</tr>
+<tr>
+<td><strong>Possessive</strong></td>
+<td>Ownership form</td>
+<td>"Red's"</td>
+<td>"Blue's"</td>
+</tr>
+</tbody>
+</table>
+<p>These strings are used to construct game messages like:
+- "You joined the <strong>Red Team</strong>" (Name)
+- "A <strong>Red</strong> tank is approaching" (Adjective)
+- "The <strong>Reds</strong> are winning" (Noun)
+- "That's <strong>Red's</strong> territory" (Possessive)</p>
+<hr />
+<h3 id="length-prefixed-string-format">Length-Prefixed String Format<a class="headerlink" href="#length-prefixed-string-format" title="Permanent link">&para;</a></h3>
+<p>Each string in TEAM_INFO uses the standard Wulfram 2 string format:</p>
+<div class="highlight"><pre><span></span><code>Length-Prefixed String:
+┌─────────────────┬──────────────────────────────────────────┐
+│  STRING_LENGTH  │  STRING DATA (with null terminator)      │
+│  (2 bytes BE)   │  (LENGTH bytes)                          │
+└─────────────────┴──────────────────────────────────────────┘
+
+Example: &quot;Red Team&quot;
+┌─────────────────┬───────────────────────────────────────────┐
+│     00 09       │  52 65 64 20 54 65 61 6D 00               │
+│     (9)         │  R  e  d     T  e  a  m  \0               │
+└─────────────────┴───────────────────────────────────────────┘
+</code></pre></div>
+<p><strong>Important</strong>: The length includes the null terminator!</p>
+<hr />
+<h3 id="data-flow-diagram">Data Flow Diagram<a class="headerlink" href="#data-flow-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>TEAM_INFO Reading Order:
+═══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  TEAM 1                                                                 │
+│  ───────                                                                │
+│  [ID:1]  [Name:var]  [Color:var]  [Adj:var]  [Noun:var]  [Poss:var]    │
+│    │         │           │           │          │            │          │
+│  uint8    string      string      string     string       string        │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│  TEAM 2                                                                 │
+│  ───────                                                                │
+│  [ID:1]  [Name:var]  [Color:var]  [Adj:var]  [Noun:var]  [Poss:var]    │
+│    │         │           │           │          │            │          │
+│  uint8    string      string      string     string       string        │
+└─────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="internal-team-structure">Internal Team Structure<a class="headerlink" href="#internal-team-structure" title="Permanent link">&para;</a></h3>
+<p>After reading TEAM_INFO, the client creates internal team structures:</p>
+<div class="highlight"><pre><span></span><code>Team Structure (0x1C = 28 bytes):
+┌─────────┬──────┬─────────────────────────────────────────────────────────┐
+│ Offset  │ Size │ Description                                             │
+├─────────┼──────┼─────────────────────────────────────────────────────────┤
+│ 0x00    │ 1    │ Team ID (from packet)                                   │
+│ 0x04    │ 4    │ Pointer to team name string                             │
+│ 0x08    │ 4    │ Pointer to color name string                            │
+│ 0x0C    │ 4    │ Pointer to adjective string                             │
+│ 0x10    │ 4    │ Pointer to noun string                                  │
+│ 0x14    │ 4    │ Pointer to possessive string                            │
+│ 0x18    │ 4    │ Team flag (1 for team 1, 2 for team 2)                  │
+└─────────┴──────┴─────────────────────────────────────────────────────────┘
+</code></pre></div>
+<p><strong>Note</strong>: A third "Neutral" team is also created internally with:
+- Color name = "Neutral"
+- Flag = 0</p>
+<hr />
+<h3 id="building-team_info-in-python">Building TEAM_INFO in Python<a class="headerlink" href="#building-team_info-in-python" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_string</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encode a string for Wulfram 2 protocol.</span>
+<span class="sd">    Format: [length:2 bytes BE][string data with null terminator]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">string_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_bytes</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">length</span> <span class="o">+</span> <span class="n">string_bytes</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_team_data</span><span class="p">(</span><span class="n">team_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">color_name</span><span class="p">,</span> <span class="n">adjective</span><span class="p">,</span> <span class="n">noun</span><span class="p">,</span> <span class="n">possessive</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the data block for a single team.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        team_id: Team identifier (1 or 2, uint8)</span>
+<span class="sd">        name: Full team name (e.g., &quot;Red Team&quot;)</span>
+<span class="sd">        color_name: Color identifier (e.g., &quot;Red&quot;)</span>
+<span class="sd">        adjective: Adjective form (e.g., &quot;Red&quot;)</span>
+<span class="sd">        noun: Collective noun (e.g., &quot;Reds&quot;)</span>
+<span class="sd">        possessive: Possessive form (e.g., &quot;Red&#39;s&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Bytes containing the team data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># Team ID (1 byte)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">team_id</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+
+    <span class="c1"># Five length-prefixed strings</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_string</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_string</span><span class="p">(</span><span class="n">color_name</span><span class="p">))</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_string</span><span class="p">(</span><span class="n">adjective</span><span class="p">))</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_string</span><span class="p">(</span><span class="n">noun</span><span class="p">))</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_string</span><span class="p">(</span><span class="n">possessive</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_team_info_packet</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a complete TEAM_INFO packet (0x28).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Complete packet bytes ready to send</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+    <span class="c1"># TEAM 1 DATA</span>
+    <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_team_data</span><span class="p">(</span>
+        <span class="n">team_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Red Team&quot;</span><span class="p">,</span>
+        <span class="n">color_name</span><span class="o">=</span><span class="s2">&quot;Red&quot;</span><span class="p">,</span>
+        <span class="n">adjective</span><span class="o">=</span><span class="s2">&quot;Red&quot;</span><span class="p">,</span>
+        <span class="n">noun</span><span class="o">=</span><span class="s2">&quot;Reds&quot;</span><span class="p">,</span>
+        <span class="n">possessive</span><span class="o">=</span><span class="s2">&quot;Red&#39;s&quot;</span>
+    <span class="p">))</span>
+
+    <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+    <span class="c1"># TEAM 2 DATA</span>
+    <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_team_data</span><span class="p">(</span>
+        <span class="n">team_id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Blue Team&quot;</span><span class="p">,</span>
+        <span class="n">color_name</span><span class="o">=</span><span class="s2">&quot;Blue&quot;</span><span class="p">,</span>
+        <span class="n">adjective</span><span class="o">=</span><span class="s2">&quot;Blue&quot;</span><span class="p">,</span>
+        <span class="n">noun</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">,</span>
+        <span class="n">possessive</span><span class="o">=</span><span class="s2">&quot;Blue&#39;s&quot;</span>
+    <span class="p">))</span>
+
+    <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+    <span class="c1"># BUILD PACKET FRAME</span>
+    <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+    <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x28</span><span class="p">)</span>  <span class="c1"># Packet type: TEAM_INFO</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">)))</span>  <span class="c1"># Length (big-endian)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_packet</span><span class="p">(</span><span class="n">packet_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap payload in a complete packet frame&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">packet_type</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span> <span class="o">+</span> <span class="n">payload</span>
+</code></pre></div>
+<hr />
+<h3 id="configurable-team-builder">Configurable Team Builder<a class="headerlink" href="#configurable-team-builder" title="Permanent link">&para;</a></h3>
+<p>For servers that want customizable team names and colors:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_team_info_packet_custom</span><span class="p">(</span><span class="n">team1_config</span><span class="p">,</span> <span class="n">team2_config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a TEAM_INFO packet with custom team configurations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        team1_config: dict with keys: id, name, color, adjective, noun, possessive</span>
+<span class="sd">        team2_config: dict with keys: id, name, color, adjective, noun, possessive</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Complete packet bytes ready to send</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        team1 = {</span>
+<span class="sd">            &#39;id&#39;: 1,</span>
+<span class="sd">            &#39;name&#39;: &#39;Alpha Squadron&#39;,</span>
+<span class="sd">            &#39;color&#39;: &#39;Green&#39;,</span>
+<span class="sd">            &#39;adjective&#39;: &#39;Alpha&#39;,</span>
+<span class="sd">            &#39;noun&#39;: &#39;Alphas&#39;,</span>
+<span class="sd">            &#39;possessive&#39;: &quot;Alpha&#39;s&quot;</span>
+<span class="sd">        }</span>
+<span class="sd">        team2 = {</span>
+<span class="sd">            &#39;id&#39;: 2,</span>
+<span class="sd">            &#39;name&#39;: &#39;Omega Force&#39;,</span>
+<span class="sd">            &#39;color&#39;: &#39;Purple&#39;,</span>
+<span class="sd">            &#39;adjective&#39;: &#39;Omega&#39;,</span>
+<span class="sd">            &#39;noun&#39;: &#39;Omegas&#39;,</span>
+<span class="sd">            &#39;possessive&#39;: &quot;Omega&#39;s&quot;</span>
+<span class="sd">        }</span>
+<span class="sd">        packet = create_team_info_packet_custom(team1, team2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># Team 1</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_team_data</span><span class="p">(</span>
+        <span class="n">team_id</span><span class="o">=</span><span class="n">team1_config</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">team1_config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+        <span class="n">color_name</span><span class="o">=</span><span class="n">team1_config</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">],</span>
+        <span class="n">adjective</span><span class="o">=</span><span class="n">team1_config</span><span class="p">[</span><span class="s1">&#39;adjective&#39;</span><span class="p">],</span>
+        <span class="n">noun</span><span class="o">=</span><span class="n">team1_config</span><span class="p">[</span><span class="s1">&#39;noun&#39;</span><span class="p">],</span>
+        <span class="n">possessive</span><span class="o">=</span><span class="n">team1_config</span><span class="p">[</span><span class="s1">&#39;possessive&#39;</span><span class="p">]</span>
+    <span class="p">))</span>
+
+    <span class="c1"># Team 2</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">create_team_data</span><span class="p">(</span>
+        <span class="n">team_id</span><span class="o">=</span><span class="n">team2_config</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">team2_config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+        <span class="n">color_name</span><span class="o">=</span><span class="n">team2_config</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">],</span>
+        <span class="n">adjective</span><span class="o">=</span><span class="n">team2_config</span><span class="p">[</span><span class="s1">&#39;adjective&#39;</span><span class="p">],</span>
+        <span class="n">noun</span><span class="o">=</span><span class="n">team2_config</span><span class="p">[</span><span class="s1">&#39;noun&#39;</span><span class="p">],</span>
+        <span class="n">possessive</span><span class="o">=</span><span class="n">team2_config</span><span class="p">[</span><span class="s1">&#39;possessive&#39;</span><span class="p">]</span>
+    <span class="p">))</span>
+
+    <span class="c1"># Build packet frame</span>
+    <span class="k">return</span> <span class="n">make_packet</span><span class="p">(</span><span class="mh">0x28</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="example-packet-bytes">Example Packet Bytes<a class="headerlink" href="#example-packet-bytes" title="Permanent link">&para;</a></h3>
+<p>Using standard "Red Team" vs "Blue Team" configuration:</p>
+<div class="highlight"><pre><span></span><code>TEAM_INFO Packet Construction:
+═══════════════════════════════════════════════════════════════════════════
+
+Team 1 Data (Red Team):
+───────────────────────
+  ID:         01                              (Team ID: 1)
+  Name:       00 09 52 65 64 20 54 65 61 6D 00   &quot;Red Team\0&quot; (9 bytes)
+  Color:      00 04 52 65 64 00                  &quot;Red\0&quot; (4 bytes)
+  Adjective:  00 04 52 65 64 00                  &quot;Red\0&quot; (4 bytes)
+  Noun:       00 05 52 65 64 73 00               &quot;Reds\0&quot; (5 bytes)
+  Possessive: 00 06 52 65 64 27 73 00            &quot;Red&#39;s\0&quot; (6 bytes)
+
+Team 1 size: 1 + 11 + 6 + 6 + 7 + 8 = 39 bytes
+
+Team 2 Data (Blue Team):
+────────────────────────
+  ID:         02                              (Team ID: 2)
+  Name:       00 0A 42 6C 75 65 20 54 65 61 6D 00   &quot;Blue Team\0&quot; (10 bytes)
+  Color:      00 05 42 6C 75 65 00                  &quot;Blue\0&quot; (5 bytes)
+  Adjective:  00 05 42 6C 75 65 00                  &quot;Blue\0&quot; (5 bytes)
+  Noun:       00 06 42 6C 75 65 73 00               &quot;Blues\0&quot; (6 bytes)
+  Possessive: 00 07 42 6C 75 65 27 73 00            &quot;Blue&#39;s\0&quot; (7 bytes)
+
+Team 2 size: 1 + 12 + 7 + 7 + 8 + 9 = 44 bytes
+
+Total payload: 39 + 44 = 83 bytes
+
+═══════════════════════════════════════════════════════════════════════════
+
+Complete Packet:
+  Type:    28                                 (TEAM_INFO)
+  Length:  00 53                              (83 bytes)
+  Payload: [Team 1 data][Team 2 data]
+
+Total packet size: 1 + 2 + 83 = 86 bytes
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="full-hex-dump-example">Full Hex Dump Example<a class="headerlink" href="#full-hex-dump-example" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Complete TEAM_INFO packet (86 bytes):
+
+28 00 53 01 00 09 52 65 64 20 54 65 61 6D 00 00
+04 52 65 64 00 00 04 52 65 64 00 00 05 52 65 64
+73 00 00 06 52 65 64 27 73 00 02 00 0A 42 6C 75
+65 20 54 65 61 6D 00 00 05 42 6C 75 65 00 00 05
+42 6C 75 65 00 00 06 42 6C 75 65 73 00 00 07 42
+6C 75 65 27 73 00
+
+Breakdown:
+Offset 0:      28                      Type: TEAM_INFO
+Offset 1-2:    00 53                   Length: 83 bytes
+Offset 3:      01                      Team 1 ID: 1
+Offset 4-14:   00 09 &quot;Red Team\0&quot;      Team 1 Name
+Offset 15-20:  00 04 &quot;Red\0&quot;           Team 1 Color
+Offset 21-26:  00 04 &quot;Red\0&quot;           Team 1 Adjective
+Offset 27-33:  00 05 &quot;Reds\0&quot;          Team 1 Noun
+Offset 34-41:  00 06 &quot;Red&#39;s\0&quot;         Team 1 Possessive
+Offset 42:     02                      Team 2 ID: 2
+Offset 43-54:  00 0A &quot;Blue Team\0&quot;     Team 2 Name
+Offset 55-61:  00 05 &quot;Blue\0&quot;          Team 2 Color
+Offset 62-68:  00 05 &quot;Blue\0&quot;          Team 2 Adjective
+Offset 69-76:  00 06 &quot;Blues\0&quot;         Team 2 Noun
+Offset 77-85:  00 07 &quot;Blue&#39;s\0&quot;        Team 2 Possessive
+</code></pre></div>
+<hr />
+<h3 id="server-integration-example">Server Integration Example<a class="headerlink" href="#server-integration-example" title="Permanent link">&para;</a></h3>
+<p>Here's how to integrate TEAM_INFO into your server's connection flow:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Wulfram2Server</span><span class="p">:</span>
+    <span class="n">PACKET_TEAM_INFO</span> <span class="o">=</span> <span class="mh">0x28</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_team_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send TEAM_INFO packet after BEHAVIOR.</span>
+<span class="sd">        This triggers the team selection screen on the client.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">packet</span> <span class="o">=</span> <span class="n">create_team_info_packet</span><span class="p">()</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TX: </span><span class="si">{</span><span class="n">packet</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TEAM_INFO sent - client should show team selection screen&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">complete_login_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Complete sequence after LOGIN_STATUS success.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 1. Send LOGIN_STATUS with status=8 (success)</span>
+        <span class="n">login_status</span> <span class="o">=</span> <span class="n">make_packet</span><span class="p">(</span><span class="mh">0x22</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">]))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">login_status</span><span class="p">)</span>
+
+        <span class="c1"># 2. Send BEHAVIOR packet (see Part 4)</span>
+        <span class="n">behavior</span> <span class="o">=</span> <span class="n">create_behavior_packet</span><span class="p">()</span>  <span class="c1"># From Part 4</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">behavior</span><span class="p">)</span>
+
+        <span class="c1"># 3. Send TEAM_INFO packet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_team_info</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+        <span class="c1"># Client will now show team selection screen!</span>
+</code></pre></div>
+<hr />
+<h3 id="what-happens-after-team_info">What Happens After TEAM_INFO<a class="headerlink" href="#what-happens-after-team_info" title="Permanent link">&para;</a></h3>
+<p>After receiving TEAM_INFO, the client:</p>
+<ol>
+<li><strong>Creates team structures</strong> for both teams</li>
+<li><strong>Creates a "Neutral" team</strong> with flag=0</li>
+<li><strong>Displays the team selection screen</strong></li>
+<li><strong>Waits for player input</strong> to choose a team</li>
+</ol>
+<p>When the player clicks a team button, the client sends a <strong>REINCARNATE (0x25)</strong> packet to join that team.</p>
+<div class="highlight"><pre><span></span><code>CLIENT STATE AFTER TEAM_INFO:
+═══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         TEAM SELECTION SCREEN                           │
+│                                                                         │
+│   ┌─────────────────┐              ┌─────────────────┐                 │
+│   │                 │              │                 │                 │
+│   │   RED TEAM      │              │   BLUE TEAM     │                 │
+│   │                 │              │                 │                 │
+│   │  [JOIN REDS]    │              │  [JOIN BLUES]   │                 │
+│   │                 │              │                 │                 │
+│   └─────────────────┘              └─────────────────┘                 │
+│                                                                         │
+│                        Player count: 0 vs 0                             │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Next packet: Client sends REINCARNATE (0x25) when player clicks a button
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
+<h4 id="problem-client-stuck-after-behavior-no-team-selection">Problem: Client Stuck After BEHAVIOR, No Team Selection<a class="headerlink" href="#problem-client-stuck-after-behavior-no-team-selection" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: TEAM_INFO packet not sent.</p>
+<p><strong>Solution</strong>: Send TEAM_INFO immediately after BEHAVIOR:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># After sending BEHAVIOR...</span>
+<span class="n">team_info</span> <span class="o">=</span> <span class="n">create_team_info_packet</span><span class="p">()</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">team_info</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="problem-team-names-show-as-garbage">Problem: Team Names Show as Garbage<a class="headerlink" href="#problem-team-names-show-as-garbage" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: Strings not properly length-prefixed, or wrong byte order.</p>
+<p><strong>Solution</strong>: Verify string encoding:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># WRONG - missing length prefix</span>
+<span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;Red Team</span><span class="se">\x00</span><span class="s2">&quot;</span>  <span class="c1"># ← WRONG!</span>
+
+<span class="c1"># CORRECT - with length prefix</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">encode_string</span><span class="p">(</span><span class="s2">&quot;Red Team&quot;</span><span class="p">)</span>  <span class="c1"># Returns: b&#39;\x00\x09Red Team\x00&#39;</span>
+</code></pre></div>
+<h4 id="problem-client-crashes-after-team_info">Problem: Client Crashes After TEAM_INFO<a class="headerlink" href="#problem-client-crashes-after-team_info" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: Missing strings or wrong number of strings per team.</p>
+<p><strong>Solution</strong>: Each team MUST have exactly 5 strings in this order:
+1. Name
+2. Color Name
+3. Adjective
+4. Noun
+5. Possessive</p>
+<h4 id="problem-team-selection-buttons-dont-work">Problem: Team Selection Buttons Don't Work<a class="headerlink" href="#problem-team-selection-buttons-dont-work" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: This is a Phase 3 (REINCARNATE) issue, not TEAM_INFO.</p>
+<p><strong>Solution</strong>: Ensure your server handles incoming REINCARNATE (0x25) packets after team selection.</p>
+<hr />
+<h3 id="common-mistakes">Common Mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Not sending TEAM_INFO</td>
+<td>Client stuck after BEHAVIOR</td>
+<td>Send TEAM_INFO after BEHAVIOR</td>
+</tr>
+<tr>
+<td>Wrong packet type</td>
+<td>Client ignores packet</td>
+<td>Use <code>0x28</code> for TEAM_INFO</td>
+</tr>
+<tr>
+<td>Missing length prefix</td>
+<td>String parse error/crash</td>
+<td>Use <code>encode_string()</code> for all strings</td>
+</tr>
+<tr>
+<td>Wrong string count</td>
+<td>Client crash</td>
+<td>Include all 5 strings per team</td>
+</tr>
+<tr>
+<td>Forgetting null terminator</td>
+<td>String parsing issues</td>
+<td>Include <code>\x00</code> in string data</td>
+</tr>
+<tr>
+<td>Little-endian length</td>
+<td>Wrong string lengths</td>
+<td>Use big-endian (<code>&gt;H</code>) for length</td>
+</tr>
+<tr>
+<td>Sending before BEHAVIOR</td>
+<td>Out-of-order error</td>
+<td>Always send BEHAVIOR first</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="verification-checklist">Verification Checklist<a class="headerlink" href="#verification-checklist" title="Permanent link">&para;</a></h3>
+<p>Before sending TEAM_INFO, verify:</p>
+<ul>
+<li>[ ] BEHAVIOR packet was sent successfully</li>
+<li>[ ] Packet type is <code>0x28</code></li>
+<li>[ ] Team 1 has: ID (1 byte) + 5 length-prefixed strings</li>
+<li>[ ] Team 2 has: ID (1 byte) + 5 length-prefixed strings</li>
+<li>[ ] All strings use big-endian length prefix</li>
+<li>[ ] All strings include null terminator in length</li>
+<li>[ ] Total payload length matches header</li>
+</ul>
+<hr />
+<h3 id="section-summary">Section Summary<a class="headerlink" href="#section-summary" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Packet Type</td>
+<td>0x28</td>
+</tr>
+<tr>
+<td>Handler Function</td>
+<td>FUN_0046dfb0</td>
+</tr>
+<tr>
+<td>Teams per Packet</td>
+<td>2 (fixed)</td>
+</tr>
+<tr>
+<td>Strings per Team</td>
+<td>5 (name, color, adjective, noun, possessive)</td>
+</tr>
+<tr>
+<td>Variable Size</td>
+<td>Yes (depends on string lengths)</td>
+</tr>
+<tr>
+<td>Follows</td>
+<td>BEHAVIOR (0x24)</td>
+</tr>
+<tr>
+<td>Triggers</td>
+<td>Team selection screen display</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="quick-reference-payload-size-calculation">Quick Reference: Payload Size Calculation<a class="headerlink" href="#quick-reference-payload-size-calculation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>TEAM_INFO Payload Size Formula:
+═══════════════════════════════════════════════════════════════════════════
+
+For each team:
+  1 byte (Team ID)
+  + (2 + len(name) + 1) bytes
+  + (2 + len(color) + 1) bytes
+  + (2 + len(adjective) + 1) bytes
+  + (2 + len(noun) + 1) bytes
+  + (2 + len(possessive) + 1) bytes
+
+Total payload = Team 1 size + Team 2 size
+
+Example with &quot;Red Team&quot; / &quot;Blue Team&quot;:
+  Team 1: 1 + 11 + 6 + 6 + 7 + 8 = 39 bytes
+  Team 2: 1 + 12 + 7 + 7 + 8 + 9 = 44 bytes
+  Total:  83 bytes
+
+Packet total = 1 (type) + 2 (length) + payload = 86 bytes
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="complete-connection-flow-summary">Complete Connection Flow Summary<a class="headerlink" href="#complete-connection-flow-summary" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>FULL CONNECTION SEQUENCE (Phases 1-2B):
+═══════════════════════════════════════════════════════════════════════════
+
+PHASE 1: HANDSHAKE
+  Server → HELLO sub=0 (version: 0x4E89)
+  Server → HELLO sub=1 (UDP port, interfaces)
+  Server → HELLO sub=2 (server name)
+
+PHASE 2: AUTHENTICATION
+  Client → LOGIN (username, password)
+  Server → LOGIN_STATUS (flag=1, status=8)
+  Server → BEHAVIOR (3,115+ bytes of game config)
+
+PHASE 2B: TEAM SELECTION SETUP
+  Server → TEAM_INFO (team data)              ◄── THIS DOCUMENT
+
+  ═══════════════════════════════════════════
+  Client now displays TEAM SELECTION screen
+  ═══════════════════════════════════════════
+
+PHASE 3: GAME ENTRY (covered in next document)
+  Client → REINCARNATE (team choice)
+  Server → PLAYER (entity assignment)
+  ...
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="whats-next">What's Next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h3>
+<p>After TEAM_INFO, the client displays the team selection screen and waits for player input. When the player selects a team, the client sends a REINCARNATE packet. In <strong>Part 6</strong>, we'll cover the REINCARNATE packet and the complete game entry sequence.</p>
+<hr />
+<p><em>Previous: <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html">Part 4-7: Post-BEHAVIOR Flow Overview</a></em><br />
+<em>Next: <a href="../part-6-reincarnate/index.html">Part 6: REINCARNATE &amp; Game Entry</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

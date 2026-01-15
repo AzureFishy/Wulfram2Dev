@@ -1,0 +1,2023 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="../part-0-getting-started/index.html">
+      
+      
+        <link rel="next" href="../part-2-hello-handshake/index.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Introduction - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Introduction
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="index.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-introduction-protocol-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 1: Introduction &amp; Protocol Fundamentals
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Introduction &amp; Protocol Fundamentals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#welcome" class="md-nav__link">
+    <span class="md-ellipsis">
+      Welcome
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-sources-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Sources &amp; Accuracy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-big-picture-connection-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Big Picture: Connection Flow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-type-quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Type Quick Reference
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-protocol-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Protocol Constants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-1-big-endian-byte-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #1: Big-Endian Byte Order
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-2-packet-frame-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #2: Packet Frame Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-3-fixed-point-number-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #3: Fixed-Point Number Encoding
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-4-strings-are-length-prefixed-and-null-terminated" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #4: Strings Are Length-Prefixed AND Null-Terminated
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-5-booleans" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #5: Booleans
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary-the-building-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary: The Building Blocks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-data-type-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: Data Type Encoding
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-1-introduction-protocol-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 1: Introduction &amp; Protocol Fundamentals
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 1: Introduction &amp; Protocol Fundamentals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#welcome" class="md-nav__link">
+    <span class="md-ellipsis">
+      Welcome
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-sources-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Sources &amp; Accuracy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-big-picture-connection-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Big Picture: Connection Flow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-type-quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Type Quick Reference
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-protocol-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Protocol Constants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-1-big-endian-byte-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #1: Big-Endian Byte Order
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-2-packet-frame-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #2: Packet Frame Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-3-fixed-point-number-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #3: Fixed-Point Number Encoding
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-4-strings-are-length-prefixed-and-null-terminated" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #4: Strings Are Length-Prefixed AND Null-Terminated
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fundamental-rule-5-booleans" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fundamental Rule #5: Booleans
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#summary-the-building-blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary: The Building Blocks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-data-type-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: Data Type Encoding
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="part-1-introduction-protocol-fundamentals">Part 1: Introduction &amp; Protocol Fundamentals<a class="headerlink" href="#part-1-introduction-protocol-fundamentals" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="welcome">Welcome<a class="headerlink" href="#welcome" title="Permanent link">&para;</a></h3>
+<p>This guide will walk you through implementing a Wulfram 2 server that successfully transitions clients from <strong>Login → Team Select → Game State</strong>. Each section builds on the previous one, with complete pseudo-examples you can use as templates.</p>
+<p>By the end of this guide, you'll understand:
+- How the Wulfram 2 protocol works at the byte level
+- What each packet does and why it's needed
+- How to construct valid packets with real example values
+- How to debug common issues</p>
+<hr />
+<h3 id="data-sources-accuracy">Data Sources &amp; Accuracy<a class="headerlink" href="#data-sources-accuracy" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Important</strong>: This documentation was reconstructed through reverse engineering, as no original server source code or protocol specifications exist.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Description</th>
+<th>Reliability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decompiled Client Binary</td>
+<td>Function analysis, memory layouts, packet parsing</td>
+<td>High - direct evidence</td>
+</tr>
+<tr>
+<td>Team Tactical Fan Site</td>
+<td>Game stats, build times, HP values (archived)</td>
+<td>Medium - player-tested</td>
+</tr>
+<tr>
+<td>Official Game Documentation</td>
+<td>Vehicle descriptions, basic mechanics</td>
+<td>Medium - may be outdated</td>
+</tr>
+<tr>
+<td>Packet Captures</td>
+<td>Wire format verification</td>
+<td>High - when available</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Conventions used in this guide</strong>:
+- Values marked with <code>?</code> are unknown/undocumented and need verification
+- Values marked as "Derived" were calculated or inferred from game behavior
+- Values marked as "Estimated" are educated guesses based on similar entities</p>
+<p>When implementing your server, start with the documented values and adjust based on testing.</p>
+<hr />
+<h3 id="the-big-picture-connection-flow">The Big Picture: Connection Flow<a class="headerlink" href="#the-big-picture-connection-flow" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                        WULFRAM 2 CONNECTION FLOW                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  PHASE 1: HANDSHAKE                                                         │
+│  ┌─────────┐                              ┌─────────┐                       │
+│  │ CLIENT  │◄──── TCP CONNECT ───────────►│ SERVER  │                       │
+│  │         │◄──── HELLO (version) ────────│         │                       │
+│  │         │◄──── HELLO (UDP info) ───────│         │                       │
+│  │         │◄──── HELLO (server name) ────│         │                       │
+│  └─────────┘                              └─────────┘                       │
+│                                                                             │
+│  PHASE 2: AUTHENTICATION                                                    │
+│  ┌─────────┐                              ┌─────────┐                       │
+│  │ CLIENT  │───── LOGIN ─────────────────►│ SERVER  │                       │
+│  │         │◄──── LOGIN_STATUS ───────────│         │                       │
+│  │         │◄──── BEHAVIOR ───────────────│         │  ← BIG packet!        │
+│  │         │◄──── TEAM_INFO ──────────────│         │                       │
+│  └─────────┘                              └─────────┘                       │
+│       ║                                                                     │
+│       ║ Client now shows TEAM SELECTION screen                              │
+│       ▼                                                                     │
+│  PHASE 3: GAME ENTRY                                                        │
+│  ┌─────────┐                              ┌─────────┐                       │
+│  │ CLIENT  │───── REINCARNATE ───────────►│ SERVER  │  (team choice)        │
+│  │         │◄──── WORLD_STATS ────────────│         │                       │
+│  │         │◄──── PLAYER ─────────────────│         │  ← CRITICAL!          │
+│  └─────────┘                              └─────────┘                       │
+│       ║                                                                     │
+│       ║ Client is now IN GAME                                               │
+│       ▼                                                                     │
+│  ═══════════════════════════════════════════════════════════════════════   │
+│                         GAMEPLAY STATE                                      │
+│  ═══════════════════════════════════════════════════════════════════════   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="packet-type-quick-reference">Packet Type Quick Reference<a class="headerlink" href="#packet-type-quick-reference" title="Permanent link">&para;</a></h3>
+<p>The following packet types are used in the connection flow:</p>
+<table>
+<thead>
+<tr>
+<th>Type Code</th>
+<th>Name</th>
+<th>Direction</th>
+<th>Size</th>
+<th>Part</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0x13</code></td>
+<td>HELLO</td>
+<td>Server → Client</td>
+<td>Variable (3 sub-packets)</td>
+<td>Part 2</td>
+</tr>
+<tr>
+<td><code>0x11</code></td>
+<td>LOGIN</td>
+<td>Client → Server</td>
+<td>Variable</td>
+<td>Part 3</td>
+</tr>
+<tr>
+<td><code>0x12</code></td>
+<td>LOGIN_STATUS</td>
+<td>Server → Client</td>
+<td>~4 bytes</td>
+<td>Part 3</td>
+</tr>
+<tr>
+<td><code>0x24</code></td>
+<td>BEHAVIOR</td>
+<td>Server → Client</td>
+<td><strong>~3,118+ bytes</strong></td>
+<td>Part 4</td>
+</tr>
+<tr>
+<td><code>0x25</code></td>
+<td>TEAM_INFO</td>
+<td>Server → Client</td>
+<td>Variable</td>
+<td>Part 5</td>
+</tr>
+<tr>
+<td><code>0x30</code></td>
+<td>REINCARNATE</td>
+<td>Client → Server</td>
+<td>~5 bytes</td>
+<td>Part 6</td>
+</tr>
+<tr>
+<td><code>0x31</code></td>
+<td>WORLD_STATS</td>
+<td>Server → Client</td>
+<td>Variable</td>
+<td>Part 7</td>
+</tr>
+<tr>
+<td><code>0x32</code></td>
+<td>PLAYER</td>
+<td>Server → Client</td>
+<td>Variable</td>
+<td>Part 7</td>
+</tr>
+<tr>
+<td><code>0x33</code></td>
+<td>UPDATE_ARRAY</td>
+<td>Server → Client</td>
+<td>Variable</td>
+<td>Part 7</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note</strong>: The BEHAVIOR packet is by far the largest packet in the handshake sequence, containing all game configuration data including entity stats, weapon data, vehicle physics, and more.</p>
+</blockquote>
+<hr />
+<h3 id="key-protocol-constants">Key Protocol Constants<a class="headerlink" href="#key-protocol-constants" title="Permanent link">&para;</a></h3>
+<p>These fixed quantities appear throughout the protocol and must be exact:</p>
+<table>
+<thead>
+<tr>
+<th>Constant</th>
+<th>Value</th>
+<th>Context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entity Types</td>
+<td><strong>39</strong></td>
+<td>Indices 0-38, always sent in BEHAVIOR</td>
+</tr>
+<tr>
+<td>Playable Vehicles</td>
+<td><strong>2</strong></td>
+<td>Tank (0) and Scout (1)</td>
+</tr>
+<tr>
+<td>Vehicle Models</td>
+<td><strong>3</strong></td>
+<td>Tank, Medic/Scout, Bomber (physics data)</td>
+</tr>
+<tr>
+<td>Weapon Slots per Vehicle</td>
+<td><strong>13</strong></td>
+<td>Fixed array size</td>
+</tr>
+<tr>
+<td>Physics Tables</td>
+<td><strong>4</strong></td>
+<td>Sent in BEHAVIOR packet</td>
+</tr>
+<tr>
+<td>Entities with Weapon Data</td>
+<td><strong>4</strong></td>
+<td>Tank, Scout, Assault Platform, Bomber</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>BEHAVIOR Packet Size Breakdown:
+┌────────────────────────────────────────────────────────────────────────┐
+│  Section 1: Fixed Header                              95 bytes         │
+│  Section 2: Entity Weapon Data (4 × 13 × 45)       2,340 bytes         │
+│  Section 3: Entity Core Stats (39 × 12)              468 bytes         │
+│  Section 4: Vehicle Type Data (2 × 36)                72 bytes         │
+│  Section 5: Physics Tables + Vehicle Models          140+ bytes        │
+│  Finalization: Byte alignment padding                0-7 bits          │
+├────────────────────────────────────────────────────────────────────────┤
+│  MINIMUM TOTAL:                                   ~3,118 bytes         │
+└────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="fundamental-rule-1-big-endian-byte-order">Fundamental Rule #1: Big-Endian Byte Order<a class="headerlink" href="#fundamental-rule-1-big-endian-byte-order" title="Permanent link">&para;</a></h3>
+<p><strong>This is the most common source of bugs.</strong> Wulfram 2 uses <strong>BIG-ENDIAN</strong> byte order for all multi-byte values.</p>
+<h4 id="what-does-big-endian-mean">What does Big-Endian mean?<a class="headerlink" href="#what-does-big-endian-mean" title="Permanent link">&para;</a></h4>
+<p>Big-Endian means the <strong>Most Significant Byte (MSB) comes first</strong>.</p>
+<div class="highlight"><pre><span></span><code>Example: The number 0x4E89 (decimal 20105)
+
+BIG-ENDIAN (Wulfram 2 uses this):
+┌──────────┬──────────┐
+│   0x4E   │   0x89   │   → Wire bytes: 4E 89
+│  (high)  │  (low)   │
+└──────────┴──────────┘
+   Byte 0     Byte 1
+
+LITTLE-ENDIAN (x86 native - DON&#39;T USE):
+┌──────────┬──────────┐
+│   0x89   │   0x4E   │   → Wire bytes: 89 4E  ← WRONG!
+│  (low)   │  (high)  │
+└──────────┴──────────┘
+   Byte 0     Byte 1
+</code></pre></div>
+<h4 id="how-the-client-reads-big-endian-data">How the Client Reads Big-Endian Data<a class="headerlink" href="#how-the-client-reads-big-endian-data" title="Permanent link">&para;</a></h4>
+<p>The client's read function shifts existing bits left and adds new bytes as the LSB:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From decompiled FUN_00508e70</span>
+<span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uVar1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">uint</span><span class="p">)</span><span class="o">*</span><span class="n">pbVar4</span><span class="p">;</span><span class="w">  </span><span class="c1">// MSB arrives first</span>
+</code></pre></div>
+<p>And writes by extracting the MSB first:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From decompiled FUN_00508df0</span>
+<span class="o">*</span><span class="n">pbVar5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">byte</span><span class="p">)(</span><span class="n">uVar6</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mh">0x18</span><span class="p">);</span><span class="w">  </span><span class="c1">// Write MSB (shift right 24 bits)</span>
+<span class="n">uVar6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uVar6</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span><span class="w">               </span><span class="c1">// Shift to get next byte</span>
+</code></pre></div>
+<h4 id="quick-reference-big-endian-encoding">Quick Reference: Big-Endian Encoding<a class="headerlink" href="#quick-reference-big-endian-encoding" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Type</th>
+<th>Big-Endian Bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>uint16</td>
+<td><code>00 05</code></td>
+</tr>
+<tr>
+<td>2627 (0x0A43)</td>
+<td>uint16</td>
+<td><code>0A 43</code></td>
+</tr>
+<tr>
+<td>20105 (0x4E89)</td>
+<td>uint32</td>
+<td><code>00 00 4E 89</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>uint32</td>
+<td><code>00 00 00 01</code></td>
+</tr>
+<tr>
+<td>100</td>
+<td>uint32</td>
+<td><code>00 00 00 64</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="python-encoding">Python Encoding<a class="headerlink" href="#python-encoding" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="c1"># BIG-ENDIAN encoding (correct for Wulfram 2)</span>
+<span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="mi">2627</span><span class="p">)</span>      <span class="c1"># Returns: b&#39;\x0a\x43&#39;  (2 bytes)</span>
+<span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="mi">20105</span><span class="p">)</span>     <span class="c1"># Returns: b&#39;\x00\x00\x4e\x89&#39;  (4 bytes)</span>
+<span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>         <span class="c1"># Returns: b&#39;\x00\x00\x00\x01&#39;  (4 bytes signed)</span>
+
+<span class="c1"># The &#39;&gt;&#39; character means BIG-ENDIAN</span>
+<span class="c1"># &#39;H&#39; = unsigned 16-bit (2 bytes)</span>
+<span class="c1"># &#39;I&#39; = unsigned 32-bit (4 bytes)</span>
+<span class="c1"># &#39;i&#39; = signed 32-bit (4 bytes)</span>
+</code></pre></div>
+<hr />
+<h3 id="fundamental-rule-2-packet-frame-structure">Fundamental Rule #2: Packet Frame Structure<a class="headerlink" href="#fundamental-rule-2-packet-frame-structure" title="Permanent link">&para;</a></h3>
+<p>Every Wulfram 2 TCP packet has this structure:</p>
+<div class="highlight"><pre><span></span><code>┌──────────────┬──────────────────┬─────────────────────────────────┐
+│    TYPE      │     LENGTH       │           PAYLOAD               │
+│   (1 byte)   │  (2 bytes BE)    │      (LENGTH bytes)             │
+├──────────────┼──────────────────┼─────────────────────────────────┤
+│   0x13       │     00 05        │   00 00 00 4E 89                │
+│   (HELLO)    │     (5)          │   (sub_type + version)          │
+└──────────────┴──────────────────┴─────────────────────────────────┘
+     ↑               ↑                      ↑
+     │               │                      │
+   Packet        Payload size          Actual data
+    type         (NOT including       (this is what
+                 type byte)           LENGTH counts)
+</code></pre></div>
+<p><strong>Important</strong>: The LENGTH field counts only the payload bytes, NOT the type byte!</p>
+<blockquote>
+<p><strong>Implementation Note</strong>: The client's TCP receive handler operates as a 
+state machine that reads the length field first, then processes the type 
+and payload. Your server should send complete packets in the documented 
+order: <code>[TYPE:1][LENGTH:2][PAYLOAD:N]</code></p>
+</blockquote>
+<h4 id="example-hello-version-packet">Example: HELLO Version Packet<a class="headerlink" href="#example-hello-version-packet" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Complete packet: 13 00 05 00 00 00 4E 89
+                 ── ───── ───────────────
+                 │    │         │
+                 │    │         └─ Payload: 5 bytes (sub_type + version)
+                 │    └─ Length: 5 (0x0005 big-endian)
+                 └─ Type: 0x13 (HELLO)
+
+Payload breakdown:
+                 00 00 00 4E 89
+                 ── ───────────
+                 │       │
+                 │       └─ Version number: 0x00004E89 (20105) as uint32 BE
+                 └─ Sub-type: 0x00 (version sub-packet)
+
+Total wire size: 1 + 2 + 5 = 8 bytes
+</code></pre></div>
+<h4 id="internal-bit-stream-protocol">Internal Bit-Stream Protocol<a class="headerlink" href="#internal-bit-stream-protocol" title="Permanent link">&para;</a></h4>
+<p>Internally, Wulfram 2 uses a bit-oriented buffer system that can read arbitrary numbers of bits. However, the wire format uses byte-aligned frames. The internal read functions are:</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Bits Read</th>
+<th>Bytes</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FUN_005092e0</code></td>
+<td>8 bits</td>
+<td>1 byte</td>
+<td>Read uint8</td>
+</tr>
+<tr>
+<td><code>FUN_005092f0</code></td>
+<td>16 bits</td>
+<td>2 bytes</td>
+<td>Read uint16 (BE)</td>
+</tr>
+<tr>
+<td><code>FUN_00509310</code></td>
+<td>32 bits</td>
+<td>4 bytes</td>
+<td>Read uint32 (BE)</td>
+</tr>
+<tr>
+<td><code>FUN_00509340</code></td>
+<td>variable</td>
+<td>variable</td>
+<td>Read length-prefixed string</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="fundamental-rule-3-fixed-point-number-encoding">Fundamental Rule #3: Fixed-Point Number Encoding<a class="headerlink" href="#fundamental-rule-3-fixed-point-number-encoding" title="Permanent link">&para;</a></h3>
+<p>Wulfram 2 transmits floating-point values as <strong>fixed-point integers</strong> to save bandwidth.</p>
+<h4 id="the-formula">The Formula<a class="headerlink" href="#the-formula" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>To ENCODE (float → wire):   wire_value = (int)(float_value × 65536)
+To DECODE (wire → float):   float_value = wire_value × (1/65536)
+                            float_value = wire_value × 0.0000152587890625
+</code></pre></div>
+<h4 id="verification-from-decompiled-code">Verification from Decompiled Code<a class="headerlink" href="#verification-from-decompiled-code" title="Permanent link">&para;</a></h4>
+<p>The client's decoding function confirms this exact formula:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From FUN_004dc620 (line 150538-150541)</span>
+<span class="n">float10</span><span class="w"> </span><span class="nf">FUN_004dc620</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">param_1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">float10</span><span class="p">)</span><span class="n">param_1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">float10</span><span class="p">)</span><span class="mf">1.52587890625e-05</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// Note: 1.52587890625e-05 = 1/65536 exactly</span>
+</code></pre></div>
+<h4 id="why-65536">Why 65536?<a class="headerlink" href="#why-65536" title="Permanent link">&para;</a></h4>
+<p>65536 = 2^16. This gives 16 bits of fractional precision, which is enough for game physics.</p>
+<h4 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Float Value</th>
+<th>Calculation</th>
+<th>Wire Value (decimal)</th>
+<th>Wire Value (hex BE)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>1.0 × 65536 = 65536</td>
+<td>65536</td>
+<td><code>00 01 00 00</code></td>
+</tr>
+<tr>
+<td>2.0</td>
+<td>2.0 × 65536 = 131072</td>
+<td>131072</td>
+<td><code>00 02 00 00</code></td>
+</tr>
+<tr>
+<td>0.5</td>
+<td>0.5 × 65536 = 32768</td>
+<td>32768</td>
+<td><code>00 00 80 00</code></td>
+</tr>
+<tr>
+<td>20.0</td>
+<td>20.0 × 65536 = 1310720</td>
+<td>1310720</td>
+<td><code>00 14 00 00</code></td>
+</tr>
+<tr>
+<td>4.0</td>
+<td>4.0 × 65536 = 262144</td>
+<td>262144</td>
+<td><code>00 04 00 00</code></td>
+</tr>
+<tr>
+<td>0.0</td>
+<td>0.0 × 65536 = 0</td>
+<td>0</td>
+<td><code>00 00 00 00</code></td>
+</tr>
+<tr>
+<td>100.0</td>
+<td>100.0 × 65536 = 6553600</td>
+<td>6553600</td>
+<td><code>00 64 00 00</code></td>
+</tr>
+<tr>
+<td>-1.0</td>
+<td>-1.0 × 65536 = -65536</td>
+<td>-65536 (signed)</td>
+<td><code>FF FF 00 00</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="python-encoding_1">Python Encoding<a class="headerlink" href="#python-encoding_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">encode_fixed_point</span><span class="p">(</span><span class="n">float_value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a float to Wulfram 2 fixed-point format (4 bytes big-endian)&quot;&quot;&quot;</span>
+    <span class="n">wire_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">float_value</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">wire_value</span><span class="p">)</span>  <span class="c1"># Use signed int for negative values</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_fixed_point</span><span class="p">(</span><span class="n">wire_bytes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert Wulfram 2 fixed-point bytes back to float&quot;&quot;&quot;</span>
+    <span class="n">wire_value</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">wire_bytes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">wire_value</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">65536.0</span><span class="p">)</span>
+
+<span class="c1"># Examples:</span>
+<span class="n">encode_fixed_point</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>   <span class="c1"># Returns: b&#39;\x00\x01\x00\x00&#39;</span>
+<span class="n">encode_fixed_point</span><span class="p">(</span><span class="mf">20.0</span><span class="p">)</span>  <span class="c1"># Returns: b&#39;\x00\x14\x00\x00&#39;</span>
+<span class="n">encode_fixed_point</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>   <span class="c1"># Returns: b&#39;\x00\x00\x80\x00&#39;</span>
+<span class="n">encode_fixed_point</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>  <span class="c1"># Returns: b&#39;\xff\xff\x00\x00&#39;</span>
+</code></pre></div>
+<hr />
+<h3 id="fundamental-rule-4-strings-are-length-prefixed-and-null-terminated">Fundamental Rule #4: Strings Are Length-Prefixed AND Null-Terminated<a class="headerlink" href="#fundamental-rule-4-strings-are-length-prefixed-and-null-terminated" title="Permanent link">&para;</a></h3>
+<p><strong>Important</strong>: Strings in Wulfram 2 have TWO components:
+1. A <strong>16-bit big-endian length prefix</strong> (counts all bytes including the null terminator)
+2. The <strong>string data</strong>, ending with a null byte (<code>0x00</code>)</p>
+<div class="highlight"><pre><span></span><code>String: &quot;Hello&quot;
+
+Wire format:
+┌─────────────────┬──────────────────────────────┐
+│  LENGTH         │  STRING DATA (with \0)       │
+│  (2 bytes BE)   │  (LENGTH bytes)              │
+├─────────────────┼──────────────────────────────┤
+│    00 06        │  48 65 6C 6C 6F 00           │
+│    (6)          │  H  e  l  l  o  \0           │
+└─────────────────┴──────────────────────────────┘
+
+Complete wire bytes: 00 06 48 65 6C 6C 6F 00
+                     ───── ─────────────────
+                       │         │
+                       │         └─ &quot;Hello&quot; + null terminator (6 bytes)
+                       └─ Length: 6 (includes the null terminator!)
+</code></pre></div>
+<h4 id="verification-from-decompiled-code_1">Verification from Decompiled Code<a class="headerlink" href="#verification-from-decompiled-code_1" title="Permanent link">&para;</a></h4>
+<p><strong>Reading strings (FUN_00509340):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// Line 184735-184746</span>
+<span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FUN_00509050</span><span class="p">(</span><span class="mh">0x10</span><span class="p">);</span><span class="w">              </span><span class="c1">// Read 16-bit length</span>
+<span class="n">uVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uVar1</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xffff</span><span class="p">;</span>
+<span class="n">pvVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_malloc</span><span class="p">(</span><span class="n">uVar1</span><span class="p">);</span><span class="w">                  </span><span class="c1">// Allocate length bytes</span>
+<span class="n">FUN_00509160</span><span class="p">(</span><span class="n">pvVar2</span><span class="p">,</span><span class="w"> </span><span class="n">uVar1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">       </span><span class="c1">// Read the string data</span>
+<span class="o">*</span><span class="p">(</span><span class="n">undefined1</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">*</span><span class="n">param_1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">-1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">uVar1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Ensure null termination</span>
+</code></pre></div></p>
+<p><strong>Writing strings (FUN_00509600):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1">// Line 184993-184998</span>
+<span class="c1">// Calculate length by finding null terminator</span>
+<span class="k">do</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">cVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">pcVar9</span><span class="p">;</span><span class="w"> </span><span class="n">pcVar9</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">cVar2</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">);</span>
+<span class="n">uVar7</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">uint</span><span class="p">)(</span><span class="n">pcVar9</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">param_2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)))</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xffff</span><span class="p">;</span><span class="w">  </span><span class="c1">// Length including \0</span>
+<span class="n">FUN_005094b0</span><span class="p">(</span><span class="n">uVar7</span><span class="p">);</span><span class="w">                     </span><span class="c1">// Write 16-bit length prefix</span>
+<span class="c1">// Then write string data...</span>
+</code></pre></div></p>
+<h4 id="python-encoding_2">Python Encoding<a class="headerlink" href="#python-encoding_2" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">encode_string</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encode a string for Wulfram 2 protocol.</span>
+<span class="sd">    Format: [length:2 bytes BE][string data with null terminator]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">string_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>  <span class="c1"># Add null terminator</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_bytes</span><span class="p">))</span>   <span class="c1"># Length includes the \0</span>
+    <span class="k">return</span> <span class="n">length</span> <span class="o">+</span> <span class="n">string_bytes</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_string</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decode a Wulfram 2 string from bytes.</span>
+<span class="sd">    Returns (string, new_offset)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">string_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">length</span><span class="p">]</span>
+    <span class="c1"># Remove null terminator for Python string</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">string_data</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">length</span>
+
+<span class="c1"># Examples:</span>
+<span class="n">encode_string</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>        <span class="c1"># b&#39;\x00\x06Hello\x00&#39;</span>
+<span class="n">encode_string</span><span class="p">(</span><span class="s2">&quot;Red Team&quot;</span><span class="p">)</span>     <span class="c1"># b&#39;\x00\x09Red Team\x00&#39;</span>
+<span class="n">encode_string</span><span class="p">(</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">)</span>    <span class="c1"># b&#39;\x00\x0a127.0.0.1\x00&#39;</span>
+<span class="n">encode_string</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>             <span class="c1"># b&#39;\x00\x01\x00&#39;  (length 1 for just the null byte)</span>
+</code></pre></div>
+<h4 id="common-string-examples">Common String Examples<a class="headerlink" href="#common-string-examples" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>String</th>
+<th>Length (decimal)</th>
+<th>Length (hex)</th>
+<th>Wire Bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"" (empty)</td>
+<td>1</td>
+<td><code>00 01</code></td>
+<td><code>00 01 00</code></td>
+</tr>
+<tr>
+<td>"Hi"</td>
+<td>3</td>
+<td><code>00 03</code></td>
+<td><code>00 03 48 69 00</code></td>
+</tr>
+<tr>
+<td>"Hello"</td>
+<td>6</td>
+<td><code>00 06</code></td>
+<td><code>00 06 48 65 6C 6C 6F 00</code></td>
+</tr>
+<tr>
+<td>"Test Server"</td>
+<td>12</td>
+<td><code>00 0C</code></td>
+<td><code>00 0C 54 65 73 74 20 53 65 72 76 65 72 00</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="fundamental-rule-5-booleans">Fundamental Rule #5: Booleans<a class="headerlink" href="#fundamental-rule-5-booleans" title="Permanent link">&para;</a></h3>
+<p>Boolean values are encoded as a single byte:
+- <code>0x00</code> = false
+- Any non-zero value = true (typically <code>0x01</code>)</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">encode_bool</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode a boolean for Wulfram 2 protocol&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x01</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="mh">0x00</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_bool</span><span class="p">(</span><span class="n">byte_value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode a Wulfram 2 boolean&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">byte_value</span> <span class="o">!=</span> <span class="mh">0x00</span>
+</code></pre></div>
+<hr />
+<h3 id="summary-the-building-blocks">Summary: The Building Blocks<a class="headerlink" href="#summary-the-building-blocks" title="Permanent link">&para;</a></h3>
+<p>Before we dive into specific packets, make sure you understand these fundamentals:</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Rule</th>
+<th>Wire Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Byte Order</strong></td>
+<td>Always BIG-ENDIAN for multi-byte integers</td>
+<td>MSB first</td>
+</tr>
+<tr>
+<td><strong>Packet Frame</strong></td>
+<td><code>[type:1][length:2 BE][payload:length]</code></td>
+<td>3-byte header + payload</td>
+</tr>
+<tr>
+<td><strong>Length Field</strong></td>
+<td>Counts payload bytes only (excludes type byte)</td>
+<td>uint16 BE</td>
+</tr>
+<tr>
+<td><strong>Floats/Doubles</strong></td>
+<td>Encoded as <code>int(value × 65536)</code></td>
+<td>int32 BE (signed)</td>
+</tr>
+<tr>
+<td><strong>Strings</strong></td>
+<td>Length-prefixed AND null-terminated</td>
+<td><code>[len:2 BE][data + \0]</code></td>
+</tr>
+<tr>
+<td><strong>Booleans</strong></td>
+<td>1 byte: <code>0x00</code> = false, else = true</td>
+<td>uint8</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="quick-reference-data-type-encoding">Quick Reference: Data Type Encoding<a class="headerlink" href="#quick-reference-data-type-encoding" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="c1"># === INTEGERS ===</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_uint8</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">value</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_uint16</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_uint32</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_int32</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="c1"># === FIXED-POINT FLOATS ===</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_fixed_point</span><span class="p">(</span><span class="n">float_value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">float_value</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">))</span>
+
+<span class="c1"># === STRINGS ===</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_string</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">string_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_bytes</span><span class="p">))</span> <span class="o">+</span> <span class="n">string_bytes</span>
+
+<span class="c1"># === BOOLEANS ===</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_bool</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x01</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="mh">0x00</span><span class="p">])</span>
+
+<span class="c1"># === PACKET WRAPPER ===</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_packet</span><span class="p">(</span><span class="n">packet_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap payload in a complete packet frame&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">packet_type</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span> <span class="o">+</span> <span class="n">payload</span>
+</code></pre></div>
+<hr />
+<h3 id="whats-next">What's Next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h3>
+<p>In <strong>Part 2</strong>, we'll implement the HELLO handshake - the first packets your server needs to send to establish a connection with the client.</p>
+<hr />
+<p><em>Continue to <a href="../part-2-hello-handshake/index.html">Part 2: The HELLO Handshake</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

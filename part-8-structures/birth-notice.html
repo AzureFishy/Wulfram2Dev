@@ -1,0 +1,2009 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="add-to-roster.html">
+      
+      
+        <link rel="next" href="../part-9-reference-files/index.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>BIRTH_NOTICE - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              BIRTH_NOTICE
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="birth-notice.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#birth_notice-packet-0x1e-complete-structure-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      BIRTH_NOTICE Packet (0x1E) - Complete Structure Reference
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="BIRTH_NOTICE Packet (0x1E) - Complete Structure Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#position-in-connection-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Position in Connection Flow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Registration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-handler-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      What The Handler Does
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wire Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payload-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Payload Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Details
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-birth_notice-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building BIRTH_NOTICE in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-wire-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Wire Bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-send-birth_notice" class="md-nav__link">
+    <span class="md-ellipsis">
+      When to Send BIRTH_NOTICE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relationship-to-other-packets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relationship to Other Packets
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Critical Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-player-spawn-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete Player Spawn Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#birth_notice-packet-0x1e-complete-structure-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      BIRTH_NOTICE Packet (0x1E) - Complete Structure Reference
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="BIRTH_NOTICE Packet (0x1E) - Complete Structure Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#position-in-connection-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Position in Connection Flow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Registration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-the-handler-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      What The Handler Does
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wire Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payload-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Payload Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Details
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-birth_notice-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building BIRTH_NOTICE in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-wire-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Wire Bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-send-birth_notice" class="md-nav__link">
+    <span class="md-ellipsis">
+      When to Send BIRTH_NOTICE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relationship-to-other-packets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relationship to Other Packets
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Critical Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-player-spawn-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete Player Spawn Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="birth_notice-packet-0x1e-complete-structure-reference">BIRTH_NOTICE Packet (0x1E) - Complete Structure Reference<a class="headerlink" href="#birth_notice-packet-0x1e-complete-structure-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The BIRTH_NOTICE packet (0x1E) notifies the client that an entity has "spawned" or become active in the game world. When received, the client marks the entity as "born" and associates it with an owner (the player controlling it).</p>
+<p>This is a simple but important packet that activates entities after they've been created.</p>
+<div class="highlight"><pre><span></span><code>Purpose:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  BIRTH_NOTICE tells the client:                                         │
+│                                                                         │
+│  &quot;Entity X is now active and controlled by Entity Y&quot;                    │
+│                                                                         │
+│  • Sets the entity&#39;s &quot;born&quot; flag to TRUE                                │
+│  • Links the entity to its owner/controller                             │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="position-in-connection-flow">Position in Connection Flow<a class="headerlink" href="#position-in-connection-flow" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Position in Connection Flow:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  PHASE 3: GAME ENTRY                                                    │
+│  ───────────────────                                                    │
+│  Client ──► REINCARNATE (0x25)               Player chooses team        │
+│  Server ──► REINCARNATE (0x25)               Server confirms            │
+│  Server ──► PLAYER (0x17)                    Assigns player entity      │
+│  Server ──► GAME_CLOCK (0x2F)                Time synchronization       │
+│  Server ──► ADD_TO_ROSTER (0x1A)             Adds to team roster        │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Server ──► BIRTH_NOTICE (0x1E)              ◄ YOU ARE HERE             │
+│             Activates the player&#39;s vehicle entity                       │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Server ──► WORLD_STATS (0x16)               Map info                   │
+│  Client ──► WANT_UPDATES (0x39)              Auto-sent by client        │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="packet-registration">Packet Registration<a class="headerlink" href="#packet-registration" title="Permanent link">&para;</a></h3>
+<p>From the client initialization code:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From line 77046</span>
+<span class="n">FUN_00509b40</span><span class="p">(</span><span class="mh">0x1e</span><span class="p">,</span><span class="w"> </span><span class="n">FUN_0046d880</span><span class="p">);</span><span class="w">    </span><span class="c1">// Register type 0x1E → BIRTH_NOTICE handler</span>
+</code></pre></div>
+<p>The packet name is registered for debugging:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From line 94149</span>
+<span class="n">FUN_0044a020</span><span class="p">(</span><span class="s">&quot;BIRTH_NOTICE&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">0x1e</span><span class="p">);</span>
+</code></pre></div>
+<hr />
+<h3 id="the-handler-code">The Handler Code<a class="headerlink" href="#the-handler-code" title="Permanent link">&para;</a></h3>
+<p>From FUN_0046d880 (lines 77796-77820):</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0046d880</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iVar1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="n">piVar2</span><span class="p">;</span>
+<span class="w">    </span><span class="n">undefined4</span><span class="w"> </span><span class="n">local_8</span><span class="p">;</span><span class="w">           </span><span class="c1">// Owner Entity ID</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">local_4</span><span class="p">;</span><span class="w">                  </span><span class="c1">// Entity ID</span>
+
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;BIRTH_NOTICE&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span><span class="w">    </span><span class="c1">// Set packet name for errors</span>
+
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// READ PACKET DATA</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span><span class="w">       </span><span class="c1">// 4 bytes: Entity ID (uint32 BE)</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_8</span><span class="p">);</span><span class="w">       </span><span class="c1">// 4 bytes: Owner Entity ID (uint32 BE)</span>
+<span class="w">    </span><span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">param_3</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span><span class="w">           </span><span class="c1">// Byte alignment</span>
+
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// FIND ENTITY AND UPDATE FLAGS</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="n">piVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">**</span><span class="p">)(</span><span class="n">DAT_00678390</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">);</span><span class="w">     </span><span class="c1">// Get entity list head</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">piVar2</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="mh">0x0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Search for entity with matching ID</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">iVar1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">piVar2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0xc</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">local_4</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">piVar2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">*</span><span class="n">piVar2</span><span class="p">;</span><span class="w">          </span><span class="c1">// Move to next entity</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">piVar2</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="mh">0x0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="p">;</span><span class="w">                        </span><span class="c1">// Entity not found</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Entity found - update its state</span>
+<span class="w">        </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x3c</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">    </span><span class="c1">// Set &quot;born&quot; flag = TRUE</span>
+<span class="w">        </span><span class="o">*</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">iVar1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0x40</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_8</span><span class="p">;</span><span class="w">  </span><span class="c1">// Set owner entity ID</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="what-the-handler-does">What The Handler Does<a class="headerlink" href="#what-the-handler-does" title="Permanent link">&para;</a></h3>
+<p>The handler performs these steps:</p>
+<ol>
+<li><strong>Read Entity ID</strong> (4 bytes) - The entity being "born"</li>
+<li><strong>Read Owner Entity ID</strong> (4 bytes) - The entity that controls/owns it</li>
+<li><strong>Search Entity List</strong> - Find the entity with matching ID</li>
+<li><strong>Set Born Flag</strong> - Mark entity as active (<code>entity + 0x3c = 1</code>)</li>
+<li><strong>Set Owner</strong> - Link to controlling entity (<code>entity + 0x40 = owner_id</code>)</li>
+</ol>
+<div class="highlight"><pre><span></span><code>Entity Structure (relevant offsets):
+┌─────────┬──────────────────────────────────────────────────────────────┐
+│ Offset  │ Description                                                  │
+├─────────┼──────────────────────────────────────────────────────────────┤
+│ 0x0C    │ Entity ID (used to find entity in list)                      │
+│ 0x3C    │ Born/Active Flag (0 = not born, 1 = born/active)             │
+│ 0x40    │ Owner Entity ID (who controls this entity)                   │
+└─────────┴──────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="wire-format">Wire Format<a class="headerlink" href="#wire-format" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>BIRTH_NOTICE Packet Structure:
+┌──────────┬──────────────┬─────────────────────────────────────────────────┐
+│  TYPE    │   LENGTH     │   PAYLOAD                                       │
+│  0x1E    │  0x00 0x08   │   (8 bytes)                                     │
+└──────────┴──────────────┴─────────────────────────────────────────────────┘
+   1 byte     2 bytes BE         8 bytes
+</code></pre></div>
+<h3 id="payload-structure">Payload Structure<a class="headerlink" href="#payload-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>BIRTH_NOTICE Payload Layout:
+┌─────────┬──────┬────────────────┬───────────────────────────────────────────┐
+│ Offset  │ Size │ Type           │ Description                               │
+├─────────┼──────┼────────────────┼───────────────────────────────────────────┤
+│ 0       │ 4    │ uint32 BE      │ Entity ID                                 │
+│ 4       │ 4    │ uint32 BE      │ Owner Entity ID                           │
+└─────────┴──────┴────────────────┴───────────────────────────────────────────┘
+
+Total Payload Size: 8 bytes (fixed)
+</code></pre></div>
+<hr />
+<h3 id="field-details">Field Details<a class="headerlink" href="#field-details" title="Permanent link">&para;</a></h3>
+<h4 id="field-1-entity-id-4-bytes">Field 1: Entity ID (4 bytes)<a class="headerlink" href="#field-1-entity-id-4-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: 0
+Size:   4 bytes
+Type:   uint32 big-endian
+Reader: FUN_00509310
+
+Description:
+  The ID of the entity that is being &quot;born&quot; or activated.
+
+  This is typically the player&#39;s vehicle (Tank, Scout, etc.) that was
+  assigned via the PLAYER packet.
+
+  ★ IMPORTANT: This entity must already exist in the client&#39;s entity list! ★
+
+  The BIRTH_NOTICE doesn&#39;t create the entity - it activates an existing one.
+  The entity should have been created via UPDATE_ARRAY or similar packets.
+
+Example:
+  Entity ID = 12345 (0x3039)
+  Wire bytes: 00 00 30 39
+</code></pre></div>
+<h4 id="field-2-owner-entity-id-4-bytes">Field 2: Owner Entity ID (4 bytes)<a class="headerlink" href="#field-2-owner-entity-id-4-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: 4
+Size:   4 bytes
+Type:   uint32 big-endian
+Reader: FUN_00509310
+
+Description:
+  The ID of the entity that &quot;owns&quot; or controls this entity.
+
+  For a player&#39;s vehicle:
+  - Owner Entity ID = same as Entity ID (player controls themselves)
+
+  For projectiles, drones, or spawned objects:
+  - Owner Entity ID = the player entity that created/fired it
+
+  This creates a parent-child relationship:
+  - Projectile → owned by → Player who fired it
+  - Drone → owned by → Player who deployed it
+
+Example (player vehicle - self-owned):
+  Entity ID = 12345
+  Owner Entity ID = 12345  (same - player owns their own vehicle)
+  Wire bytes: 00 00 30 39
+
+Example (projectile owned by player):
+  Entity ID = 50000 (the projectile)
+  Owner Entity ID = 12345 (the player who fired it)
+  Wire bytes: 00 00 30 39
+</code></pre></div>
+<hr />
+<h3 id="data-flow-diagram">Data Flow Diagram<a class="headerlink" href="#data-flow-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>BIRTH_NOTICE Reading Order:
+═══════════════════════════════════════════════════════════════════════════
+
+Packet:   1E 00 08 XX XX XX XX YY YY YY YY
+          │  └──┬──┘ └────┬────┘ └────┬────┘
+          │     │         │           │
+          │     │         │           └─ Owner Entity ID (4 bytes)
+          │     │         │
+          │     │         └─ Entity ID (4 bytes)
+          │     │
+          │     └─ Payload Length: 8 bytes
+          │
+          └─ Packet Type: BIRTH_NOTICE (0x1E)
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="building-birth_notice-in-python">Building BIRTH_NOTICE in Python<a class="headerlink" href="#building-birth_notice-in-python" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_packet</span><span class="p">(</span><span class="n">packet_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap payload in a complete packet frame.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">packet_type</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span> <span class="o">+</span> <span class="n">payload</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_birth_notice</span><span class="p">(</span><span class="n">entity_id</span><span class="p">,</span> <span class="n">owner_entity_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a BIRTH_NOTICE packet (0x1E).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        entity_id:       The entity being &quot;born&quot; / activated (uint32)</span>
+<span class="sd">        owner_entity_id: The entity that owns/controls this entity (uint32)</span>
+<span class="sd">                         If None, defaults to entity_id (self-owned)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Complete BIRTH_NOTICE packet as bytes</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">        For player vehicles: owner = entity itself (self-owned)</span>
+<span class="sd">        For projectiles: owner = player who fired it</span>
+<span class="sd">        For drones/spawns: owner = player who deployed it</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">owner_entity_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">owner_entity_id</span> <span class="o">=</span> <span class="n">entity_id</span>  <span class="c1"># Self-owned (typical for player vehicles)</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">)</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">owner_entity_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">make_packet</span><span class="p">(</span><span class="mh">0x1E</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Example 1: Player spawns in their vehicle (self-owned)</span>
+<span class="c1"># The player&#39;s entity owns itself</span>
+<span class="n">birth_packet</span> <span class="o">=</span> <span class="n">create_birth_notice</span><span class="p">(</span>
+    <span class="n">entity_id</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
+    <span class="n">owner_entity_id</span><span class="o">=</span><span class="mi">12345</span>    <span class="c1"># Same as entity_id - player controls themselves</span>
+<span class="p">)</span>
+<span class="c1"># Or simply:</span>
+<span class="n">birth_packet</span> <span class="o">=</span> <span class="n">create_birth_notice</span><span class="p">(</span><span class="n">entity_id</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span>  <span class="c1"># owner defaults to self</span>
+
+<span class="c1"># Example 2: Player fires a projectile</span>
+<span class="c1"># The projectile is owned by the player who fired it</span>
+<span class="n">projectile_birth</span> <span class="o">=</span> <span class="n">create_birth_notice</span><span class="p">(</span>
+    <span class="n">entity_id</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span>         <span class="c1"># The projectile entity</span>
+    <span class="n">owner_entity_id</span><span class="o">=</span><span class="mi">12345</span>    <span class="c1"># The player who fired it</span>
+<span class="p">)</span>
+
+<span class="c1"># Example 3: Player deploys a drone/turret</span>
+<span class="n">drone_birth</span> <span class="o">=</span> <span class="n">create_birth_notice</span><span class="p">(</span>
+    <span class="n">entity_id</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span>         <span class="c1"># The drone entity</span>
+    <span class="n">owner_entity_id</span><span class="o">=</span><span class="mi">12345</span>    <span class="c1"># The player who deployed it</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="example-wire-bytes">Example Wire Bytes<a class="headerlink" href="#example-wire-bytes" title="Permanent link">&para;</a></h3>
+<h4 id="example-player-entity-12345-spawning-self-owned">Example: Player entity 12345 spawning (self-owned)<a class="headerlink" href="#example-player-entity-12345-spawning-self-owned" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Entity ID:       12345 (0x00003039)
+Owner Entity ID: 12345 (0x00003039)
+
+Payload (8 bytes):
+  00 00 30 39    Entity ID
+  00 00 30 39    Owner Entity ID
+
+Complete Packet (11 bytes):
+  1E 00 08 00 00 30 39 00 00 30 39
+
+Breakdown:
+  1E             Type: BIRTH_NOTICE
+  00 08          Length: 8 bytes
+  00 00 30 39    Entity ID: 12345
+  00 00 30 39    Owner Entity ID: 12345 (self-owned)
+</code></pre></div>
+<h4 id="example-projectile-entity-50000-fired-by-player-entity-12345">Example: Projectile (entity 50000) fired by player (entity 12345)<a class="headerlink" href="#example-projectile-entity-50000-fired-by-player-entity-12345" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Entity ID:       50000 (0x0000C350)
+Owner Entity ID: 12345 (0x00003039)
+
+Complete Packet (11 bytes):
+  1E 00 08 00 00 C3 50 00 00 30 39
+
+Breakdown:
+  1E             Type: BIRTH_NOTICE
+  00 08          Length: 8 bytes
+  00 00 C3 50    Entity ID: 50000 (projectile)
+  00 00 30 39    Owner Entity ID: 12345 (player who fired)
+</code></pre></div>
+<hr />
+<h3 id="when-to-send-birth_notice">When to Send BIRTH_NOTICE<a class="headerlink" href="#when-to-send-birth_notice" title="Permanent link">&para;</a></h3>
+<h4 id="during-player-spawn-sequence">During Player Spawn Sequence<a class="headerlink" href="#during-player-spawn-sequence" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Complete spawn sequence after player selects team:</span>
+
+<span class="c1"># 1. Confirm team selection</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_reincarnate_response</span><span class="p">(</span><span class="n">sub_type</span><span class="o">=</span><span class="mh">0x02</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Welcome!&quot;</span><span class="p">))</span>
+
+<span class="c1"># 2. Assign player to their entity</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_player_packet</span><span class="p">(</span><span class="n">entity_id</span><span class="o">=</span><span class="mi">12345</span><span class="p">))</span>
+
+<span class="c1"># 3. Send game clock</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_game_clock</span><span class="p">())</span>
+
+<span class="c1"># 4. Add player to roster</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_add_to_roster</span><span class="p">(</span>
+    <span class="n">player_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="n">entity_id</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span> 
+    <span class="n">team_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="n">player_name</span><span class="o">=</span><span class="s2">&quot;Baffler&quot;</span>
+<span class="p">))</span>
+
+<span class="c1"># 5. Activate the player&#39;s entity</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_birth_notice</span><span class="p">(</span><span class="n">entity_id</span><span class="o">=</span><span class="mi">12345</span><span class="p">))</span>  <span class="c1"># ◄ BIRTH_NOTICE</span>
+
+<span class="c1"># 6. Send world info (triggers WANT_UPDATES)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_world_stats</span><span class="p">())</span>
+</code></pre></div>
+<h4 id="when-entities-are-created-mid-game">When Entities Are Created Mid-Game<a class="headerlink" href="#when-entities-are-created-mid-game" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># When a player fires a weapon that creates an entity:</span>
+<span class="n">projectile_id</span> <span class="o">=</span> <span class="n">allocate_entity_id</span><span class="p">()</span>
+
+<span class="c1"># First: Create the entity via UPDATE_ARRAY (so it exists in client&#39;s list)</span>
+<span class="c1"># Then: Send BIRTH_NOTICE to activate it</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_birth_notice</span><span class="p">(</span>
+    <span class="n">entity_id</span><span class="o">=</span><span class="n">projectile_id</span><span class="p">,</span>
+    <span class="n">owner_entity_id</span><span class="o">=</span><span class="n">player_entity_id</span>
+<span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="relationship-to-other-packets">Relationship to Other Packets<a class="headerlink" href="#relationship-to-other-packets" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Entity Lifecycle:
+═══════════════════════════════════════════════════════════════════════════
+
+1. Entity Created (via UPDATE_ARRAY or initial state)
+   └─ Entity exists in client&#39;s entity list but is NOT active
+
+2. BIRTH_NOTICE sent
+   └─ Entity marked as &quot;born&quot; (active)
+   └─ Entity linked to owner
+   └─ Entity now participates in game logic
+
+3. Entity Destroyed (via DEATH_NOTICE or similar)
+   └─ Entity marked as inactive/dead
+
+═══════════════════════════════════════════════════════════════════════════
+
+Packet Relationships:
+┌────────────────────┬──────────────────────────────────────────────────────┐
+│ Packet             │ Relationship to BIRTH_NOTICE                         │
+├────────────────────┼──────────────────────────────────────────────────────┤
+│ PLAYER (0x17)      │ Assigns entity to player - BIRTH_NOTICE activates it │
+│ ADD_TO_ROSTER      │ Adds player to team list - uses same entity ID       │
+│ UPDATE_ARRAY       │ Creates/updates entity data - BIRTH_NOTICE activates │
+│ DEATH_NOTICE       │ Opposite of BIRTH_NOTICE - deactivates entity        │
+└────────────────────┴──────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="critical-requirements">Critical Requirements<a class="headerlink" href="#critical-requirements" title="Permanent link">&para;</a></h3>
+<h4 id="1-entity-must-exist-before-birth_notice">1. Entity Must Exist Before BIRTH_NOTICE<a class="headerlink" href="#1-entity-must-exist-before-birth_notice" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>The BIRTH_NOTICE doesn&#39;t CREATE an entity - it ACTIVATES one.
+
+The entity must already exist in the client&#39;s entity list before
+sending BIRTH_NOTICE. If the entity doesn&#39;t exist, the handler
+simply returns without doing anything.
+
+Correct Order:
+  1. Create entity (via UPDATE_ARRAY or initial game state)
+  2. Send BIRTH_NOTICE (activates the entity)
+
+Wrong Order:
+  1. Send BIRTH_NOTICE (entity not found - does nothing!)
+  2. Create entity (entity exists but not marked as born)
+</code></pre></div>
+<h4 id="2-entity-id-must-match-player-packet">2. Entity ID Must Match PLAYER Packet<a class="headerlink" href="#2-entity-id-must-match-player-packet" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>For player vehicles, the entity_id in BIRTH_NOTICE must match:
+  - PLAYER packet entity_id
+  - ADD_TO_ROSTER entity_id
+
+All three packets should reference the same entity:
+  PLAYER:         entity_id = 12345
+  ADD_TO_ROSTER:  entity_id = 12345
+  BIRTH_NOTICE:   entity_id = 12345  ← Must match!
+</code></pre></div>
+<h4 id="3-owner-entity-id-for-different-entity-types">3. Owner Entity ID for Different Entity Types<a class="headerlink" href="#3-owner-entity-id-for-different-entity-types" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Entity Type      │ Owner Entity ID
+─────────────────┼────────────────────────────────────
+Player Vehicle   │ Same as Entity ID (self-owned)
+Projectile       │ Player who fired it
+Drone/Turret     │ Player who deployed it
+Building         │ Team or player who built it
+NPC/AI           │ Possibly 0 or server-controlled ID
+</code></pre></div>
+<hr />
+<h3 id="common-mistakes">Common Mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entity doesn't exist yet</td>
+<td>BIRTH_NOTICE has no effect</td>
+<td>Create entity first via UPDATE_ARRAY</td>
+</tr>
+<tr>
+<td>Wrong entity ID</td>
+<td>Wrong entity activated</td>
+<td>Use same ID as PLAYER packet</td>
+</tr>
+<tr>
+<td>Forgot BIRTH_NOTICE entirely</td>
+<td>Player can't control vehicle</td>
+<td>Add to spawn sequence</td>
+</tr>
+<tr>
+<td>Wrong owner for projectiles</td>
+<td>Kill credit goes to wrong player</td>
+<td>Set owner to firing player</td>
+</tr>
+<tr>
+<td>Sent before entity created</td>
+<td>Entity not marked as born</td>
+<td>Send after UPDATE_ARRAY</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="verification-checklist">Verification Checklist<a class="headerlink" href="#verification-checklist" title="Permanent link">&para;</a></h3>
+<p>Before sending BIRTH_NOTICE, verify:</p>
+<ul>
+<li>[ ] Entity exists in game state (created via UPDATE_ARRAY or similar)</li>
+<li>[ ] Entity ID matches the PLAYER packet (for player vehicles)</li>
+<li>[ ] Entity ID matches ADD_TO_ROSTER (for player vehicles)</li>
+<li>[ ] Owner Entity ID is set correctly:</li>
+<li>[ ] Self-owned for player vehicles</li>
+<li>[ ] Parent player for projectiles/spawns</li>
+<li>[ ] Values are big-endian encoded</li>
+<li>[ ] Packet is sent AFTER entity creation, not before</li>
+</ul>
+<hr />
+<h3 id="packet-summary">Packet Summary<a class="headerlink" href="#packet-summary" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Packet Type</td>
+<td>0x1E</td>
+</tr>
+<tr>
+<td>Packet Name</td>
+<td>BIRTH_NOTICE</td>
+</tr>
+<tr>
+<td>Handler Function</td>
+<td>FUN_0046d880</td>
+</tr>
+<tr>
+<td>Direction</td>
+<td>Server → Client</td>
+</tr>
+<tr>
+<td>Payload Size</td>
+<td>8 bytes (fixed)</td>
+</tr>
+<tr>
+<td>Fields</td>
+<td>Entity ID, Owner Entity ID</td>
+</tr>
+<tr>
+<td>Related Packets</td>
+<td>PLAYER (0x17), UPDATE_ARRAY (0x0E), ADD_TO_ROSTER (0x1A)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="quick-reference">Quick Reference<a class="headerlink" href="#quick-reference" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>BIRTH_NOTICE Quick Reference:
+═══════════════════════════════════════════════════════════════════════════
+
+Packet:   1E 00 08 [Entity ID:4] [Owner Entity ID:4]
+
+Offset  Size  Type        Field
+──────  ────  ────        ─────
+0       4     uint32 BE   Entity ID       (the entity being activated)
+4       4     uint32 BE   Owner Entity ID (who controls it)
+
+Total: 8 bytes payload (always fixed)
+
+Effect on Entity Structure:
+  entity + 0x3C = 1              (born flag = TRUE)
+  entity + 0x40 = owner_id       (links to controlling entity)
+
+═══════════════════════════════════════════════════════════════════════════
+
+Python One-Liner:
+  packet = b&#39;\x1E\x00\x08&#39; + struct.pack(&#39;&gt;II&#39;, entity_id, owner_id)
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="complete-player-spawn-example">Complete Player Spawn Example<a class="headerlink" href="#complete-player-spawn-example" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">spawn_player</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">player_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Complete sequence to spawn a player after team selection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1. Confirm team selection</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_reincarnate_response</span><span class="p">(</span>
+        <span class="n">sub_type</span><span class="o">=</span><span class="mh">0x02</span><span class="p">,</span> 
+        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Welcome to Team </span><span class="si">{</span><span class="n">team_id</span><span class="si">}</span><span class="s2">!&quot;</span>
+    <span class="p">))</span>
+
+    <span class="c1"># 2. Assign player to entity</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_player_packet</span><span class="p">(</span><span class="n">entity_id</span><span class="o">=</span><span class="n">entity_id</span><span class="p">))</span>
+
+    <span class="c1"># 3. Time sync</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_game_clock</span><span class="p">())</span>
+
+    <span class="c1"># 4. Add to roster (visible to all players)</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_add_to_roster</span><span class="p">(</span>
+        <span class="n">player_id</span><span class="o">=</span><span class="n">player_id</span><span class="p">,</span>
+        <span class="n">entity_id</span><span class="o">=</span><span class="n">entity_id</span><span class="p">,</span>
+        <span class="n">team_id</span><span class="o">=</span><span class="n">team_id</span><span class="p">,</span>
+        <span class="n">player_name</span><span class="o">=</span><span class="n">player_name</span>
+    <span class="p">))</span>
+
+    <span class="c1"># 5. ★ Activate the entity ★</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_birth_notice</span><span class="p">(</span>
+        <span class="n">entity_id</span><span class="o">=</span><span class="n">entity_id</span><span class="p">,</span>
+        <span class="n">owner_entity_id</span><span class="o">=</span><span class="n">entity_id</span>  <span class="c1"># Self-owned</span>
+    <span class="p">))</span>
+
+    <span class="c1"># 6. Send world info (triggers client to send WANT_UPDATES)</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">create_world_stats</span><span class="p">())</span>
+
+    <span class="c1"># Client is now ready to receive UPDATE_ARRAY and play!</span>
+</code></pre></div>
+<hr />
+<p><em>Related: <a href="add-to-roster.html">ADD_TO_ROSTER Structure</a></em>
+<em>Related: <a href="../part-6-reincarnate/index.html">Part 6: REINCARNATE &amp; Game Entry</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

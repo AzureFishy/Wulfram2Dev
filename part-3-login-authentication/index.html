@@ -1,0 +1,1876 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="../part-2-hello-handshake/index.html">
+      
+      
+        <link rel="next" href="../part-4-behavior-packet/index.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Login Authentication - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Login Authentication
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="index.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-login-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 3: Login Authentication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Login Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#receiving-the-login-packet-0x21" class="md-nav__link">
+    <span class="md-ellipsis">
+      Receiving the LOGIN Packet (0x21)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-login_status-0x22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sending LOGIN_STATUS (0x22)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-login-flow-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete Login Flow Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pseudo-example-complete-exchange" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pseudo-Example: Complete Exchange
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-after-login_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      What Happens After LOGIN_STATUS?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-login-packet-sizes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: LOGIN Packet Sizes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-8-structures/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/add-to-roster.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8-structures/birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#part-3-login-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Part 3: Login Authentication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Part 3: Login Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#receiving-the-login-packet-0x21" class="md-nav__link">
+    <span class="md-ellipsis">
+      Receiving the LOGIN Packet (0x21)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sending-login_status-0x22" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sending LOGIN_STATUS (0x22)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-login-flow-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete Login Flow Example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pseudo-example-complete-exchange" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pseudo-Example: Complete Exchange
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-happens-after-login_status" class="md-nav__link">
+    <span class="md-ellipsis">
+      What Happens After LOGIN_STATUS?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-login-packet-sizes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: LOGIN Packet Sizes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#whats-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      What's Next?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="part-3-login-authentication">Part 3: Login Authentication<a class="headerlink" href="#part-3-login-authentication" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>After the HELLO handshake, the client sends a LOGIN packet with the player's credentials. Your server must respond with LOGIN_STATUS to either accept or reject the login.</p>
+<div class="highlight"><pre><span></span><code>CLIENT                                    SERVER
+   │                                        │
+   │  (HELLO handshake completed)           │
+   │                                        │
+   │───── LOGIN (username/password) ───────►│
+   │                                        │
+   │◄──── LOGIN_STATUS (success/fail) ──────│
+   │                                        │
+   │  If successful, client expects         │
+   │  BEHAVIOR and TEAM_INFO next...        │
+   │                                        │
+</code></pre></div>
+<hr />
+<h3 id="receiving-the-login-packet-0x21">Receiving the LOGIN Packet (0x21)<a class="headerlink" href="#receiving-the-login-packet-0x21" title="Permanent link">&para;</a></h3>
+<p>When the client sends LOGIN, you'll receive a packet containing credentials.</p>
+<h4 id="what-the-client-sends">What the Client Sends<a class="headerlink" href="#what-the-client-sends" title="Permanent link">&para;</a></h4>
+<p>From the decompiled code (FUN_0046cea0, lines 77470-77472):</p>
+<div class="highlight"><pre><span></span><code><span class="n">thunk_FUN_00509440</span><span class="p">(</span><span class="n">in_EAX</span><span class="p">);</span><span class="w">   </span><span class="c1">// Write 8-bit sub-type</span>
+<span class="n">FUN_00509600</span><span class="p">(</span><span class="n">param_2</span><span class="p">);</span><span class="w">         </span><span class="c1">// Write username - LENGTH-PREFIXED string!</span>
+<span class="n">FUN_00509600</span><span class="p">(</span><span class="n">param_3</span><span class="p">);</span><span class="w">         </span><span class="c1">// Write password - LENGTH-PREFIXED string!</span>
+</code></pre></div>
+<p><strong>IMPORTANT</strong>: Username and password are <strong>length-prefixed strings</strong>, NOT simple null-terminated strings!</p>
+<h4 id="login-packet-structure">LOGIN Packet Structure<a class="headerlink" href="#login-packet-structure" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>LOGIN (0x21) Structure:
+┌──────────┬──────────────┬───────────┬──────────────────┬──────────────────┬────────────┐
+│  TYPE    │   LENGTH     │ SUB_TYPE  │    USERNAME      │    PASSWORD      │  (extra)   │
+│  0x21    │  (2 bytes)   │ (1 byte)  │ (len-prefixed)   │ (len-prefixed)   │  varies    │
+└──────────┴──────────────┴───────────┴──────────────────┴──────────────────┴────────────┘
+</code></pre></div>
+<p>Each string is encoded as:
+<div class="highlight"><pre><span></span><code>┌─────────────────┬──────────────────────────────┐
+│  STRING_LENGTH  │  STRING DATA (with \0)       │
+│  (2 bytes BE)   │  (LENGTH bytes)              │
+└─────────────────┴──────────────────────────────┘
+</code></pre></div></p>
+<h4 id="sub-types">Sub-Types<a class="headerlink" href="#sub-types" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Sub-Type</th>
+<th>Meaning</th>
+<th>Additional Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>Normal login</td>
+<td>Just username/password</td>
+</tr>
+<tr>
+<td>0x02, 0x03, 0x04</td>
+<td>Game service login</td>
+<td>Extra: count (32-bit) + N strings + final string</td>
+</tr>
+</tbody>
+</table>
+<h4 id="example-player-root-logging-in-with-password-secret123">Example: Player "ROOT" logging in with password "secret123"<a class="headerlink" href="#example-player-root-logging-in-with-password-secret123" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Building the packet:
+├─ Type:            21                              (1 byte)
+├─ Length:          00 14                           (20 bytes payload)
+├─ Sub-type:        00                              (1 byte - normal login)
+├─ Username length: 00 05                           (5 bytes = &quot;ROOT&quot; + null)
+├─ Username data:   52 4F 4F 54 00                  (&quot;ROOT\0&quot;)
+├─ Password length: 00 0A                           (10 bytes = &quot;secret123&quot; + null)
+└─ Password data:   73 65 63 72 65 74 31 32 33 00   (&quot;secret123\0&quot;)
+
+Complete packet:
+21 00 14 00 00 05 52 4F 4F 54 00 00 0A 73 65 63 72 65 74 31 32 33 00
+── ───── ── ───── ─────────────── ───── ───────────────────────────────
+│    │   │    │         │           │              │
+│    │   │    │         │           │              └─ &quot;secret123\0&quot; (10 bytes)
+│    │   │    │         │           └─ Password length: 10
+│    │   │    │         └─ &quot;ROOT\0&quot; (5 bytes)
+│    │   │    └─ Username length: 5
+│    │   └─ Sub-type: 0 (normal login)
+│    └─ Payload length: 20 bytes (0x0014)
+└─ Type: 0x21 (LOGIN)
+
+Total: 23 bytes on wire
+</code></pre></div>
+<h4 id="python-parsing-login-packet">Python: Parsing LOGIN Packet<a class="headerlink" href="#python-parsing-login-packet" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_string</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decode a length-prefixed string from Wulfram 2 protocol.</span>
+<span class="sd">    Returns (string, new_offset)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">string_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">length</span><span class="p">]</span>
+    <span class="c1"># Remove null terminator for Python string</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">string_data</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">length</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_login_packet</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse a LOGIN packet received from the client.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: Raw packet bytes (including type and length)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict with &#39;sub_type&#39;, &#39;username&#39;, &#39;password&#39;, and optionally &#39;extra_data&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Verify packet type</span>
+    <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x21</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not a LOGIN packet: 0x</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Read length (big-endian)</span>
+    <span class="n">payload_length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Get payload</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">3</span><span class="o">+</span><span class="n">payload_length</span><span class="p">]</span>
+
+    <span class="c1"># Parse sub-type (1 byte)</span>
+    <span class="n">sub_type</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># Parse username (length-prefixed string)</span>
+    <span class="n">username</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">decode_string</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+    <span class="c1"># Parse password (length-prefixed string)</span>
+    <span class="n">password</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">decode_string</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;sub_type&#39;</span><span class="p">:</span> <span class="n">sub_type</span><span class="p">,</span>
+        <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+        <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="n">password</span>
+    <span class="p">}</span>
+
+    <span class="c1"># For sub-types 2, 3, 4: parse additional game service data</span>
+    <span class="k">if</span> <span class="n">sub_type</span> <span class="ow">in</span> <span class="p">(</span><span class="mh">0x02</span><span class="p">,</span> <span class="mh">0x03</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">)</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
+        <span class="n">extra_count</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">4</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
+
+        <span class="n">extra_strings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">extra_count</span><span class="p">):</span>
+            <span class="n">s</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">decode_string</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+            <span class="n">extra_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="c1"># One more string at the end</span>
+        <span class="n">final_string</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">decode_string</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;extra_strings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">extra_strings</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;final_string&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_string</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="c1"># Example usage:</span>
+<span class="c1"># data = bytes.fromhex(&#39;21001400000552 4F 4F 5400000A736563726574313233 00&#39;)</span>
+<span class="c1"># result = parse_login_packet(data)</span>
+<span class="c1"># print(result)  # {&#39;sub_type&#39;: 0, &#39;username&#39;: &#39;ROOT&#39;, &#39;password&#39;: &#39;secret123&#39;}</span>
+</code></pre></div>
+<hr />
+<h3 id="sending-login_status-0x22">Sending LOGIN_STATUS (0x22)<a class="headerlink" href="#sending-login_status-0x22" title="Permanent link">&para;</a></h3>
+<p>After receiving LOGIN, you must respond with LOGIN_STATUS to tell the client whether login succeeded.</p>
+<h4 id="what-the-client-expects">What the Client Expects<a class="headerlink" href="#what-the-client-expects" title="Permanent link">&para;</a></h4>
+<p>From the decompiled code (FUN_0046db40, lines 77927-77935):</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0046db40</span><span class="p">(</span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">(</span><span class="s">&quot;LOGIN_STATUS&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">param_3</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_5</span><span class="p">);</span><span class="w">    </span><span class="c1">// Read 8-bit flag</span>
+<span class="w">    </span><span class="n">FUN_005092e0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_4</span><span class="p">);</span><span class="w">    </span><span class="c1">// Read 8-bit status</span>
+<span class="w">    </span><span class="n">FUN_00509dc0</span><span class="p">(</span><span class="n">param_3</span><span class="p">,</span><span class="w"> </span><span class="n">param_2</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">FUN_004617f0</span><span class="p">(</span><span class="n">local_4</span><span class="p">);</span><span class="w">     </span><span class="c1">// Process status code</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="kt">char</span><span class="p">)</span><span class="n">local_4</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;\b&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">   </span><span class="c1">// Status == 8</span>
+<span class="w">        </span><span class="n">DAT_0067916b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_5</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">&#39;\x01&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">// Store flag</span>
+<span class="w">        </span><span class="n">DAT_0067916c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DAT_0067916b</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="login_status-packet-structure">LOGIN_STATUS Packet Structure<a class="headerlink" href="#login_status-packet-structure" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>LOGIN_STATUS (0x22) Structure:
+┌──────────┬──────────────┬───────────┬───────────────┐
+│  TYPE    │   LENGTH     │   FLAG    │   STATUS      │
+│  0x22    │   00 02      │ (1 byte)  │   (1 byte)    │
+└──────────┴──────────────┴───────────┴───────────────┘
+   1 byte     2 bytes        1 byte       1 byte
+
+Total: 5 bytes on wire
+</code></pre></div>
+<h4 id="status-codes">Status Codes<a class="headerlink" href="#status-codes" title="Permanent link">&para;</a></h4>
+<p>From FUN_004617f0 (lines 69909-69961):</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Hex</th>
+<th>Client Action</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0x01</td>
+<td>Shows password prompt</td>
+<td>Existing user - "Enter your password for this handle"</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0x02</td>
+<td>Re-sends LOGIN with sub-type 3</td>
+<td>Game service continuation</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x03</td>
+<td>Shows new password prompt</td>
+<td>New account - "This is a new handle. Supply a password"</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0x04</td>
+<td>Proceeds to game</td>
+<td>Direct game entry (similar to 8)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0x05</td>
+<td>Shows handle prompt</td>
+<td>Login cleanup - "Welcome to/back to Wulfram!"</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0x06</td>
+<td>Shows handle prompt</td>
+<td>Login cleanup - "Welcome to/back to Wulfram!"</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x07</td>
+<td>Shows handle prompt</td>
+<td>Login cleanup - "Welcome to/back to Wulfram!"</td>
+</tr>
+<tr>
+<td><strong>8</strong></td>
+<td><strong>0x08</strong></td>
+<td><strong>Proceeds to team select</strong></td>
+<td><strong>SUCCESS - Login accepted!</strong></td>
+</tr>
+<tr>
+<td>Other</td>
+<td>-</td>
+<td>Shows error message</td>
+<td>"XXX not handling some login_status return code XXX"</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The magic status code is 8 (0x08)</strong>. This tells the client that login was successful and it should proceed to the team selection screen.</p>
+<h4 id="flag-byte">Flag Byte<a class="headerlink" href="#flag-byte" title="Permanent link">&para;</a></h4>
+<p>The flag byte (first byte of payload) is stored in <code>DAT_0067916b</code> when status=8. 
+- Set to <code>0x01</code> for a normal successful login
+- The exact meaning depends on server implementation, but <code>0x01</code> is standard</p>
+<h4 id="example-successful-login-response">Example: Successful Login Response<a class="headerlink" href="#example-successful-login-response" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Building LOGIN_STATUS for successful login:
+
+Hex: 22 00 02 01 08
+     ── ───── ── ──
+     │    │   │  │
+     │    │   │  └─ Status: 8 (SUCCESS!)
+     │    │   └─ Flag: 1 (normal)
+     │    └─ Length: 2 bytes
+     └─ Type: 0x22 (LOGIN_STATUS)
+
+Total: 5 bytes on wire
+</code></pre></div>
+<h4 id="python-implementation">Python Implementation<a class="headerlink" href="#python-implementation" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_login_status</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mh">0x08</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mh">0x01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a LOGIN_STATUS response packet.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        status: Status code (default 0x08 for success)</span>
+<span class="sd">        flag: Flag byte (default 0x01 for normal)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Complete packet bytes</span>
+
+<span class="sd">    Status codes:</span>
+<span class="sd">        1 = Existing user, prompt for password</span>
+<span class="sd">        2 = Continue login flow (game service)</span>
+<span class="sd">        3 = New account, prompt for new password</span>
+<span class="sd">        4 = Direct game entry</span>
+<span class="sd">        5, 6, 7 = Cleanup/restart login</span>
+<span class="sd">        8 = SUCCESS - proceed to team select</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">packet_type</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x22</span><span class="p">])</span>  <span class="c1"># LOGIN_STATUS</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">flag</span><span class="p">,</span> <span class="n">status</span><span class="p">])</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">packet_type</span> <span class="o">+</span> <span class="n">length</span> <span class="o">+</span> <span class="n">payload</span>
+
+<span class="c1"># Successful login:</span>
+<span class="c1"># create_login_status(status=0x08, flag=0x01)</span>
+<span class="c1"># Returns: b&#39;\x22\x00\x02\x01\x08&#39;</span>
+
+<span class="c1"># Failed login (restart):</span>
+<span class="c1"># create_login_status(status=0x05, flag=0x00)</span>
+<span class="c1"># Returns: b&#39;\x22\x00\x02\x00\x05&#39;</span>
+</code></pre></div>
+<hr />
+<h3 id="complete-login-flow-example">Complete Login Flow Example<a class="headerlink" href="#complete-login-flow-example" title="Permanent link">&para;</a></h3>
+<p>Here's the complete server-side implementation of the login exchange:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_string</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode a length-prefixed, null-terminated string&quot;&quot;&quot;</span>
+    <span class="n">string_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_bytes</span><span class="p">))</span> <span class="o">+</span> <span class="n">string_bytes</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_string</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode a length-prefixed string, returns (string, new_offset)&quot;&quot;&quot;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">string_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">length</span><span class="p">]</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">string_data</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">length</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_packet</span><span class="p">(</span><span class="n">packet_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap payload in a complete packet frame&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">packet_type</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span> <span class="o">+</span> <span class="n">payload</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Wulfram2Server</span><span class="p">:</span>
+    <span class="n">PACKET_LOGIN</span> <span class="o">=</span> <span class="mh">0x21</span>
+    <span class="n">PACKET_LOGIN_STATUS</span> <span class="o">=</span> <span class="mh">0x22</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_packet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send raw packet data to client&quot;&quot;&quot;</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TX: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">recv_packet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receive a complete packet from client&quot;&quot;&quot;</span>
+        <span class="c1"># Read packet header (type + length)</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="n">packet_type</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">packet_length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Read payload</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">packet_length</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RX: </span><span class="si">{</span><span class="n">header</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">payload</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">packet_type</span><span class="p">,</span> <span class="n">packet_length</span><span class="p">,</span> <span class="n">payload</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle the login exchange after HELLO handshake.</span>
+
+<span class="sd">        1. Receive LOGIN packet from client</span>
+<span class="sd">        2. Validate credentials (or accept all for testing)</span>
+<span class="sd">        3. Send LOGIN_STATUS response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="c1"># Step 1: Receive LOGIN packet</span>
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="n">packet_type</span><span class="p">,</span> <span class="n">packet_length</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recv_packet</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">packet_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connection closed before LOGIN&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Verify it&#39;s a LOGIN packet</span>
+        <span class="k">if</span> <span class="n">packet_type</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PACKET_LOGIN</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected LOGIN (0x21), got 0x</span><span class="si">{</span><span class="n">packet_type</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Parse LOGIN packet</span>
+        <span class="n">sub_type</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># Decode username (length-prefixed string)</span>
+        <span class="n">username</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">decode_string</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+        <span class="c1"># Decode password (length-prefixed string)</span>
+        <span class="n">password</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">decode_string</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Login attempt: sub_type=</span><span class="si">{</span><span class="n">sub_type</span><span class="si">}</span><span class="s2">, username=&#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;, password=&#39;</span><span class="si">{</span><span class="n">password</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="c1"># Step 2: Validate credentials</span>
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="c1"># For testing, accept all logins</span>
+        <span class="c1"># In production, check against your user database</span>
+        <span class="n">login_valid</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Accept all for now</span>
+
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="c1"># Step 3: Send LOGIN_STATUS response</span>
+        <span class="c1"># ═══════════════════════════════════════════════════════════</span>
+        <span class="k">if</span> <span class="n">login_valid</span><span class="p">:</span>
+            <span class="c1"># SUCCESS! Status = 8</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">])</span>  <span class="c1"># Flag=1, Status=8</span>
+            <span class="n">login_status</span> <span class="o">=</span> <span class="n">make_packet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PACKET_LOGIN_STATUS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_packet</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">login_status</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Login successful! Sent LOGIN_STATUS with status=8&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Expected bytes sent: 22 00 02 01 08</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># FAILURE! Status = 5 (cleanup/restart)</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x05</span><span class="p">])</span>  <span class="c1"># Flag=0, Status=5</span>
+            <span class="n">login_status</span> <span class="o">=</span> <span class="n">make_packet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PACKET_LOGIN_STATUS</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_packet</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">login_status</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Login failed! Sent LOGIN_STATUS with status=5&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<hr />
+<h3 id="pseudo-example-complete-exchange">Pseudo-Example: Complete Exchange<a class="headerlink" href="#pseudo-example-complete-exchange" title="Permanent link">&para;</a></h3>
+<p>Let's trace through a complete login exchange:</p>
+<div class="highlight"><pre><span></span><code>═══════════════════════════════════════════════════════════════════════════════
+STEP 1: Client connects and receives HELLO handshake (see Part 2)
+═══════════════════════════════════════════════════════════════════════════════
+
+SERVER → CLIENT: 13 00 05 00 00 00 4E 89              (HELLO version)
+SERVER → CLIENT: 13 00 11 01 0A 43 00 01 00 0A ...   (HELLO UDP)
+SERVER → CLIENT: 13 00 17 02 00 14 57 75 ...         (HELLO name)
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 2: Client sends LOGIN with credentials
+═══════════════════════════════════════════════════════════════════════════════
+
+CLIENT → SERVER: 21 00 14 00 00 05 52 4F 4F 54 00 00 0A 73 65 63 72 65 74 31 32 33 00
+                 │  └──┬──┘ │  └──┬──┘ └────┬────┘ └──┬──┘ └────────────┬────────────┘
+                 │     │    │     │         │         │                 │
+                 │     │    │     │         │         │                 └─ &quot;secret123\0&quot;
+                 │     │    │     │         │         └─ Password length: 10
+                 │     │    │     │         └─ &quot;ROOT\0&quot;
+                 │     │    │     └─ Username length: 5
+                 │     │    └─ Sub-type: 0 (normal login)
+                 │     └─ Length: 20 bytes
+                 └─ Type: 0x21 (LOGIN)
+
+Parsed: sub_type=0, username=&quot;ROOT&quot;, password=&quot;secret123&quot;
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 3: Server validates and responds with LOGIN_STATUS
+═══════════════════════════════════════════════════════════════════════════════
+
+Server validates credentials... (accept for testing)
+
+SERVER → CLIENT: 22 00 02 01 08
+                 │  └──┬──┘ │  │
+                 │     │    │  └─ Status: 8 (SUCCESS!)
+                 │     │    └─ Flag: 1
+                 │     └─ Length: 2 bytes
+                 └─ Type: 0x22 (LOGIN_STATUS)
+
+═══════════════════════════════════════════════════════════════════════════════
+STEP 4: Client receives status=8, waits for BEHAVIOR and TEAM_INFO
+═══════════════════════════════════════════════════════════════════════════════
+
+Client internal state:
+  - Login successful
+  - Flag stored: DAT_0067916b = true
+  - Waiting for BEHAVIOR packet...
+  - Then TEAM_INFO packet...
+  - Then will show team selection screen
+</code></pre></div>
+<hr />
+<h3 id="what-happens-after-login_status">What Happens After LOGIN_STATUS?<a class="headerlink" href="#what-happens-after-login_status" title="Permanent link">&para;</a></h3>
+<p>After sending LOGIN_STATUS with status=8, the client is now waiting for:</p>
+<ol>
+<li><strong>BEHAVIOR packet (0x24)</strong> - The big configuration packet</li>
+<li><strong>TEAM_INFO packet (0x28)</strong> - Team data for the selection screen</li>
+</ol>
+<p>The client will NOT show the team selection screen until it receives both of these packets!</p>
+<hr />
+<h3 id="quick-reference-login-packet-sizes">Quick Reference: LOGIN Packet Sizes<a class="headerlink" href="#quick-reference-login-packet-sizes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Size</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type</td>
+<td>1 byte</td>
+<td><code>0x21</code></td>
+</tr>
+<tr>
+<td>Length</td>
+<td>2 bytes</td>
+<td><code>0x0014</code> (20)</td>
+</tr>
+<tr>
+<td>Sub-type</td>
+<td>1 byte</td>
+<td><code>0x00</code></td>
+</tr>
+<tr>
+<td>Username</td>
+<td>2 + len + 1 bytes</td>
+<td><code>00 05 52 4F 4F 54 00</code></td>
+</tr>
+<tr>
+<td>Password</td>
+<td>2 + len + 1 bytes</td>
+<td><code>00 0A 73 65 63 72 65 74 31 32 33 00</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Payload formula</strong>: <code>1 + (2 + username_len + 1) + (2 + password_len + 1)</code></p>
+<p>Example: username="ROOT" (4 chars), password="secret123" (9 chars)
+- Payload = 1 + (2 + 4 + 1) + (2 + 9 + 1) = 1 + 7 + 12 = 20 bytes</p>
+<hr />
+<h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
+<h4 id="problem-client-stuck-at-login-screen">Problem: Client Stuck at Login Screen<a class="headerlink" href="#problem-client-stuck-at-login-screen" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: LOGIN_STATUS not sent, or wrong status code.</p>
+<p><strong>Solution</strong>: Make sure you're sending <code>22 00 02 01 08</code> after receiving LOGIN.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># This exact sequence is required:</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="s1">&#39;22 00 02 01 08&#39;</span><span class="p">))</span>
+</code></pre></div>
+<h4 id="problem-client-shows-error-after-login">Problem: Client Shows Error After Login<a class="headerlink" href="#problem-client-shows-error-after-login" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: Status code other than 8, or packets sent in wrong order.</p>
+<p><strong>Solution</strong>: 
+1. Use status code 8 for success
+2. Make sure you completed HELLO handshake before LOGIN
+3. Send BEHAVIOR and TEAM_INFO after LOGIN_STATUS</p>
+<h4 id="problem-server-fails-to-parse-login">Problem: Server Fails to Parse LOGIN<a class="headerlink" href="#problem-server-fails-to-parse-login" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: Expecting null-terminated strings instead of length-prefixed strings.</p>
+<p><strong>Solution</strong>: Use proper length-prefixed string decoding:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># WRONG - Don&#39;t do this:</span>
+<span class="n">strings</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># ← WRONG!</span>
+
+<span class="c1"># CORRECT - Do this:</span>
+<span class="n">username</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">decode_string</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">password</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">decode_string</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="problem-nothing-happens-after-login_status">Problem: Nothing Happens After LOGIN_STATUS<a class="headerlink" href="#problem-nothing-happens-after-login_status" title="Permanent link">&para;</a></h4>
+<p><strong>Cause</strong>: Client is waiting for BEHAVIOR packet.</p>
+<p><strong>Solution</strong>: Immediately send BEHAVIOR (0x24) after LOGIN_STATUS. The client won't proceed without it.</p>
+<hr />
+<h3 id="common-mistakes">Common Mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Null-terminated strings</td>
+<td>Parse failure</td>
+<td>Use length-prefixed string decoding</td>
+</tr>
+<tr>
+<td>Wrong payload length</td>
+<td>Packet rejected</td>
+<td>Recalculate: 1 + (2+len+1) per string</td>
+</tr>
+<tr>
+<td>Status code not 8</td>
+<td>Client shows prompts</td>
+<td>Use status=8 for successful login</td>
+</tr>
+<tr>
+<td>Missing BEHAVIOR packet</td>
+<td>Client hangs</td>
+<td>Send BEHAVIOR immediately after LOGIN_STATUS</td>
+</tr>
+<tr>
+<td>Wrong byte order</td>
+<td>Parse failure</td>
+<td>Use big-endian (<code>&gt;H</code>) for length prefix</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="whats-next">What's Next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h3>
+<p>The client is now waiting for the BEHAVIOR packet - the largest and most complex packet in the protocol. In <strong>Part 4</strong>, we'll start building the BEHAVIOR packet by understanding its structure and the fixed header.</p>
+<hr />
+<p><em>Previous: <a href="../part-2-hello-handshake/index.html">Part 2: HELLO Handshake</a></em>
+<em>Next: <a href="../part-4-behavior-packet/part-4-1-fixed-header.html">Part 4: BEHAVIOR Packet - Overview</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

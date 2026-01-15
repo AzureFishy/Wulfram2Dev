@@ -1,0 +1,2100 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Wulfram 2 server restoration project">
+      
+      
+      
+      
+        <link rel="prev" href="index.html">
+      
+      
+        <link rel="next" href="birth-notice.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>ADD_TO_ROSTER - Wulfram 2 Server Implementation Guide</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wulfram-2-server-implementation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-header__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Wulfram 2 Server Implementation Guide
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ADD_TO_ROSTER
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Wulfram 2 Server Implementation Guide" class="md-nav__button md-logo" aria-label="Wulfram 2 Server Implementation Guide" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Wulfram 2 Server Implementation Guide
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-getting-started/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-1-introduction/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 1.0 - Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2-hello-handshake/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 2.0 - HELLO Handshake
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3-login-authentication/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 3.0 - Login Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-4-behavior-packet/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    BEHAVIOR Packet
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            BEHAVIOR Packet
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-1-fixed-header.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.1 - Fixed Header
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-2-entity-weapon-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.2 - Entity Weapon Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-3-entity-core-stats.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.3 - Entity Core Stats
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-4-vehicle-type-data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.4 - Vehicle Type Data
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-5-physics-tables.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.5 - Physics Tables
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-6-packet-finalization.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.6 - Packet Finalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4-behavior-packet/part-4-7-post-behavior-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 4.7 - Post BEHAVIOR Flow
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-0-game-state/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Game State
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Game State
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5-team-info/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 5.0 - TEAM INFO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6-reincarnate/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 6.0 - REINCARNATE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7-update-array/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 7.0 - UPDATE ARRAY
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../part-9-reference-files/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Structures
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Structures
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="add-to-roster.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.1 - ADD_TO_ROSTER
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#add_to_roster-packet-0x1a-complete-structure-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      ADD_TO_ROSTER Packet (0x1A) - Complete Structure Reference
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ADD_TO_ROSTER Packet (0x1A) - Complete Structure Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Registration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-the-reader-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the Reader Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wire Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payload-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Payload Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Details
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimum-payload-size-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minimum Payload Size Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-add_to_roster-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building ADD_TO_ROSTER in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-wire-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Wire Bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Critical Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-packet-remove_from_roster-0x1b" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Packet: REMOVE_FROM_ROSTER (0x1B)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-field-offsets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: Field Offsets
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="birth-notice.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Part 8.2 - BIRTH_NOTICE
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#add_to_roster-packet-0x1a-complete-structure-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      ADD_TO_ROSTER Packet (0x1A) - Complete Structure Reference
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ADD_TO_ROSTER Packet (0x1A) - Complete Structure Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Registration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-handler-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Handler Code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#understanding-the-reader-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Understanding the Reader Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wire-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wire Format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payload-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Payload Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Field Details
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-flow-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Flow Diagram
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minimum-payload-size-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minimum Payload Size Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-add_to_roster-in-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building ADD_TO_ROSTER in Python
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Usage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-wire-bytes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Wire Bytes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#critical-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Critical Requirements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#related-packet-remove_from_roster-0x1b" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related Packet: REMOVE_FROM_ROSTER (0x1B)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Mistakes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packet Summary
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-reference-field-offsets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference: Field Offsets
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wulfram-2-server-implementation-guide">Wulfram 2 Server Implementation Guide<a class="headerlink" href="#wulfram-2-server-implementation-guide" title="Permanent link">&para;</a></h1>
+<h2 id="add_to_roster-packet-0x1a-complete-structure-reference">ADD_TO_ROSTER Packet (0x1A) - Complete Structure Reference<a class="headerlink" href="#add_to_roster-packet-0x1a-complete-structure-reference" title="Permanent link">&para;</a></h2>
+<hr />
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The ADD_TO_ROSTER packet (0x1A) adds a player to the team roster display. This packet is sent by the server to inform the client about players joining the game, including their stats, team assignment, and associated entity.</p>
+<div class="highlight"><pre><span></span><code>Position in Connection Flow:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  PHASE 3: GAME ENTRY                                                    │
+│  ───────────────────                                                    │
+│  Client ──► REINCARNATE (0x25)               Player chooses team        │
+│  Server ──► REINCARNATE (0x25)               Server confirms            │
+│  Server ──► PLAYER (0x17)                    ★ Assigns player entity    │
+│  Server ──► GAME_CLOCK (0x2F)                Time synchronization       │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Server ──► ADD_TO_ROSTER (0x1A)             ◄ YOU ARE HERE             │
+│             Adds player to team roster display                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Server ──► WORLD_STATS (0x16)               Map info                   │
+│  Client ──► WANT_UPDATES (0x39)              Auto-sent by client        │
+└─────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="packet-registration">Packet Registration<a class="headerlink" href="#packet-registration" title="Permanent link">&para;</a></h3>
+<p>From the client initialization code:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From line 77042</span>
+<span class="n">FUN_00509b40</span><span class="p">(</span><span class="mh">0x1a</span><span class="p">,</span><span class="w"> </span><span class="n">FUN_0046d5d0</span><span class="p">);</span><span class="w">    </span><span class="c1">// Register type 0x1A → ADD_TO_ROSTER handler</span>
+</code></pre></div>
+<p>The packet name is registered for debugging:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// From line 94145</span>
+<span class="n">FUN_0044a020</span><span class="p">(</span><span class="s">&quot;ADD_TO_ROSTER&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">0x1a</span><span class="p">);</span>
+</code></pre></div>
+<hr />
+<h3 id="the-handler-code">The Handler Code<a class="headerlink" href="#the-handler-code" title="Permanent link">&para;</a></h3>
+<p>From FUN_0046d5d0 (lines 77724-77760):</p>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">FUN_0046d5d0</span><span class="p">(</span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_1</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_2</span><span class="p">,</span><span class="w"> </span><span class="n">undefined4</span><span class="w"> </span><span class="n">param_3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">undefined2</span><span class="w"> </span><span class="n">local_30</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">      </span><span class="c1">// Deaths</span>
+<span class="w">    </span><span class="n">undefined2</span><span class="w"> </span><span class="n">local_2c</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">      </span><span class="c1">// Kills</span>
+<span class="w">    </span><span class="n">undefined2</span><span class="w"> </span><span class="n">local_28</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">      </span><span class="c1">// Unknown flag</span>
+<span class="w">    </span><span class="n">undefined2</span><span class="w"> </span><span class="n">local_24</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">      </span><span class="c1">// Team ID</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">local_20</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">           </span><span class="c1">// Player name pointer</span>
+<span class="w">    </span><span class="n">undefined4</span><span class="w"> </span><span class="n">local_18</span><span class="p">;</span><span class="w">          </span><span class="c1">// Clan name pointer</span>
+<span class="w">    </span><span class="n">undefined4</span><span class="w"> </span><span class="n">local_14</span><span class="p">;</span><span class="w">          </span><span class="c1">// Unknown uint32</span>
+<span class="w">    </span><span class="n">undefined4</span><span class="w"> </span><span class="n">local_10</span><span class="p">;</span><span class="w">          </span><span class="c1">// Entity ID</span>
+<span class="w">    </span><span class="n">undefined4</span><span class="w"> </span><span class="n">local_c</span><span class="p">;</span><span class="w">           </span><span class="c1">// Player ID</span>
+<span class="w">    </span><span class="n">undefined8</span><span class="w"> </span><span class="n">local_8</span><span class="p">;</span><span class="w">           </span><span class="c1">// Score (fixed-point)</span>
+
+<span class="w">    </span><span class="n">FUN_004e5080</span><span class="p">();</span><span class="w">                          </span><span class="c1">// Initialize context</span>
+<span class="w">    </span><span class="n">local_20</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="mh">0x0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">local_18</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">FUN_004e5090</span><span class="p">(</span><span class="n">param_3</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Set context pointer</span>
+<span class="w">    </span><span class="n">FUN_00509db0</span><span class="p">();</span><span class="w">                          </span><span class="c1">// Set packet name for errors</span>
+
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// READ PACKET DATA</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_c</span><span class="p">);</span><span class="w">                  </span><span class="c1">// 4 bytes: Player ID (uint32 BE)</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_10</span><span class="p">);</span><span class="w">                 </span><span class="c1">// 4 bytes: Entity ID (uint32 BE)</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">(</span><span class="n">local_24</span><span class="p">);</span><span class="w">                  </span><span class="c1">// 2 bytes: Team ID (uint16 BE)</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">(</span><span class="n">local_28</span><span class="p">);</span><span class="w">                  </span><span class="c1">// 2 bytes: Unknown flag (uint16 BE)</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="n">local_20</span><span class="p">);</span><span class="w">                  </span><span class="c1">// String:  Player Name (length-prefixed)</span>
+<span class="w">    </span><span class="n">FUN_00509340</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_18</span><span class="p">);</span><span class="w">                 </span><span class="c1">// String:  Clan Name (length-prefixed)</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">(</span><span class="n">local_2c</span><span class="p">);</span><span class="w">                  </span><span class="c1">// 2 bytes: Kills (uint16 BE)</span>
+<span class="w">    </span><span class="n">FUN_005092f0</span><span class="p">(</span><span class="n">local_30</span><span class="p">);</span><span class="w">                  </span><span class="c1">// 2 bytes: Deaths (uint16 BE)</span>
+<span class="w">    </span><span class="n">FUN_004e51d0</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_8</span><span class="p">);</span><span class="w">                  </span><span class="c1">// 4 bytes: Score (fixed-point)</span>
+<span class="w">    </span><span class="n">FUN_00509310</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_14</span><span class="p">);</span><span class="w">                 </span><span class="c1">// 4 bytes: Unknown (uint32 BE)</span>
+<span class="w">    </span><span class="n">FUN_00509dc0</span><span class="p">();</span><span class="w">                          </span><span class="c1">// Byte alignment</span>
+
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="c1">// PROCESS ROSTER ENTRY</span>
+<span class="w">    </span><span class="c1">// ═══════════════════════════════════════════════════════════</span>
+<span class="w">    </span><span class="n">FUN_00475b90</span><span class="p">(</span><span class="n">local_c</span><span class="p">,</span><span class="w"> </span><span class="n">local_10</span><span class="p">,</span><span class="w"> </span><span class="n">local_24</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">local_28</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">local_18</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                 </span><span class="n">local_2c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">local_30</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">local_8</span><span class="p">,</span><span class="w"> </span><span class="n">local_14</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Free player name string if allocated</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">local_20</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="mh">0x0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">_free</span><span class="p">(</span><span class="n">local_20</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="understanding-the-reader-functions">Understanding the Reader Functions<a class="headerlink" href="#understanding-the-reader-functions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Bits Read</th>
+<th>Wire Bytes</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FUN_00509310</code></td>
+<td>32 bits</td>
+<td>4 bytes</td>
+<td>Reads uint32 (big-endian)</td>
+</tr>
+<tr>
+<td><code>FUN_005092f0</code></td>
+<td>16 bits</td>
+<td>2 bytes</td>
+<td>Reads uint16 (big-endian)</td>
+</tr>
+<tr>
+<td><code>FUN_00509340</code></td>
+<td>variable</td>
+<td>2 + N bytes</td>
+<td>Reads length-prefixed string</td>
+</tr>
+<tr>
+<td><code>FUN_004e51d0</code></td>
+<td>32 bits</td>
+<td>4 bytes</td>
+<td>Reads fixed-point → double</td>
+</tr>
+<tr>
+<td><code>FUN_00509dc0</code></td>
+<td>0-7 bits</td>
+<td>0 bytes</td>
+<td>Byte alignment</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="wire-format">Wire Format<a class="headerlink" href="#wire-format" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ADD_TO_ROSTER Packet Structure:
+┌──────────┬──────────────┬─────────────────────────────────────────────────┐
+│  TYPE    │   LENGTH     │   PAYLOAD                                       │
+│  0x1A    │  (2 bytes)   │   (variable size)                               │
+└──────────┴──────────────┴─────────────────────────────────────────────────┘
+   1 byte     2 bytes BE         N bytes
+</code></pre></div>
+<h3 id="payload-structure">Payload Structure<a class="headerlink" href="#payload-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ADD_TO_ROSTER Payload Layout:
+┌─────────┬──────┬────────────────┬───────────────────────────────────────────┐
+│ Offset  │ Size │ Type           │ Description                               │
+├─────────┼──────┼────────────────┼───────────────────────────────────────────┤
+│ 0       │ 4    │ uint32 BE      │ Player ID                                 │
+│ 4       │ 4    │ uint32 BE      │ Entity ID                                 │
+│ 8       │ 2    │ uint16 BE      │ Team ID                                   │
+│ 10      │ 2    │ uint16 BE      │ Unknown Flag                              │
+│ 12      │ var  │ string         │ Player Name (length-prefixed)             │
+│ var     │ var  │ string         │ Clan Name (length-prefixed)               │
+│ var     │ 2    │ uint16 BE      │ Kills                                     │
+│ var+2   │ 2    │ uint16 BE      │ Deaths                                    │
+│ var+4   │ 4    │ fixed-point    │ Score                                     │
+│ var+8   │ 4    │ uint32 BE      │ Unknown (ping/status?)                    │
+└─────────┴──────┴────────────────┴───────────────────────────────────────────┘
+</code></pre></div>
+<hr />
+<h3 id="field-details">Field Details<a class="headerlink" href="#field-details" title="Permanent link">&para;</a></h3>
+<h4 id="field-1-player-id-4-bytes">Field 1: Player ID (4 bytes)<a class="headerlink" href="#field-1-player-id-4-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: 0
+Size:   4 bytes
+Type:   uint32 big-endian
+Reader: FUN_00509310
+
+Description:
+  Unique identifier for the player within the game session.
+  This is NOT the entity ID - it&#39;s a separate player identifier.
+
+Example:
+  Player ID = 1
+  Wire bytes: 00 00 00 01
+</code></pre></div>
+<h4 id="field-2-entity-id-4-bytes">Field 2: Entity ID (4 bytes)<a class="headerlink" href="#field-2-entity-id-4-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: 4
+Size:   4 bytes
+Type:   uint32 big-endian
+Reader: FUN_00509310
+
+Description:
+  The entity ID of the player&#39;s vehicle/unit in the game world.
+
+  ★ CRITICAL: This MUST match the entity_id sent in the PLAYER packet! ★
+
+  If these don&#39;t match, the client won&#39;t properly associate the 
+  player with their entity in the roster display.
+
+Example:
+  Entity ID = 12345 (0x3039)
+  Wire bytes: 00 00 30 39
+</code></pre></div>
+<h4 id="field-3-team-id-2-bytes">Field 3: Team ID (2 bytes)<a class="headerlink" href="#field-3-team-id-2-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: 8
+Size:   2 bytes
+Type:   uint16 big-endian
+Reader: FUN_005092f0
+
+Description:
+  The team the player belongs to.
+
+  Values:
+    1 = Team 1 (typically Red)
+    2 = Team 2 (typically Blue)
+
+  ★ IMPORTANT: This MUST match the team the player selected via REINCARNATE! ★
+
+Example:
+  Team 1 (Red)
+  Wire bytes: 00 01
+</code></pre></div>
+<h4 id="field-4-unknown-flag-2-bytes">Field 4: Unknown Flag (2 bytes)<a class="headerlink" href="#field-4-unknown-flag-2-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: 10
+Size:   2 bytes
+Type:   uint16 big-endian
+Reader: FUN_005092f0
+
+Description:
+  Purpose not fully determined. Possibly:
+  - Player status flags
+  - Connection type
+  - Permissions/role
+
+  Safe default: 0
+
+Example:
+  Flag = 0
+  Wire bytes: 00 00
+</code></pre></div>
+<h4 id="field-5-player-name-variable">Field 5: Player Name (variable)<a class="headerlink" href="#field-5-player-name-variable" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: 12
+Size:   2 + length + 1 bytes (length-prefixed string)
+Type:   Length-prefixed, null-terminated string
+Reader: FUN_00509340
+
+Description:
+  The player&#39;s display name shown in the roster.
+
+  Format:
+    [length:2 bytes BE][string data][null terminator]
+
+  The length field INCLUDES the null terminator!
+
+Example:
+  Player Name = &quot;Baffler&quot;
+  Length = 8 (7 characters + 1 null)
+  Wire bytes: 00 08 42 61 66 66 6C 65 72 00
+              ───── ─────────────────────────
+                │              │
+                │              └─ &quot;Baffler\0&quot;
+                └─ Length: 8
+</code></pre></div>
+<h4 id="field-6-clan-name-variable">Field 6: Clan Name (variable)<a class="headerlink" href="#field-6-clan-name-variable" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: varies (after player name)
+Size:   2 + length + 1 bytes (length-prefixed string)
+Type:   Length-prefixed, null-terminated string
+Reader: FUN_00509340
+
+Description:
+  The player&#39;s clan/guild tag. Can be empty.
+
+  For empty string, send:
+    [00 01][00]  = Length 1 + just the null terminator
+
+Example (with clan):
+  Clan Name = &quot;PRO&quot;
+  Wire bytes: 00 04 50 52 4F 00
+
+Example (no clan):
+  Clan Name = &quot;&quot;
+  Wire bytes: 00 01 00
+</code></pre></div>
+<h4 id="field-7-kills-2-bytes">Field 7: Kills (2 bytes)<a class="headerlink" href="#field-7-kills-2-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: varies (after clan name)
+Size:   2 bytes
+Type:   uint16 big-endian
+Reader: FUN_005092f0
+
+Description:
+  Player&#39;s kill count for the current session.
+
+Example:
+  Kills = 5
+  Wire bytes: 00 05
+</code></pre></div>
+<h4 id="field-8-deaths-2-bytes">Field 8: Deaths (2 bytes)<a class="headerlink" href="#field-8-deaths-2-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: varies (after kills)
+Size:   2 bytes
+Type:   uint16 big-endian
+Reader: FUN_005092f0
+
+Description:
+  Player&#39;s death count for the current session.
+
+Example:
+  Deaths = 2
+  Wire bytes: 00 02
+</code></pre></div>
+<h4 id="field-9-score-4-bytes">Field 9: Score (4 bytes)<a class="headerlink" href="#field-9-score-4-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: varies (after deaths)
+Size:   4 bytes
+Type:   Fixed-point (value × 65536)
+Reader: FUN_004e51d0
+
+Description:
+  Player&#39;s score as a fixed-point number.
+
+  Encoding: wire_value = int(score × 65536)
+
+Example:
+  Score = 150.5
+  Wire value = 150.5 × 65536 = 9,863,168 = 0x968000
+  Wire bytes: 00 96 80 00
+
+Example (zero score):
+  Score = 0.0
+  Wire bytes: 00 00 00 00
+</code></pre></div>
+<h4 id="field-10-unknown-field-4-bytes">Field 10: Unknown Field (4 bytes)<a class="headerlink" href="#field-10-unknown-field-4-bytes" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Offset: varies (after score)
+Size:   4 bytes
+Type:   uint32 big-endian
+Reader: FUN_00509310
+
+Description:
+  Purpose not fully determined. Possibly:
+  - Ping/latency
+  - Player status
+  - Join timestamp
+
+  Safe default: 0
+
+Example:
+  Wire bytes: 00 00 00 00
+</code></pre></div>
+<hr />
+<h3 id="data-flow-diagram">Data Flow Diagram<a class="headerlink" href="#data-flow-diagram" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ADD_TO_ROSTER Reading Order:
+═══════════════════════════════════════════════════════════════════════════
+
+┌────────────────────────────────────────────────────────────────────────┐
+│  FIXED FIELDS (12 bytes)                                               │
+│  ────────────────────────                                              │
+│  [Player ID:4][Entity ID:4][Team ID:2][Flag:2]                        │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│  STRING FIELDS (variable)                                              │
+│  ────────────────────────                                              │
+│  [Player Name: len-prefixed string][Clan Name: len-prefixed string]   │
+└────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│  STATS FIELDS (12 bytes)                                               │
+│  ───────────────────────                                               │
+│  [Kills:2][Deaths:2][Score:4][Unknown:4]                              │
+└────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<h3 id="minimum-payload-size-calculation">Minimum Payload Size Calculation<a class="headerlink" href="#minimum-payload-size-calculation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Minimum ADD_TO_ROSTER Payload:
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Player ID:      4 bytes                                                │
+│  Entity ID:      4 bytes                                                │
+│  Team ID:        2 bytes                                                │
+│  Unknown Flag:   2 bytes                                                │
+│  Player Name:    3 bytes minimum (00 01 00 = empty string)              │
+│  Clan Name:      3 bytes minimum (00 01 00 = empty string)              │
+│  Kills:          2 bytes                                                │
+│  Deaths:         2 bytes                                                │
+│  Score:          4 bytes                                                │
+│  Unknown:        4 bytes                                                │
+│  ─────────────────────────────────────────────────────────────────────  │
+│  MINIMUM TOTAL:  30 bytes                                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+With typical player name (8 chars) and no clan:
+  12 + (2+8+1) + (2+0+1) + 12 = 12 + 11 + 3 + 12 = 38 bytes
+</code></pre></div>
+<hr />
+<h3 id="building-add_to_roster-in-python">Building ADD_TO_ROSTER in Python<a class="headerlink" href="#building-add_to_roster-in-python" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_string</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Encode a string for Wulfram 2 protocol.</span>
+<span class="sd">    Format: [length:2 bytes BE][string data with null terminator]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">string_bytes</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_bytes</span><span class="p">))</span> <span class="o">+</span> <span class="n">string_bytes</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_fixed_point</span><span class="p">(</span><span class="n">float_value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a float to fixed-point format (4 bytes big-endian).&quot;&quot;&quot;</span>
+    <span class="n">wire_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">float_value</span> <span class="o">*</span> <span class="mi">65536</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;i&#39;</span><span class="p">,</span> <span class="n">wire_value</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_packet</span><span class="p">(</span><span class="n">packet_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrap payload in a complete packet frame.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">([</span><span class="n">packet_type</span><span class="p">])</span> <span class="o">+</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span> <span class="o">+</span> <span class="n">payload</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_add_to_roster</span><span class="p">(</span><span class="n">player_id</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">,</span> <span class="n">team_id</span><span class="p">,</span> <span class="n">player_name</span><span class="p">,</span>
+                         <span class="n">clan_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">kills</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">deaths</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                         <span class="n">unknown_flag</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">unknown_field</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an ADD_TO_ROSTER packet (0x1A).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        player_id:     Unique player identifier (uint32)</span>
+<span class="sd">        entity_id:     Entity ID of player&#39;s vehicle (uint32)</span>
+<span class="sd">                       ★ MUST match entity_id from PLAYER packet! ★</span>
+<span class="sd">        team_id:       Team number (1 or 2)</span>
+<span class="sd">                       ★ MUST match team from REINCARNATE! ★</span>
+<span class="sd">        player_name:   Player&#39;s display name (string)</span>
+<span class="sd">        clan_name:     Player&#39;s clan tag (string, can be empty)</span>
+<span class="sd">        kills:         Kill count (uint16)</span>
+<span class="sd">        deaths:        Death count (uint16)</span>
+<span class="sd">        score:         Player score (float, sent as fixed-point)</span>
+<span class="sd">        unknown_flag:  Unknown field (uint16, default 0)</span>
+<span class="sd">        unknown_field: Unknown field (uint32, default 0)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Complete ADD_TO_ROSTER packet as bytes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+    <span class="c1"># Fixed fields (12 bytes)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">player_id</span><span class="p">))</span>     <span class="c1"># 4 bytes: Player ID</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">entity_id</span><span class="p">))</span>     <span class="c1"># 4 bytes: Entity ID</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">team_id</span><span class="p">))</span>       <span class="c1"># 2 bytes: Team ID</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">unknown_flag</span><span class="p">))</span>  <span class="c1"># 2 bytes: Unknown flag</span>
+
+    <span class="c1"># String fields (variable)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_string</span><span class="p">(</span><span class="n">player_name</span><span class="p">))</span>       <span class="c1"># Player name</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_string</span><span class="p">(</span><span class="n">clan_name</span><span class="p">))</span>         <span class="c1"># Clan name</span>
+
+    <span class="c1"># Stats fields (12 bytes)</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">kills</span><span class="p">))</span>         <span class="c1"># 2 bytes: Kills</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">deaths</span><span class="p">))</span>        <span class="c1"># 2 bytes: Deaths</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encode_fixed_point</span><span class="p">(</span><span class="n">score</span><span class="p">))</span>        <span class="c1"># 4 bytes: Score</span>
+    <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;I&#39;</span><span class="p">,</span> <span class="n">unknown_field</span><span class="p">))</span> <span class="c1"># 4 bytes: Unknown</span>
+
+    <span class="k">return</span> <span class="n">make_packet</span><span class="p">(</span><span class="mh">0x1A</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h3 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Example 1: New player joining Team 1 (Red)</span>
+<span class="n">roster_packet</span> <span class="o">=</span> <span class="n">create_add_to_roster</span><span class="p">(</span>
+    <span class="n">player_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">entity_id</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>      <span class="c1"># Must match PLAYER packet!</span>
+    <span class="n">team_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>            <span class="c1"># Team 1 (Red)</span>
+    <span class="n">player_name</span><span class="o">=</span><span class="s2">&quot;Baffler&quot;</span><span class="p">,</span>
+    <span class="n">clan_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>         <span class="c1"># No clan</span>
+    <span class="n">kills</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">deaths</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">score</span><span class="o">=</span><span class="mf">0.0</span>
+<span class="p">)</span>
+
+<span class="c1"># Example 2: Player with clan and some stats</span>
+<span class="n">roster_packet</span> <span class="o">=</span> <span class="n">create_add_to_roster</span><span class="p">(</span>
+    <span class="n">player_id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">entity_id</span><span class="o">=</span><span class="mi">12346</span><span class="p">,</span>
+    <span class="n">team_id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>            <span class="c1"># Team 2 (Blue)</span>
+    <span class="n">player_name</span><span class="o">=</span><span class="s2">&quot;DrGotcha&quot;</span><span class="p">,</span>
+    <span class="n">clan_name</span><span class="o">=</span><span class="s2">&quot;PRO&quot;</span><span class="p">,</span>
+    <span class="n">kills</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">deaths</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">score</span><span class="o">=</span><span class="mf">150.5</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="example-wire-bytes">Example Wire Bytes<a class="headerlink" href="#example-wire-bytes" title="Permanent link">&para;</a></h3>
+<h4 id="example-player-baffler-joining-team-1-with-entity-12345">Example: Player "Baffler" joining Team 1 with entity 12345<a class="headerlink" href="#example-player-baffler-joining-team-1-with-entity-12345" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Building the packet:
+
+Fixed Fields (12 bytes):
+  Player ID:    00 00 00 01        (1)
+  Entity ID:    00 00 30 39        (12345)
+  Team ID:      00 01              (1 = Red)
+  Unknown Flag: 00 00              (0)
+
+String Fields:
+  Player Name:  00 08 42 61 66 66 6C 65 72 00    (len=8, &quot;Baffler\0&quot;)
+  Clan Name:    00 01 00                          (len=1, empty string)
+
+Stats Fields (12 bytes):
+  Kills:        00 00              (0)
+  Deaths:       00 00              (0)
+  Score:        00 00 00 00        (0.0)
+  Unknown:      00 00 00 00        (0)
+
+Payload (38 bytes):
+00 00 00 01 00 00 30 39 00 01 00 00 00 08 42 61
+66 66 6C 65 72 00 00 01 00 00 00 00 00 00 00 00
+00 00 00 00
+
+Complete Packet (41 bytes):
+1A 00 26 00 00 00 01 00 00 30 39 00 01 00 00 00
+08 42 61 66 66 6C 65 72 00 00 01 00 00 00 00 00
+00 00 00 00 00 00
+
+Breakdown:
+  1A          Type: ADD_TO_ROSTER
+  00 26       Length: 38 bytes (0x0026)
+  00 00 00 01 Player ID: 1
+  00 00 30 39 Entity ID: 12345
+  00 01       Team ID: 1
+  00 00       Unknown flag: 0
+  00 08       Player name length: 8
+  42 61 66 66 6C 65 72 00   &quot;Baffler\0&quot;
+  00 01       Clan name length: 1
+  00          &quot;&quot; (empty string, just null)
+  00 00       Kills: 0
+  00 00       Deaths: 0
+  00 00 00 00 Score: 0.0
+  00 00 00 00 Unknown: 0
+</code></pre></div>
+<hr />
+<h3 id="critical-requirements">Critical Requirements<a class="headerlink" href="#critical-requirements" title="Permanent link">&para;</a></h3>
+<h4 id="1-entity-id-must-match-player-packet">1. Entity ID Must Match PLAYER Packet<a class="headerlink" href="#1-entity-id-must-match-player-packet" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>When you send:
+  PLAYER (0x17):        entity_id = 12345
+  ADD_TO_ROSTER (0x1A): entity_id = 12345  ← MUST BE THE SAME!
+
+If these don&#39;t match, the roster display won&#39;t properly link the
+player entry to their in-game entity.
+</code></pre></div>
+<h4 id="2-team-id-must-match-reincarnate-selection">2. Team ID Must Match REINCARNATE Selection<a class="headerlink" href="#2-team-id-must-match-reincarnate-selection" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>When player selects Team 1 via REINCARNATE:
+  REINCARNATE response: confirms Team 1
+  ADD_TO_ROSTER:        team_id = 1  ← MUST MATCH!
+
+If the team ID is wrong, the player appears on the wrong team&#39;s roster.
+</code></pre></div>
+<h4 id="3-broadcast-to-all-clients">3. Broadcast to All Clients<a class="headerlink" href="#3-broadcast-to-all-clients" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>When a new player joins, you should send ADD_TO_ROSTER to:
+  - The joining player (so they see themselves)
+  - All other connected players (so they see the new player)
+
+When a player first connects, send them ADD_TO_ROSTER for all
+existing players so their roster is populated.
+</code></pre></div>
+<hr />
+<h3 id="related-packet-remove_from_roster-0x1b">Related Packet: REMOVE_FROM_ROSTER (0x1B)<a class="headerlink" href="#related-packet-remove_from_roster-0x1b" title="Permanent link">&para;</a></h3>
+<p>When a player disconnects or leaves, send REMOVE_FROM_ROSTER:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Handler registered at line 77043</span>
+<span class="n">FUN_00509b40</span><span class="p">(</span><span class="mh">0x1b</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">LAB_0046d6f0</span><span class="p">);</span>
+</code></pre></div>
+<p>The structure is simpler (just player/entity identification), but the full
+analysis of REMOVE_FROM_ROSTER is not covered in this document.</p>
+<hr />
+<h3 id="common-mistakes">Common Mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Symptom</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entity ID doesn't match PLAYER packet</td>
+<td>Player not linked to entity</td>
+<td>Use same entity_id in both packets</td>
+</tr>
+<tr>
+<td>Team ID doesn't match REINCARNATE</td>
+<td>Player on wrong team in roster</td>
+<td>Use team from selection</td>
+</tr>
+<tr>
+<td>Forgot length prefix on strings</td>
+<td>Client crash/parse error</td>
+<td>Use <code>encode_string()</code></td>
+</tr>
+<tr>
+<td>Little-endian encoding</td>
+<td>Garbled values</td>
+<td>Use big-endian (<code>&gt;I</code>, <code>&gt;H</code>)</td>
+</tr>
+<tr>
+<td>Missing null terminator</td>
+<td>String parsing issues</td>
+<td>Include <code>\x00</code> in string</td>
+</tr>
+<tr>
+<td>Score as raw float</td>
+<td>Wrong score display</td>
+<td>Use fixed-point encoding</td>
+</tr>
+<tr>
+<td>Only sent to joining player</td>
+<td>Others don't see new player</td>
+<td>Broadcast to all clients</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="verification-checklist">Verification Checklist<a class="headerlink" href="#verification-checklist" title="Permanent link">&para;</a></h3>
+<p>Before sending ADD_TO_ROSTER, verify:</p>
+<ul>
+<li>[ ] Player ID is set (can be any unique value)</li>
+<li>[ ] Entity ID matches the PLAYER packet entity_id</li>
+<li>[ ] Team ID matches the team selected via REINCARNATE</li>
+<li>[ ] Player name is length-prefixed with null terminator</li>
+<li>[ ] Clan name is length-prefixed (can be empty: <code>00 01 00</code>)</li>
+<li>[ ] Score uses fixed-point encoding (× 65536)</li>
+<li>[ ] All multi-byte values are big-endian</li>
+<li>[ ] Packet is broadcast to all connected clients</li>
+</ul>
+<hr />
+<h3 id="packet-summary">Packet Summary<a class="headerlink" href="#packet-summary" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Packet Type</td>
+<td>0x1A</td>
+</tr>
+<tr>
+<td>Packet Name</td>
+<td>ADD_TO_ROSTER</td>
+</tr>
+<tr>
+<td>Handler Function</td>
+<td>FUN_0046d5d0</td>
+</tr>
+<tr>
+<td>Direction</td>
+<td>Server → Client</td>
+</tr>
+<tr>
+<td>Minimum Payload Size</td>
+<td>30 bytes</td>
+</tr>
+<tr>
+<td>Variable Fields</td>
+<td>Player Name, Clan Name</td>
+</tr>
+<tr>
+<td>Related Packets</td>
+<td>PLAYER (0x17), REINCARNATE (0x25), REMOVE_FROM_ROSTER (0x1B)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="quick-reference-field-offsets">Quick Reference: Field Offsets<a class="headerlink" href="#quick-reference-field-offsets" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ADD_TO_ROSTER Quick Reference:
+═══════════════════════════════════════════════════════════════════════════
+
+Offset  Size  Type          Field
+──────  ────  ────          ─────
+0       4     uint32 BE     Player ID
+4       4     uint32 BE     Entity ID        ★ Must match PLAYER packet!
+8       2     uint16 BE     Team ID          ★ Must match REINCARNATE!
+10      2     uint16 BE     Unknown Flag     (use 0)
+12      var   string        Player Name      (length-prefixed)
+var     var   string        Clan Name        (length-prefixed)
+var     2     uint16 BE     Kills
+var+2   2     uint16 BE     Deaths
+var+4   4     fixed-point   Score
+var+8   4     uint32 BE     Unknown          (use 0)
+
+═══════════════════════════════════════════════════════════════════════════
+</code></pre></div>
+<hr />
+<p><em>Related: <a href="../part-6-reincarnate/index.html">Part 6: REINCARNATE &amp; Game Entry</a></em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "navigation.top"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>
